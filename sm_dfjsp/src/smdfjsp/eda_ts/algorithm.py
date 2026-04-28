@@ -1,9 +1,11 @@
 from __future__ import annotations
 
+import json
 import math
 import time
 from dataclasses import dataclass
-from typing import Dict, List, Sequence, Tuple
+from pathlib import Path
+from typing import Any, Dict, List, Optional, Sequence, Tuple
 
 import numpy as np
 
@@ -37,12 +39,16 @@ class EDATSConfig:
     use_multi_population: bool = True
     use_nd_memory: bool = True
     use_ts: bool = True
+    trace_enabled: bool = False
+    trace_dir: Optional[str] = None
+    trace_every: int = 1
 
 
 @dataclass
 class RunResult:
     nd_solutions: List[EncodedIndividual]
     history: List[Dict[str, float]]
+    trace_file: Optional[str] = None
 
 
 class EDATS:
@@ -57,6 +63,77 @@ class EDATS:
         self.srus_by_type = instance.srus_by_type()
         self.compatible_srus = build_compatible_sru_map(instance, self.option_index)
         self._init_probability_matrices()
+        self._trace_file: Optional[Path] = None
+        if self.cfg.trace_enabled and self.cfg.trace_dir:
+            trace_dir = Path(self.cfg.trace_dir)
+            trace_dir.mkdir(parents=True, exist_ok=True)
+            stamp = int(time.time() * 1000)
+            self._trace_file = trace_dir / f"edats_trace_seed{self.cfg.seed}_{stamp}.jsonl"
+
+    @staticmethod
+    def _copy_individual(ind: EncodedIndividual) -> EncodedIndividual:
+        return EncodedIndividual(
+            ua=dict(ind.ua),
+            os={k: list(v) for k, v in ind.os.items()},
+            op={k: list(v) for k, v in ind.op.items()},
+            ms={k: list(v) for k, v in ind.ms.items()},
+            aux=dict(ind.aux),
+        )
+
+    @staticmethod
+    def _entropy(values: np.ndarray) -> float:
+        if values.size == 0:
+            return 0.0
+        arr = values.astype(float)
+        arr = arr[arr > 0.0]
+        if arr.size == 0:
+            return 0.0
+        return float(-(arr * np.log(arr)).sum())
+
+    def _trace_snapshot(self, it: int, en_size: int, nd_size: int) -> None:
+        if not self.cfg.trace_enabled:
+            return
+        every = max(1, int(self.cfg.trace_every))
+        if it % every != 0:
+            return
+
+        pma_entropy = []
+        pms_entropy = []
+        pmm_entropy = []
+        for t in self.pma:
+            for j in self.pma[t]:
+                pma_entropy.append(self._entropy(self.pma[t][j]))
+        for t in self.pms:
+            for j in self.pms[t]:
+                pms_entropy.append(self._entropy(self.pms[t][j]))
+        for key in self.pmm:
+            pmm_entropy.append(self._entropy(self.pmm[key]))
+
+        payload: Dict[str, Any] = {
+            "iter": it,
+            "seed": int(self.cfg.seed),
+            "en_size": int(en_size),
+            "nd_size": int(nd_size),
+            "pma_entropy_mean": (sum(pma_entropy) / len(pma_entropy) if pma_entropy else 0.0),
+            "pms_entropy_mean": (sum(pms_entropy) / len(pms_entropy) if pms_entropy else 0.0),
+            "pmm_entropy_mean": (sum(pmm_entropy) / len(pmm_entropy) if pmm_entropy else 0.0),
+            "pma": {
+                str(t): {str(j): [float(x) for x in self.pma[t][j]] for j in sorted(self.pma[t])}
+                for t in sorted(self.pma)
+            },
+            "pms": {
+                str(t): {str(j): [float(x) for x in self.pms[t][j]] for j in sorted(self.pms[t])}
+                for t in sorted(self.pms)
+            },
+            "pmm": {
+                f"{j}-{o}-{s}": [float(x) for x in self.pmm[(j, o, s)]]
+                for (j, o, s) in sorted(self.pmm)
+            },
+        }
+        line = json.dumps(payload, ensure_ascii=False)
+        if self._trace_file is not None:
+            with self._trace_file.open("a", encoding="utf-8") as f:
+                f.write(line + "\n")
 
     def _init_probability_matrices(self) -> None:
         # PMA[x][job_id] -> probabilities over compatible sru ids for this job
@@ -318,15 +395,20 @@ class EDATS:
                 possible = [sid for sid in self.compatible_srus.get(job.job_id, []) if sid != ind.ua[job.job_id]]
                 if not possible:
                     continue
-                moved = EncodedIndividual(
-                    ua=dict(ind.ua),
-                    os={k: list(v) for k, v in ind.os.items()},
-                    op={k: list(v) for k, v in ind.op.items()},
-                    ms={k: list(v) for k, v in ind.ms.items()},
-                )
-                moved.ua[job.job_id] = self.rng.py_rng.choice(possible)
+                moved = self._copy_individual(ind)
+                from_sru = int(ind.ua[job.job_id])
+                to_sru = int(self.rng.py_rng.choice(possible))
+                moved.ua[job.job_id] = to_sru
                 moved.op = op_from_ua_os(self.instance, moved.ua, moved.os)
                 moved.ms = self._sample_ms(moved.op)
+                moved.aux.update(
+                    {
+                        "move_kind": "N1",
+                        "job_id": int(job.job_id),
+                        "from_sru": from_sru,
+                        "to_sru": to_sru,
+                    }
+                )
                 neighbors.append(repair_individual(moved, self.instance, self.option_index, self.rng))
         return neighbors
 
@@ -350,6 +432,13 @@ class EDATS:
                     os={k: (new_vec if k == t else list(v)) for k, v in ind.os.items()},
                     op={},
                     ms={},
+                    aux={
+                        "move_kind": "N2",
+                        "type_id": int(t),
+                        "from_pos": int(i1),
+                        "to_pos": int(i2),
+                        "job_id": int(token),
+                    },
                 )
                 moved.op = op_from_ua_os(self.instance, moved.ua, moved.os)
                 moved.ms = self._sample_ms(moved.op)
@@ -369,20 +458,50 @@ class EDATS:
                 options = list(self.option_index[(job_id, op_id, sru_id)].keys())
                 if len(options) <= 1:
                     continue
-                moved = EncodedIndividual(
-                    ua=dict(ind.ua),
-                    os={k: list(v) for k, v in ind.os.items()},
-                    op={k: list(v) for k, v in ind.op.items()},
-                    ms={k: list(v) for k, v in ind.ms.items()},
-                )
+                moved = self._copy_individual(ind)
                 current = moved.ms[sru_id][i]
                 choices = [m for m in options if m != current]
-                moved.ms[sru_id][i] = self.rng.py_rng.choice(choices)
+                to_machine = int(self.rng.py_rng.choice(choices))
+                moved.ms[sru_id][i] = to_machine
+                moved.aux.update(
+                    {
+                        "move_kind": "N3",
+                        "sru_id": int(sru_id),
+                        "job_id": int(job_id),
+                        "op_id": int(op_id),
+                        "from_machine": int(current),
+                        "to_machine": to_machine,
+                    }
+                )
                 neighbors.append(repair_individual(moved, self.instance, self.option_index, self.rng))
         return neighbors
 
     def _penalized(self, obj: ObjPair, freq: int) -> ObjPair:
         return (obj[0] + self.cfg.epsilon * obj[0] * freq, obj[1] + self.cfg.epsilon * obj[1] * freq)
+
+    @staticmethod
+    def _build_tabu_key(ind: EncodedIndividual) -> Tuple:
+        mk = str(ind.aux.get("move_kind", ""))
+        if mk == "N1":
+            return ("N1", int(ind.aux["job_id"]), int(ind.aux["to_sru"]))
+        if mk == "N2":
+            return (
+                "N2",
+                int(ind.aux["type_id"]),
+                int(ind.aux["job_id"]),
+                int(ind.aux["from_pos"]),
+                int(ind.aux["to_pos"]),
+            )
+        if mk == "N3":
+            return (
+                "N3",
+                int(ind.aux["sru_id"]),
+                int(ind.aux["job_id"]),
+                int(ind.aux["op_id"]),
+                int(ind.aux["to_machine"]),
+            )
+        # Fallback key for safety.
+        return tuple(ind.os[t][0] if ind.os[t] else -1 for t in sorted(ind.os))
 
     def _tabu_search(self, initial: EncodedIndividual) -> EncodedIndividual:
         current = initial
@@ -393,7 +512,7 @@ class EDATS:
 
         t_list: List[Tuple] = []
         lmls: Dict[Tuple[int, int], int] = {}
-        lmlm: Dict[Tuple[int, int, int], int] = {}
+        lmlm: Dict[Tuple[int, int, int, int], int] = {}
         t_max_len = max(5, sum(min(5, self.kx[t]) for t in self.kx))
 
         for _ in range(max(1, self.cfg.tmax)):
@@ -408,22 +527,28 @@ class EDATS:
             scored: List[Tuple[ObjPair, EncodedIndividual]] = []
             for nb in neighbors:
                 obj = nb.objectives  # type: ignore[assignment]
-                # Penalty for move frequencies.
                 pen = 0
-                for j, sru in nb.ua.items():
-                    if sru != current.ua.get(j):
-                        pen += lmls.get((sru, j), 0)
-                for sru_id, seq in nb.op.items():
-                    ms_vec = nb.ms.get(sru_id, [])
-                    for i, (j, op_id) in enumerate(seq):
-                        if i < len(ms_vec):
-                            pen += lmlm.get((sru_id, j, ms_vec[i]), 0)
+                mk = str(nb.aux.get("move_kind", ""))
+                if mk == "N1":
+                    pen += lmls.get((int(nb.aux["to_sru"]), int(nb.aux["job_id"])), 0)
+                elif mk == "N3":
+                    pen += lmlm.get(
+                        (
+                            int(nb.aux["sru_id"]),
+                            int(nb.aux["job_id"]),
+                            int(nb.aux["op_id"]),
+                            int(nb.aux["to_machine"]),
+                        ),
+                        0,
+                    )
                 scored.append((self._penalized(obj, pen), nb))
             scored.sort(key=lambda x: (x[0][0], x[0][1]))
             chosen = None
             for _, cand in scored:
-                tabu_key = tuple(cand.os[t][0] if cand.os[t] else -1 for t in sorted(cand.os))
-                if tabu_key not in t_list:
+                tabu_key = self._build_tabu_key(cand)
+                # Aspiration criterion: allow tabu move if it improves current best.
+                improves_best = dominates(cand.objectives, best_obj)  # type: ignore[arg-type]
+                if tabu_key not in t_list or improves_best:
                     chosen = cand
                     t_list.append(tabu_key)
                     if len(t_list) > t_max_len:
@@ -431,14 +556,19 @@ class EDATS:
                     break
             if chosen is None:
                 chosen = scored[0][1]
-            # Update frequencies.
-            for j, sru in chosen.ua.items():
-                if sru != current.ua.get(j):
-                    lmls[(sru, j)] = lmls.get((sru, j), 0) + 1
-            for sru_id, seq in chosen.op.items():
-                for i, (j, _) in enumerate(seq):
-                    m = chosen.ms[sru_id][i]
-                    lmlm[(sru_id, j, m)] = lmlm.get((sru_id, j, m), 0) + 1
+            # Update long-memory frequencies by neighborhood move type.
+            mk = str(chosen.aux.get("move_kind", ""))
+            if mk == "N1":
+                key = (int(chosen.aux["to_sru"]), int(chosen.aux["job_id"]))
+                lmls[key] = lmls.get(key, 0) + 1
+            elif mk == "N3":
+                key = (
+                    int(chosen.aux["sru_id"]),
+                    int(chosen.aux["job_id"]),
+                    int(chosen.aux["op_id"]),
+                    int(chosen.aux["to_machine"]),
+                )
+                lmlm[key] = lmlm.get(key, 0) + 1
 
             current = chosen
             if dominates(current.objectives, best_obj):  # type: ignore[arg-type]
@@ -466,6 +596,7 @@ class EDATS:
             elites = self._select_elite(pop, elite_size)
             en = elites + ([x[1] for x in nd_pool] if self.cfg.use_nd_memory else [])
             self._update_probability_matrices(en)
+            self._trace_snapshot(it=it, en_size=len(en), nd_size=len(nd_pool))
 
             new_pop = [self._build_individual() for _ in range(self.cfg.popsize)]
             self._evaluate_population(self.instance, new_pop)
@@ -511,4 +642,5 @@ class EDATS:
             best_mk = min(ind.objectives[1] for ind in pop if ind.objectives is not None)
             history.append({"iter": it, "best_cost": best_cost, "best_makespan": best_mk, "nd_size": len(nd_pool)})
 
-        return RunResult(nd_solutions=[x[1] for x in nd_pool], history=history)
+        trace_file = str(self._trace_file) if self._trace_file is not None else None
+        return RunResult(nd_solutions=[x[1] for x in nd_pool], history=history, trace_file=trace_file)
