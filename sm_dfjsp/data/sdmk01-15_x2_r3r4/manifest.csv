@@ -1,0 +1,16 @@
+instance,source_mk,jobs,types_x,r_total,r_type_1,r_type_2,srus,ops,options,seed,file
+sdmk01,mk01,10,2,3,2,1,3,55,159,20260408,data/sdmk01-15_x2_r3r4/sdmk01.json
+sdmk02,mk02,10,2,3,1,2,3,58,340,20260409,data/sdmk01-15_x2_r3r4/sdmk02.json
+sdmk03,mk03,15,2,3,2,1,3,150,663,20260410,data/sdmk01-15_x2_r3r4/sdmk03.json
+sdmk04,mk04,15,2,3,1,2,3,90,238,20260411,data/sdmk01-15_x2_r3r4/sdmk04.json
+sdmk05,mk05,15,2,3,2,1,3,106,254,20260412,data/sdmk01-15_x2_r3r4/sdmk05.json
+sdmk06,mk06,10,2,3,1,2,3,150,695,20260413,data/sdmk01-15_x2_r3r4/sdmk06.json
+sdmk07,mk07,20,2,4,2,2,4,100,479,20260414,data/sdmk01-15_x2_r3r4/sdmk07.json
+sdmk08,mk08,20,2,4,2,2,4,225,579,20260415,data/sdmk01-15_x2_r3r4/sdmk08.json
+sdmk09,mk09,20,2,4,2,2,4,240,1053,20260416,data/sdmk01-15_x2_r3r4/sdmk09.json
+sdmk10,mk10,20,2,4,2,2,4,240,1291,20260417,data/sdmk01-15_x2_r3r4/sdmk10.json
+sdmk11,mk11,30,2,4,2,2,4,179,420,20260418,data/sdmk01-15_x2_r3r4/sdmk11.json
+sdmk12,mk12,30,2,4,2,2,4,193,537,20260419,data/sdmk01-15_x2_r3r4/sdmk12.json
+sdmk13,mk13,30,2,4,2,2,4,231,1430,20260420,data/sdmk01-15_x2_r3r4/sdmk13.json
+sdmk14,mk14,30,2,4,2,2,4,277,757,20260421,data/sdmk01-15_x2_r3r4/sdmk14.json
+sdmk15,mk15,30,2,4,2,2,4,284,1559,20260422,data/sdmk01-15_x2_r3r4/sdmk15.json
