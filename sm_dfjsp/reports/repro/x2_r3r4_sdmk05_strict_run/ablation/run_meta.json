@@ -1,0 +1,11 @@
+{
+  "utc_time": "2026-04-29T14:45:14.353542+00:00",
+  "python": "3.9.25 (main, Nov  3 2025, 22:44:01) [MSC v.1929 64 bit (AMD64)]",
+  "platform": "Windows-10-10.0.19045-SP0",
+  "git_commit": "7bca5e4174c31a2133c06b763ab51db8be5a9889",
+  "cwd": "D:\\Code\\re_code\\vc-sm-dfjsp\\sm_dfjsp",
+  "config_path": "D:\\Code\\re_code\\vc-sm-dfjsp\\sm_dfjsp\\reports\\repro\\x2_r3r4_sdmk05_strict_run\\configs\\ablation_sdmk05.yaml",
+  "config_sha256": "2122f5596c6d2cf0f53fa07639f555d9eee22b4c3707667ce5db38aa18625caf",
+  "task": "run_ablation_repeated",
+  "data_dir": "D:\\Code\\re_code\\vc-sm-dfjsp\\sm_dfjsp\\data\\sdmk01-15_x2_r3r4"
+}

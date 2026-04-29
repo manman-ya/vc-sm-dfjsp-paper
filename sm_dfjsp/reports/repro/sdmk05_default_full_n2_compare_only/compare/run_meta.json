@@ -1,0 +1,15 @@
+{
+  "utc_time": "2026-04-29T17:06:36.978287+00:00",
+  "python": "3.9.25 (main, Nov  3 2025, 22:44:01) [MSC v.1929 64 bit (AMD64)]",
+  "platform": "Windows-10-10.0.19045-SP0",
+  "git_commit": "7bca5e4174c31a2133c06b763ab51db8be5a9889",
+  "cwd": "D:\\Code\\re_code\\vc-sm-dfjsp\\sm_dfjsp",
+  "config_path": "D:\\Code\\re_code\\vc-sm-dfjsp\\sm_dfjsp\\reports\\repro\\sdmk05_default_full_n2_compare_only\\configs\\experiment_sdmk05.yaml",
+  "config_sha256": "2b508b530e7970c89e8f67a72867d6f9f7d86cebb88a79d361046beae5da55cf",
+  "task": "run_experiments_repeated",
+  "n_runs": 2,
+  "instances": [
+    "sdmk05"
+  ],
+  "data_dir": "D:\\Code\\re_code\\vc-sm-dfjsp\\sm_dfjsp\\data\\sdmk01-15"
+}

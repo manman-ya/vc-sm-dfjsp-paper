@@ -1,0 +1,146 @@
+[
+  {
+    "file": "ablation/ablation_cmetric_runs.csv",
+    "bytes": 260
+  },
+  {
+    "file": "ablation/ablation_runs.csv",
+    "bytes": 737
+  },
+  {
+    "file": "ablation/ablation_summary.csv",
+    "bytes": 454
+  },
+  {
+    "file": "ablation/ablation_wilcoxon.csv",
+    "bytes": 355
+  },
+  {
+    "file": "ablation/run_meta.json",
+    "bytes": 638
+  },
+  {
+    "file": "compare/cmetric_runs.csv",
+    "bytes": 692
+  },
+  {
+    "file": "compare/front_points.csv",
+    "bytes": 1438
+  },
+  {
+    "file": "compare/metrics_runs.csv",
+    "bytes": 1012
+  },
+  {
+    "file": "compare/metrics_summary.csv",
+    "bytes": 754
+  },
+  {
+    "file": "compare/run_meta.json",
+    "bytes": 697
+  },
+  {
+    "file": "compare/wilcoxon.csv",
+    "bytes": 399
+  },
+  {
+    "file": "configs/ablation_sdmk05.yaml",
+    "bytes": 190
+  },
+  {
+    "file": "configs/experiment_sdmk05.yaml",
+    "bytes": 661
+  },
+  {
+    "file": "figures/ablation_cmetric_boxplot.png",
+    "bytes": 45476
+  },
+  {
+    "file": "figures/cmetric_edats_vs_baselines.png",
+    "bytes": 33200
+  },
+  {
+    "file": "figures/cmetric_edats_vs_baselines_by_instance.png",
+    "bytes": 57164
+  },
+  {
+    "file": "figures/cmetric_heatmap_overall.png",
+    "bytes": 61558
+  },
+  {
+    "file": "figures/compare_cmetric_boxplot.png",
+    "bytes": 97954
+  },
+  {
+    "file": "figures/dominance_graph_overall.png",
+    "bytes": 101838
+  },
+  {
+    "file": "figures/dominance_matrix_overall.png",
+    "bytes": 68709
+  },
+  {
+    "file": "figures/fig10_taguchi_main_effects.png",
+    "bytes": 218036
+  },
+  {
+    "file": "figures/fig11_taguchi_factor_trend.png",
+    "bytes": 188261
+  },
+  {
+    "file": "figures/gantt_sdmk05_best_vs_random.png",
+    "bytes": 109266
+  },
+  {
+    "file": "figures/gantt_sdmk05_EDATS_run1.png",
+    "bytes": 141511
+  },
+  {
+    "file": "figures/pareto_overall.png",
+    "bytes": 49266
+  },
+  {
+    "file": "figures/pareto_sdmk05.png",
+    "bytes": 51295
+  },
+  {
+    "file": "tables/table11_ablation_gd_igd.csv",
+    "bytes": 261
+  },
+  {
+    "file": "tables/table12_ablation_cmetric.csv",
+    "bytes": 161
+  },
+  {
+    "file": "tables/table13_ablation_wilcoxon.csv",
+    "bytes": 355
+  },
+  {
+    "file": "tables/table7_compare_gd_igd_runtime.csv",
+    "bytes": 447
+  },
+  {
+    "file": "tables/table8_compare_cmetric.csv",
+    "bytes": 362
+  },
+  {
+    "file": "taguchi/run_meta.json",
+    "bytes": 501
+  },
+  {
+    "file": "taguchi/taguchi_results.csv",
+    "bytes": 1990
+  },
+  {
+    "file": "validation/run_meta.json",
+    "bytes": 414
+  },
+  {
+    "file": "validation/validation_rows.csv",
+    "bytes": 983
+  },
+  {
+    "file": "validation/validation_summary.txt",
+    "bytes": 31
+  }
+]

@@ -1,0 +1,35 @@
+{
+  "input": "D:/Code/re_code/vc-sm-dfjsp/sm_dfjsp/data/mvc_sm_dfjsp/mk05_mvc_3vc_6sru.json",
+  "n_runs": 2,
+  "seed_base": 20260428,
+  "rows": [
+    {
+      "algorithm": "EDA-TS",
+      "run": 1,
+      "seed": 20260429,
+      "runtime_s": 102.75005865097046,
+      "nd_size": 5
+    },
+    {
+      "algorithm": "NSGA-II",
+      "run": 1,
+      "seed": 20260429,
+      "runtime_s": 14.689024686813354,
+      "nd_size": 10
+    },
+    {
+      "algorithm": "EDA-TS",
+      "run": 2,
+      "seed": 20260430,
+      "runtime_s": 101.43994855880737,
+      "nd_size": 6
+    },
+    {
+      "algorithm": "NSGA-II",
+      "run": 2,
+      "seed": 20260430,
+      "runtime_s": 14.675353288650513,
+      "nd_size": 5
+    }
+  ]
+}

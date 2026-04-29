@@ -17,6 +17,34 @@ from smdfjsp.metrics import build_pf_known, c_metric, gd, igd, wilcoxon_signed_r
 from repro_utils import load_yaml, write_run_meta
 
 
+FRONT_FIELDS = ["instance", "run", "algorithm", "cost", "makespan"]
+METRICS_FIELDS = [
+    "instance",
+    "run",
+    "algorithm",
+    "seed",
+    "GD",
+    "IGD",
+    "runtime_s",
+    "nd_size",
+    "best_cost",
+    "best_makespan",
+]
+CMETRIC_FIELDS = ["instance", "run", "a", "b", "c_ab", "c_ba"]
+WILCOXON_FIELDS = ["instance", "competitor", "metric", "Wm", "p_value", "win", "n_runs"]
+SUMMARY_FIELDS = [
+    "instance",
+    "algorithm",
+    "mean_GD",
+    "std_GD",
+    "mean_IGD",
+    "std_IGD",
+    "mean_runtime_s",
+    "std_runtime_s",
+    "mean_nd_size",
+]
+
+
 def nd_objectives(nd_solutions) -> List[tuple]:
     objs = []
     for x in nd_solutions:
@@ -52,15 +80,54 @@ def _safe_std(vals: List[float]) -> float:
     return statistics.pstdev(vals) if len(vals) > 1 else 0.0
 
 
+def _read_csv_rows(path: Path) -> List[dict]:
+    if not path.exists():
+        return []
+    with path.open("r", newline="", encoding="utf-8") as f:
+        return list(csv.DictReader(f))
+
+
+def _write_csv(path: Path, fieldnames: List[str], rows: List[dict]) -> None:
+    with path.open("w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=fieldnames)
+        writer.writeheader()
+        writer.writerows(rows)
+
+
+def _run_key(row: dict) -> Tuple[str, int]:
+    return (str(row["instance"]), int(row["run"]))
+
+
+def _completed_runs(metrics_rows: List[dict], algo_order: List[str]) -> set[Tuple[str, int]]:
+    by_run: Dict[Tuple[str, int], set[str]] = defaultdict(set)
+    for row in metrics_rows:
+        by_run[_run_key(row)].add(str(row["algorithm"]))
+    needed = set(algo_order)
+    return {key for key, algos in by_run.items() if needed.issubset(algos)}
+
+
+def _keep_completed(rows: List[dict], completed: set[Tuple[str, int]]) -> List[dict]:
+    return [row for row in rows if _run_key(row) in completed]
+
+
+def _write_raw_outputs(out_dir: Path, front_rows: List[dict], metrics_run_rows: List[dict], cmetric_run_rows: List[dict]) -> None:
+    _write_csv(out_dir / "front_points.csv", FRONT_FIELDS, front_rows)
+    _write_csv(out_dir / "metrics_runs.csv", METRICS_FIELDS, metrics_run_rows)
+    _write_csv(out_dir / "cmetric_runs.csv", CMETRIC_FIELDS, cmetric_run_rows)
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--config", default="configs/repro/experiment_01_15_quick.yaml")
+    parser.add_argument("--data-dir", default="data/sdmk01-15")
     parser.add_argument("--out-dir", default="reports/repro/compare_01_15")
     parser.add_argument("--no-progress", action="store_true")
+    parser.add_argument("--resume", action="store_true")
     args = parser.parse_args()
 
     root = Path(__file__).resolve().parents[1]
     cfg_path = root / args.config
+    data_dir = root / args.data_dir
     cfg = load_yaml(cfg_path)
 
     out_dir = root / args.out_dir
@@ -73,6 +140,7 @@ def main() -> None:
             "task": "run_experiments_repeated",
             "n_runs": n_runs,
             "instances": cfg["instances"],
+            "data_dir": str(data_dir),
         },
     )
 
@@ -83,16 +151,29 @@ def main() -> None:
 
     instances = list(cfg["instances"])
     algo_order = ["EDA-TS", "EDA", "NSGA-II", "EDA-VNS", "H-GA-TS"]
+    if args.resume:
+        metrics_run_rows = _read_csv_rows(out_dir / "metrics_runs.csv")
+        completed = _completed_runs(metrics_run_rows, algo_order)
+        metrics_run_rows = _keep_completed(metrics_run_rows, completed)
+        front_rows = _keep_completed(_read_csv_rows(out_dir / "front_points.csv"), completed)
+        cmetric_run_rows = _keep_completed(_read_csv_rows(out_dir / "cmetric_runs.csv"), completed)
+        print(f"resume: loaded {len(completed)} completed run(s) from {out_dir}")
+    else:
+        completed = set()
+
     total_steps = len(instances) * n_runs * len(algo_order)
-    done_steps = 0
+    done_steps = len(completed) * len(algo_order)
     if not args.no_progress:
         print("Overall Progress " + _render_bar(done_steps, total_steps))
 
     exp_start = time.time()
     for inst_idx, inst_name in enumerate(instances, start=1):
         print(f"\n=== Instance {inst_name} ({inst_idx}/{len(instances)}) ===")
-        inst = load_instance_json(root / "data" / "sdmk01-15" / f"{inst_name}.json")
+        inst = load_instance_json(data_dir / f"{inst_name}.json")
         for run_idx in range(1, n_runs + 1):
+            if (inst_name, run_idx) in completed:
+                print(f"[{inst_name}] run {run_idx}/{n_runs} already complete, skipped")
+                continue
             seed = int(cfg["seed"]) + inst_idx * 10000 + run_idx
             print(f"[{inst_name}] run {run_idx}/{n_runs}, seed={seed}")
             runners = _runner_bundle(inst, seed, cfg)
@@ -161,6 +242,9 @@ def main() -> None:
                         }
                     )
 
+            _write_raw_outputs(out_dir, front_rows, metrics_run_rows, cmetric_run_rows)
+            completed.add((inst_name, run_idx))
+
         # Wilcoxon per instance (EDA-TS vs competitors) on GD/IGD.
         for competitor in ["EDA", "NSGA-II", "EDA-VNS", "H-GA-TS"]:
             base_rows = [
@@ -212,47 +296,9 @@ def main() -> None:
             }
         )
 
-    def write_csv(path: Path, fieldnames: List[str], rows: List[dict]) -> None:
-        with path.open("w", newline="", encoding="utf-8") as f:
-            writer = csv.DictWriter(f, fieldnames=fieldnames)
-            writer.writeheader()
-            writer.writerows(rows)
-
-    write_csv(
-        out_dir / "front_points.csv",
-        ["instance", "run", "algorithm", "cost", "makespan"],
-        front_rows,
-    )
-    write_csv(
-        out_dir / "metrics_runs.csv",
-        ["instance", "run", "algorithm", "seed", "GD", "IGD", "runtime_s", "nd_size", "best_cost", "best_makespan"],
-        metrics_run_rows,
-    )
-    write_csv(
-        out_dir / "metrics_summary.csv",
-        [
-            "instance",
-            "algorithm",
-            "mean_GD",
-            "std_GD",
-            "mean_IGD",
-            "std_IGD",
-            "mean_runtime_s",
-            "std_runtime_s",
-            "mean_nd_size",
-        ],
-        summary_rows,
-    )
-    write_csv(
-        out_dir / "cmetric_runs.csv",
-        ["instance", "run", "a", "b", "c_ab", "c_ba"],
-        cmetric_run_rows,
-    )
-    write_csv(
-        out_dir / "wilcoxon.csv",
-        ["instance", "competitor", "metric", "Wm", "p_value", "win", "n_runs"],
-        wilcoxon_rows,
-    )
+    _write_raw_outputs(out_dir, front_rows, metrics_run_rows, cmetric_run_rows)
+    _write_csv(out_dir / "metrics_summary.csv", SUMMARY_FIELDS, summary_rows)
+    _write_csv(out_dir / "wilcoxon.csv", WILCOXON_FIELDS, wilcoxon_rows)
     print(f"\ndone. outputs in {out_dir}")
     print(f"elapsed: {(time.time() - exp_start) / 60.0:.2f} min")
 

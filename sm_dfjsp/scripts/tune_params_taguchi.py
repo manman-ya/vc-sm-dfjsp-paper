@@ -11,6 +11,21 @@ from smdfjsp.metrics import ods
 from repro_utils import write_run_meta
 
 
+TAGUCHI_FIELDS = [
+    "trial",
+    "alpha",
+    "beta",
+    "gamma",
+    "mu",
+    "popsize",
+    "epsilon",
+    "avg_ods",
+    "std_ods",
+    "avg_nd_size",
+    "runs_per_combo",
+]
+
+
 # L25(5^6) table, same ordering as paper Table 4:
 # alpha, beta, gamma, mu, popsize, epsilon
 L25 = [
@@ -51,18 +66,44 @@ LEVELS = {
 }
 
 
+def _render_bar(done: int, total: int, width: int = 36) -> str:
+    if total <= 0:
+        return "[" + "-" * width + "] 0/0"
+    ratio = max(0.0, min(1.0, done / total))
+    fill = int(round(width * ratio))
+    return f"[{'#' * fill}{'-' * (width - fill)}] {done}/{total} ({ratio * 100:5.1f}%)"
+
+
+def _read_csv_rows(path: Path) -> list[dict]:
+    if not path.exists():
+        return []
+    with path.open("r", newline="", encoding="utf-8") as f:
+        return list(csv.DictReader(f))
+
+
+def _write_taguchi_rows(path: Path, rows: list[dict]) -> None:
+    rows = sorted(rows, key=lambda r: int(r["trial"]))
+    with path.open("w", newline="", encoding="utf-8") as f:
+        w = csv.DictWriter(f, fieldnames=TAGUCHI_FIELDS)
+        w.writeheader()
+        w.writerows(rows)
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--instance", default="sdmk15")
+    parser.add_argument("--data-dir", default="data/sdmk01-15")
     parser.add_argument("--runs-per-combo", type=int, default=1)
     parser.add_argument("--time-limit", type=float, default=30.0)
     parser.add_argument("--max-iter", type=int, default=30)
     parser.add_argument("--out-dir", default="reports/repro/taguchi")
     parser.add_argument("--seed", type=int, default=20260408)
+    parser.add_argument("--resume", action="store_true")
     args = parser.parse_args()
 
     root = Path(__file__).resolve().parents[1]
-    inst = load_instance_json(root / "data" / "sdmk01-15" / f"{args.instance}.json")
+    data_dir = root / args.data_dir
+    inst = load_instance_json(data_dir / f"{args.instance}.json")
     out_dir = root / args.out_dir
     out_dir.mkdir(parents=True, exist_ok=True)
     write_run_meta(
@@ -74,15 +115,29 @@ def main() -> None:
             "runs_per_combo": args.runs_per_combo,
             "time_limit": args.time_limit,
             "max_iter": args.max_iter,
+            "data_dir": str(data_dir),
         },
     )
 
-    rows = []
+    out_csv = out_dir / "taguchi_results.csv"
+    rows = _read_csv_rows(out_csv) if args.resume else []
+    completed_trials = {int(r["trial"]) for r in rows}
+    if args.resume:
+        print(f"resume: loaded {len(completed_trials)} completed Taguchi trial(s) from {out_csv}")
+    print("Taguchi Progress " + _render_bar(len(completed_trials), len(L25)))
+
     for trial_id, lv in enumerate(L25, start=1):
+        if trial_id in completed_trials:
+            print(f"trial {trial_id}/25 already complete, skipped")
+            continue
         a, b, g, m, p, e = lv
         ods_vals = []
         nd_sizes = []
         for run_idx in range(1, args.runs_per_combo + 1):
+            print(
+                f"trial {trial_id}/25 run {run_idx}/{args.runs_per_combo} "
+                + _render_bar(run_idx - 1, args.runs_per_combo, width=20)
+            )
             cfg = EDATSConfig(
                 popsize=LEVELS["popsize"][p - 1],
                 max_iter=args.max_iter,
@@ -99,6 +154,10 @@ def main() -> None:
             front = [(x.objectives[0], x.objectives[1]) for x in result.nd_solutions if x.objectives is not None]
             ods_vals.append(ods(front))
             nd_sizes.append(len(front))
+            print(
+                f"trial {trial_id}/25 run {run_idx}/{args.runs_per_combo} done "
+                + _render_bar(run_idx, args.runs_per_combo, width=20)
+            )
         rows.append(
             {
                 "trial": trial_id,
@@ -114,28 +173,13 @@ def main() -> None:
                 "runs_per_combo": args.runs_per_combo,
             }
         )
+        completed_trials.add(trial_id)
+        _write_taguchi_rows(out_csv, rows)
         print(f"trial {trial_id}/25 done")
+        print("Taguchi Progress " + _render_bar(len(completed_trials), len(L25)))
 
-    with (out_dir / "taguchi_results.csv").open("w", newline="", encoding="utf-8") as f:
-        w = csv.DictWriter(
-            f,
-            fieldnames=[
-                "trial",
-                "alpha",
-                "beta",
-                "gamma",
-                "mu",
-                "popsize",
-                "epsilon",
-                "avg_ods",
-                "std_ods",
-                "avg_nd_size",
-                "runs_per_combo",
-            ],
-        )
-        w.writeheader()
-        w.writerows(rows)
-    print(f"saved: {out_dir / 'taguchi_results.csv'}")
+    _write_taguchi_rows(out_csv, rows)
+    print(f"saved: {out_csv}")
 
 
 if __name__ == "__main__":

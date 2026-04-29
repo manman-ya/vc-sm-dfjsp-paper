@@ -162,13 +162,14 @@ def _dominates(a: Tuple[float, float], b: Tuple[float, float]) -> bool:
 
 def _model_accuracy_report(
     root: Path,
+    data_dir: Path,
     instance: str,
     compare_dir: Path,
     out_dir: Path,
     gurobi_time_limit: float,
 ) -> None:
     out_dir.mkdir(parents=True, exist_ok=True)
-    inst_path = root / "data" / "sdmk01-15" / f"{instance}.json"
+    inst_path = data_dir / f"{instance}.json"
     inst = load_instance_json(inst_path)
 
     front_df = pd.read_csv(compare_dir / "front_points.csv")
@@ -305,7 +306,7 @@ def _plot_records(ax, records, title: str) -> None:
     ax.grid(axis="x", alpha=0.25, linestyle="--")
 
 
-def _gantt_best_vs_random(compare_dir: Path, cfg_path: Path, instance: str, out_dir: Path) -> None:
+def _gantt_best_vs_random(compare_dir: Path, cfg_path: Path, data_dir: Path, instance: str, out_dir: Path) -> None:
     out_dir.mkdir(parents=True, exist_ok=True)
     root = Path(__file__).resolve().parents[1]
     cfg = _load_yaml(cfg_path)
@@ -317,7 +318,7 @@ def _gantt_best_vs_random(compare_dir: Path, cfg_path: Path, instance: str, out_
         raise RuntimeError("Cannot find run=1 EDA-TS seed in metrics_runs.csv")
     seed = int(row.iloc[0]["seed"])
 
-    inst = load_instance_json(root / "data" / "sdmk01-15" / f"{instance}.json")
+    inst = load_instance_json(data_dir / f"{instance}.json")
     edats_cfg = EDATSConfig(seed=seed, **cfg["eda_ts"])
     best_res = EDATS(inst, edats_cfg).run()
     sols = [x for x in best_res.nd_solutions if x.objectives is not None]
@@ -357,6 +358,7 @@ def _write_manifest(root_out: Path) -> None:
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--instance", default="sdmk05")
+    parser.add_argument("--data-dir", default="data/sdmk01-15")
     parser.add_argument("--mode", choices=["quick", "full"], default="quick")
     parser.add_argument("--out-dir", default="reports/repro/single_instance_all")
     parser.add_argument("--n-runs", type=int, default=None)
@@ -366,23 +368,30 @@ def main() -> None:
     parser.add_argument("--skip-validation", action="store_true")
     parser.add_argument("--skip-gurobi", action="store_true")
     parser.add_argument("--gurobi-time-limit", type=float, default=120.0)
+    parser.add_argument("--resume", action="store_true")
     args = parser.parse_args()
 
     root = Path(__file__).resolve().parents[1]
     out_root = (root / args.out_dir).resolve()
     out_root.mkdir(parents=True, exist_ok=True)
 
-    inst_path = root / "data" / "sdmk01-15" / f"{args.instance}.json"
+    data_dir = root / args.data_dir
+    inst_path = data_dir / f"{args.instance}.json"
     if not inst_path.exists():
         raise FileNotFoundError(f"Instance not found: {inst_path}")
 
     if not args.skip_build_data:
-        _run_cmd([sys.executable, "scripts/build_sdmk.py"], root)
+        if args.data_dir.replace("\\", "/").rstrip("/") == "data/sdmk01-15":
+            _run_cmd([sys.executable, "scripts/build_sdmk.py"], root)
+        else:
+            print(f">> using existing dataset only: {data_dir}")
     if not args.skip_validation:
         _run_cmd(
             [
                 sys.executable,
                 "scripts/validate_sdmk_dataset.py",
+                "--data-dir",
+                args.data_dir,
                 "--out-dir",
                 str(out_root / "validation"),
             ],
@@ -413,9 +422,12 @@ def main() -> None:
             "scripts/run_experiments_repeated.py",
             "--config",
             str(exp_cfg_path),
+            "--data-dir",
+            args.data_dir,
             "--out-dir",
             str(compare_dir),
-        ],
+        ]
+        + (["--resume"] if args.resume else []),
         root,
     )
     _run_cmd(
@@ -424,9 +436,12 @@ def main() -> None:
             "scripts/run_ablation_repeated.py",
             "--config",
             str(abl_cfg_path),
+            "--data-dir",
+            args.data_dir,
             "--out-dir",
             str(ablation_dir),
-        ],
+        ]
+        + (["--resume"] if args.resume else []),
         root,
     )
 
@@ -442,6 +457,8 @@ def main() -> None:
             "scripts/tune_params_taguchi.py",
             "--instance",
             args.instance,
+            "--data-dir",
+            args.data_dir,
             "--runs-per-combo",
             str(taguchi_runs),
             "--time-limit",
@@ -450,7 +467,8 @@ def main() -> None:
             str(taguchi_max_iter),
             "--out-dir",
             str(taguchi_dir),
-        ],
+        ]
+        + (["--resume"] if args.resume else []),
         root,
     )
 
@@ -476,6 +494,8 @@ def main() -> None:
             str(compare_dir),
             "--config",
             str(exp_cfg_path),
+            "--data-dir",
+            args.data_dir,
             "--out-dir",
             str(figs_dir),
             "--gantt-instance",
@@ -491,11 +511,12 @@ def main() -> None:
     _plot_taguchi(taguchi_dir / "taguchi_results.csv", figs_dir)
     _plot_compare_cmetric_box(compare_dir / "cmetric_runs.csv", figs_dir / "compare_cmetric_boxplot.png")
     _plot_ablation_cmetric_box(ablation_dir / "ablation_cmetric_runs.csv", figs_dir / "ablation_cmetric_boxplot.png")
-    _gantt_best_vs_random(compare_dir, exp_cfg_path, args.instance, figs_dir)
+    _gantt_best_vs_random(compare_dir, exp_cfg_path, data_dir, args.instance, figs_dir)
 
     if not args.skip_gurobi:
         _model_accuracy_report(
             root=root,
+            data_dir=data_dir,
             instance=args.instance,
             compare_dir=compare_dir,
             out_dir=model_dir,
