@@ -1,1 +1,0 @@
-instance,gurobi_cost,gurobi_makespan,closest_edats_cost,closest_edats_makespan,gap_cost_pct,gap_makespan_pct,contains_exact,edats_dominates_or_matches_gurobi

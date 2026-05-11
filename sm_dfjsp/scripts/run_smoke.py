@@ -9,7 +9,7 @@ from smdfjsp.eda_ts import EDATS, EDATSConfig
 
 def main() -> None:
     root = Path(__file__).resolve().parents[1]
-    sdmk_dir = root / "data" / "sdmk01-15"
+    sdmk_dir = root / "data" / "sdmk01-15_x2_r3r4"
     sample_file = sdmk_dir / "sdmk01.json"
     if not sample_file.exists():
         build_sdmk_dataset(

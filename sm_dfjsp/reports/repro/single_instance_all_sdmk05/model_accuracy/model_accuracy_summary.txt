@@ -1,3 +1,0 @@
-instance=sdmk05
-gurobi_status=unknown
-gurobi_error=gurobipy is not available. Install optional dependency [solver].

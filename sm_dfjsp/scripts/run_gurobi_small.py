@@ -14,7 +14,7 @@ def main() -> None:
     args = parser.parse_args()
 
     root = Path(__file__).resolve().parents[1]
-    inst = load_instance_json(root / "data" / "sdmk01-15" / f"{args.instance}.json")
+    inst = load_instance_json(root / "data" / "sdmk01-15_x2_r3r4" / f"{args.instance}.json")
     res = solve_with_gurobi(inst, time_limit_s=args.time_limit)
     print(
         {

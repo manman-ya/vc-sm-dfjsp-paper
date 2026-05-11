@@ -81,7 +81,7 @@ def main() -> None:
     exp_start = time.time()
     for inst_idx, inst_name in enumerate(instances, start=1):
         print(f"\n=== Instance {inst_name} ({inst_idx}/{len(instances)}) ===")
-        inst = load_instance_json(root / "data" / "sdmk01-15" / f"{inst_name}.json")
+        inst = load_instance_json(root / "data" / "sdmk01-15_x2_r3r4" / f"{inst_name}.json")
         seed = int(cfg["seed"])
         runners = _runner_bundle(inst, seed, cfg)
         res: Dict[str, List[tuple]] = {}

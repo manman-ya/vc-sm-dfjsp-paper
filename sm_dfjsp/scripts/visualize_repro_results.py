@@ -389,7 +389,7 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--compare-dir", default="reports/repro/compare_01_15_quick")
     parser.add_argument("--config", default="configs/repro/experiment_01_15_quick.yaml")
-    parser.add_argument("--data-dir", default="data/sdmk01-15")
+    parser.add_argument("--data-dir", default="data/sdmk01-15_x2_r3r4")
     parser.add_argument("--out-dir", default="reports/repro/figures/compare_01_15_quick")
     parser.add_argument("--gantt-instance", default="sdmk01")
     parser.add_argument("--gantt-algorithm", default="EDA-TS", choices=ALGO_ORDER)

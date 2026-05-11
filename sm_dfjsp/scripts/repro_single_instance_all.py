@@ -358,7 +358,7 @@ def _write_manifest(root_out: Path) -> None:
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--instance", default="sdmk05")
-    parser.add_argument("--data-dir", default="data/sdmk01-15")
+    parser.add_argument("--data-dir", default="data/sdmk01-15_x2_r3r4")
     parser.add_argument("--mode", choices=["quick", "full"], default="quick")
     parser.add_argument("--out-dir", default="reports/repro/single_instance_all")
     parser.add_argument("--n-runs", type=int, default=None)
@@ -381,8 +381,8 @@ def main() -> None:
         raise FileNotFoundError(f"Instance not found: {inst_path}")
 
     if not args.skip_build_data:
-        if args.data_dir.replace("\\", "/").rstrip("/") == "data/sdmk01-15":
-            _run_cmd([sys.executable, "scripts/build_sdmk.py"], root)
+        if args.data_dir.replace("\\", "/").rstrip("/") == "data/sdmk01-15_x2_r3r4":
+            _run_cmd([sys.executable, "scripts/build_sdmk_01_15_x2_r3r4.py"], root)
         else:
             print(f">> using existing dataset only: {data_dir}")
     if not args.skip_validation:

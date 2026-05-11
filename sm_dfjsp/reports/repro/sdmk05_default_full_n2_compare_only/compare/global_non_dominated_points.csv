@@ -1,6 +1,0 @@
-instance,run,algorithm,cost,makespan
-sdmk05,1,EDA-VNS,2243.0,91.0
-sdmk05,2,EDA-VNS,2243.0,91.0
-sdmk05,2,EDA-TS,2250.0,86.0
-sdmk05,2,EDA-TS,2354.0,84.0
-sdmk05,2,EDA-TS,2363.0,82.0

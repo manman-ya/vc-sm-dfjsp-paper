@@ -16,18 +16,19 @@
 | 论文组件 | 代码证据 | 状态 | 说明 |
 |---|---|---|---|
 | 四层编码（UA/OS/OP/MS） | `core/encoding.py:106`, `core/encoding.py:175` | `same` | 已有完整编码与修复流程。 |
-| PMA/PMS/PMM 概率矩阵 | `algorithm.py:62-95` | `same` | 三类概率矩阵显式初始化。 |
-| 代际多种群策略 | `algorithm.py:210-232` | `same` | UA: sampling/MD；MS: sampling/MC/MCT。 |
-| PMA/PMS/PMM 更新 | `algorithm.py:254-321` | `approx` | 采用精英频率学习，非论文符号级逐行复刻。 |
-| TS 邻域 I（作业重分配） | `algorithm.py:321-343` | `same` | 已实现基于兼容集合的 SRU 迁移。 |
-| TS 邻域 II（OS 插入） | `algorithm.py:345-370` | `same` | 已实现 OS 序列插入操作。 |
-| TS 邻域 III（MS 替换） | `algorithm.py:372-385` | `same` | 已实现工序机器替换。 |
-| 短期禁忌表 | `algorithm.py:483`, `algorithm.py:551` | `approx` | 已升级为 move 级 tabu key（N1/N2/N3），但是否与论文动作编码逐项同构仍需进一步对拍。 |
-| 长期记忆惩罚（LMLS/LMLM 意图） | `algorithm.py:514`, `algorithm.py:532`, `algorithm.py:561` | `approx` | 已按邻域动作触发记忆（N1->LMLS，N3->LMLM），粒度明显优于旧实现，但尚未形成论文步骤号级证明。 |
-| 非支配记忆池 | `algorithm.py:454-506` | `same` | 已实现外部 ND 池与迭代融合。 |
-| EDA/TS 协同迭代 | `algorithm.py:449-506` | `same` | 已实现 EDA 生成 + TS 局部强化。 |
-| 终止条件（max_iter/time_limit） | `algorithm.py:460-462` | `same` | 两类终止条件均已实现。 |
-| PMA/PMS/PMM 审计追踪 | `algorithm.py:42`, `algorithm.py:93`, `algorithm.py:599` | `same` | 已支持 `trace_enabled/trace_dir/trace_every` 的迭代快照输出（jsonl）。 |
+| PMA/PMS/PMM 概率矩阵 | `algorithm.py` | `same` | 三类概率矩阵显式初始化。 |
+| PMA/PMS/PMM 采样 | `algorithm.py` | `same` | UA/MS 改为累积概率阈值采样，OS 按 Algorithm 1 的 SPS/POS 阈值逻辑生成。 |
+| 代际多种群策略 | `algorithm.py` | `same` | UA: sampling/MD；MS: sampling/MC/MCT。 |
+| PMA/PMS/PMM 更新 | `algorithm.py` | `same` | 按 Eq. (18)/(22)/(26)-(27) 的 EN 频次与学习率更新；PMM 无观测时保持原分布。 |
+| TS 邻域 I（作业重分配） | `algorithm.py` | `same` | 已实现基于兼容集合的 SRU 迁移。 |
+| TS 邻域 II（OS 插入） | `algorithm.py` | `same` | 已实现 OS 序列插入操作。 |
+| TS 邻域 III（MS 替换） | `algorithm.py` | `same` | 已实现工序机器替换。 |
+| 短期禁忌表 | `algorithm.py` | `same` | 已收敛为邻域 II 专用 T list，长度为 `sum(min(5, Kx))`，并保留 aspiration 逻辑。 |
+| 长期记忆惩罚（LMLS/LMLM） | `algorithm.py` | `same` | N1 使用 LMLS、N3 使用 LMLM，且仅当候选解差于当前解时施加惩罚。 |
+| 非支配记忆池 | `algorithm.py` | `same` | 已按 EDA 后更新、TS 后再更新、下一代参与 EN 的时序实现。 |
+| EDA/TS 协同迭代 | `algorithm.py` | `same` | 已实现 EDA 生成 + ND pool 更新 + TS 局部强化 + ND pool 再更新。 |
+| 终止条件（max_iter/time_limit） | `algorithm.py` | `same` | 两类终止条件均已实现。 |
+| PMA/PMS/PMM 审计追踪 | `algorithm.py` | `same` | 已支持 `trace_enabled/trace_dir/trace_every` 的迭代快照输出（jsonl）。 |
 
 ## 4. 对比算法映射
 
@@ -39,8 +40,8 @@
 | H-GA-TS | `baselines/h_gats.py` | `approx` | GA 主干 + TS 辅助的工程等价实现。 |
 
 ## 5. 严格复现差距
-1. PMA/PMS/PMM 的采样与更新仍需与论文伪代码步骤号逐条对拍。
-2. tabu-key 与 LMLS/LMLM 虽已 move 化，但仍需形成“论文条款级一一映射证明”。
+1. 论文部分细节依赖图示和文字说明，仍建议补充“论文步骤号 -> 代码输出字段”的自动对拍报告。
+2. 多种群比例来自论文 Fig. 4，当前按工程固定比例实现，最终报告中应单独说明。
 3. 对比算法需要独立完成参数/算子与原始文献的一致性审计。
 
 ## 6. 建议补充的可审计能力

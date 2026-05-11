@@ -1,88 +1,60 @@
-# EDA-TS 复现说明文档（代码已完成三项优先改造版）
+# EDA-TS 复现说明文档（算法对齐增强版，2026-05-11）
 
 ## 1. 结论
-- 结论：**当前 EDA-TS 仍不是“与论文完全一致”**，但已经完成三项优先改造：
-  1. `tabu_key`：从 OS 头 token 改为 move 级键；
-  2. `LMLS/LMLM`：改为按邻域动作类型触发；
-  3. `PMA/PMS/PMM trace`：已支持迭代级审计快照输出。
-- 判定：由“主框架一致 + 关键细节近似”提升为“主框架一致 + 关键机制可审计增强”，但仍未达到论文逐行同构。
 
-## 2. 本轮改造完成项（你要求的 3 点）
+- 结论：当前 EDA-TS 已完成本轮算法层面的三项关键对齐：
+  1. `PMA/PMS/PMM` 采样与更新按论文 Eq. (17)-(29)、Algorithm 1/2 改为累积概率矩阵口径；
+  2. TS 短期 tabu 收敛为论文描述的邻域 II 口径，长期记忆 LMLS/LMLM 改为仅对“差于当前解”的 N1/N3 候选施加惩罚；
+  3. 非支配解记忆池改为 EDA 后更新一次、TS 后再更新一次，再用于下一代 EDA 采样。
+- 判定：EDA-TS 已从“主框架一致 + 关键细节近似”提升为“核心概率模型、TS 记忆机制、ND 记忆时序基本按论文对齐”。仍需注意，论文部分细节来自图示和文字描述，不是可执行伪代码，因此仍建议保留 trace 与测试证据链，而不表述为“源码级逐行完全相同”。
 
-### 2.1 tabu_key 改造（已完成）
-- 旧逻辑：`tabu_key = tuple(cand.os[t][0] ...)`（OS 头 token）。
-- 新逻辑：基于 move 语义构造 key（N1/N2/N3）：
-  - N1: `("N1", job_id, to_sru)`
-  - N2: `("N2", type_id, job_id, from_pos, to_pos)`
-  - N3: `("N3", sru_id, job_id, op_id, to_machine)`
-- 代码证据：
-  - 新增 key 构造函数：`algorithm.py:483`
-  - tabu 使用与 aspiration：`algorithm.py:551`
-  - move 元信息写入：
-    - N1：`algorithm.py:406`
-    - N2：`algorithm.py:436`
-    - N3：`algorithm.py:468`
+## 2. 本轮完成项
 
-### 2.2 LMLS/LMLM 触发逻辑改造（已完成）
-- 旧逻辑：对“候选个体相对 current 的全量差异”聚合惩罚，触发粒度偏粗。
-- 新逻辑：按邻域动作类型触发记忆：
-  - N1 候选仅查询/更新 `LMLS[(to_sru, job_id)]`
-  - N3 候选仅查询/更新 `LMLM[(sru_id, job_id, op_id, to_machine)]`
-  - N2 不触发长期频次记忆惩罚
-- 代码证据：
-  - 频次容器定义：`algorithm.py:514`、`algorithm.py:515`
-  - 惩罚读取（按 move_kind）：`algorithm.py:532`、`algorithm.py:534`
-  - 频次更新（按 move_kind）：`algorithm.py:561`、`algorithm.py:564`
+### 2.1 PMA/PMS/PMM 对齐（已完成）
 
-### 2.3 PMA/PMS/PMM trace 审计输出（已完成）
-- 新增配置项：
-  - `trace_enabled`：开关
-  - `trace_dir`：输出目录
-  - `trace_every`：采样间隔
-- 新增输出：
-  - 每代审计快照（jsonl），包含：
-    - PMA/PMS/PMM 的完整概率向量
-    - 各矩阵熵均值（便于观察收敛）
-    - `iter`、`en_size`、`nd_size` 等运行上下文
-- 代码证据：
-  - 配置项：`algorithm.py:42`
-  - trace 文件初始化：`algorithm.py:67`
-  - trace 快照函数：`algorithm.py:93`
-  - 迭代中写快照：`algorithm.py:599`
-  - 结果返回 trace 文件路径：`algorithm.py:645`
+- UA 采样：由直接 `np.choice` 改为 PMA 累积概率阈值采样，对齐 SPA 思路。
+- OS 采样：按 Algorithm 1 使用 SPS 累积矩阵、剩余位置 POS 与随机阈值生成 OS 层。
+- MS 采样：按 Algorithm 2 使用 SPM 累积矩阵与随机阈值选择机器。
+- PMM 更新：按 Eq. (26)-(27) 修正无观测分支；当某个 `(job, op, sru)` 在 EN 中没有被分配到该 SRU 时，保持原 PMM 分布，而不是向零频次漂移。
+- 测试证据：
+  - `test_pmm_update_keeps_previous_distribution_when_assignment_unobserved`
+  - `test_trace_snapshot_output`
 
-## 3. 目前仍与论文不一致的点（改造后仍存在）
+### 2.2 TS tabu 与长期记忆对齐（已完成）
 
-### 3.1 PMA/PMS/PMM 仍非“论文伪代码逐行同构”
-- 当前仍是工程化概率更新流程，虽可审计，但并非论文步骤号逐行复刻。
-- 证据：`algorithm.py:323`（更新主流程）
+- 短期 tabu：
+  - 旧逻辑：N1/N2/N3 都构造 move-level tabu key。
+  - 新逻辑：仅邻域 II（OS 插入）进入短期 T list，对齐论文“T list based on neighborhood structure II”的描述。
+  - T list 长度改为 `sum(min(5, Kx))`，对应论文 NII。
+- 长期记忆：
+  - N1 使用 `LMLS[(to_sru, job_id)]` 记录作业重分配频次。
+  - N3 使用 `LMLM[(sru_id, job_id, op_id, to_machine)]` 记录机器选择频次。
+  - 仅当候选邻域解被当前解支配时施加长期记忆惩罚，对齐论文“worse than current solution”触发语义。
+- 测试证据：
+  - `test_short_tabu_key_is_neighborhood_ii_only`
 
-### 3.2 多种群比例仍为固定工程参数
-- UA `0.8/0.2`，MS `0.6/0.2/0.2` 固化在分支逻辑。
-- 证据：`algorithm.py:283`、`algorithm.py:288`
+### 2.3 非支配解记忆池时序对齐（已完成）
 
-### 3.3 邻域采样规模仍为固定上限 `min(5, ...)`
-- 证据：
-  - N1：`algorithm.py:393`
-  - N2：`algorithm.py:421`
-  - N3：`algorithm.py:454`
+- 旧逻辑：生成 EDA 新种群、追加 TS 解、环境选择后统一更新 ND pool。
+- 新逻辑：
+  1. EDA 新种群生成并评价后，先更新 ND pool；
+  2. 从当前 ND pool 中选择 TS 初始解；
+  3. TS 执行完成后，再用 TS 改进解更新 ND pool；
+  4. 下一代概率矩阵更新时使用当前 ND pool 与 elite 共同构成 EN。
+- 该流程对齐论文 Section 4.5/4.6 对 EDA、TS 与非支配解记忆机制交互的描述。
 
-### 3.4 缺少“论文步骤号级”自动对拍报告
-- 已有 trace，但尚未实现“步骤号 -> 统计指标 -> 一致性判定”自动报告。
+## 3. 当前仍需保留的审计边界
 
-## 4. 为什么仍未完全一致
-1. 当前代码目标仍偏“可运行 + 可审计 + 可复现实验”，不是“逐行伪代码复刻器”。
-2. 论文文本对部分实现细则（尤其禁忌键编码）没有完全工程化定义，仍需解释性映射。
-3. 现阶段只优先改了你指定三项，尚未全面重写所有 EDA/TS 微观步骤。
+1. 多种群比例仍按当前工程配置固化为 UA `0.8/0.2`、MS `0.6/0.2/0.2`，其依据来自论文 Fig. 4，但图示比例仍建议在最终报告中单独引用说明。
+2. 邻域规模 `min(5, ...)` 已按论文口径保留，但随机抽取顺序、并列解排序、拥挤距离截断等工程细节仍会影响随机轨迹。
+3. 尚未生成“论文步骤号 -> 代码字段 -> 运行 trace”的自动对拍报告。
 
-## 5. 当前准确表述建议
-- 可以表述：**“EDA-TS 主框架复现完成，且 tabu_key、长期记忆触发、概率矩阵 trace 审计能力已增强。”**
-- 不应表述：**“EDA-TS 已与论文逐行完全一致。”**
+## 4. 当前准确表述建议
 
-## 6. 如何启用新的 trace 审计
-在 `EDATSConfig` 中设置：
-1. `trace_enabled=True`
-2. `trace_dir='reports/repro/trace'`
-3. `trace_every=1`
+- 可以表述：**“EDA-TS 的概率模型、TS 短/长期记忆机制与非支配解记忆时序已按论文核心描述完成对齐。”**
+- 谨慎表述：**“由于论文部分细节以图示和文字说明给出，当前实现仍需依赖 trace、测试和实验指标验证其算法级一致性。”**
 
-运行后可在 `trace_dir` 下获得 `edats_trace_seed*.jsonl`，并在 `RunResult.trace_file` 中取到文件路径。
+## 5. 验证
+
+- 命令：`$env:PYTHONPATH='src'; python -m unittest discover -s tests -p "test_*.py" -v`
+- 当前结果：`Ran 11 tests, OK`

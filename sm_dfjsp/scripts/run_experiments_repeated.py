@@ -119,7 +119,7 @@ def _write_raw_outputs(out_dir: Path, front_rows: List[dict], metrics_run_rows: 
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--config", default="configs/repro/experiment_01_15_quick.yaml")
-    parser.add_argument("--data-dir", default="data/sdmk01-15")
+    parser.add_argument("--data-dir", default="data/sdmk01-15_x2_r3r4")
     parser.add_argument("--out-dir", default="reports/repro/compare_01_15")
     parser.add_argument("--no-progress", action="store_true")
     parser.add_argument("--resume", action="store_true")

@@ -20,7 +20,7 @@ def main() -> None:
     rows = []
 
     for name in instances:
-        inst = load_instance_json(root / "data" / "sdmk01-15" / f"{name}.json")
+        inst = load_instance_json(root / "data" / "sdmk01-15_x2_r3r4" / f"{name}.json")
         base = EDATSConfig(
             popsize=50,
             max_iter=100,

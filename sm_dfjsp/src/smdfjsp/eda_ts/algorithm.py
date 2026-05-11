@@ -90,6 +90,19 @@ class EDATS:
             return 0.0
         return float(-(arr * np.log(arr)).sum())
 
+    def _sample_by_cumulative(self, values: Sequence[int], probs: np.ndarray, theta_max: float = 1.0) -> int:
+        total = float(probs.sum())
+        if not values:
+            raise ValueError("Cannot sample from an empty sequence")
+        if total <= 0.0:
+            return int(self.rng.py_rng.choice(list(values)))
+        cdf = np.cumsum(probs.astype(float) / total)
+        theta = self.rng.py_rng.random() * float(theta_max)
+        for value, bound in zip(values, cdf):
+            if theta <= float(bound):
+                return int(value)
+        return int(values[-1])
+
     def _trace_snapshot(self, it: int, en_size: int, nd_size: int) -> None:
         if not self.cfg.trace_enabled:
             return
@@ -178,7 +191,7 @@ class EDATS:
             for j in jobs:
                 sru_ids = self.pma_srus[j.job_id]
                 probs = self.pma[t][j.job_id]
-                ua[j.job_id] = int(self.rng.np_rng.choice(sru_ids, p=probs))
+                ua[j.job_id] = self._sample_by_cumulative(sru_ids, probs)
         return ua
 
     def _md_ua(self) -> Dict[int, int]:
@@ -197,21 +210,20 @@ class EDATS:
             kx = self.kx[t]
             vec = [-1] * kx
             positions = list(range(kx))
-            self.rng.py_rng.shuffle(positions)
-            # Implement algorithm-1 style by weighted placement.
             for j in jobs:
                 remain = len(j.operations)
                 for _ in range(remain):
                     probs = self.pms[t][j.job_id]
                     if not positions:
                         break
-                    pos_weights = np.array([probs[p] for p in positions], dtype=float)
-                    if pos_weights.sum() <= 0:
-                        idx = self.rng.py_rng.randrange(len(positions))
-                    else:
-                        pos_weights = pos_weights / pos_weights.sum()
-                        idx = int(self.rng.np_rng.choice(np.arange(len(positions)), p=pos_weights))
-                    pos = positions.pop(idx)
+                    sps = np.cumsum(probs.astype(float) / max(float(probs.sum()), 1e-12))
+                    theta = self.rng.py_rng.random() * max(float(sps[p]) for p in positions)
+                    pos = positions[-1]
+                    for cand_pos in positions:
+                        if theta <= float(sps[cand_pos]):
+                            pos = cand_pos
+                            break
+                    positions.remove(pos)
                     vec[pos] = j.job_id
             # Fill any leftover by random valid token.
             missing = []
@@ -241,7 +253,7 @@ class EDATS:
                 machines = self.pmm_machines.get(key)
                 probs = self.pmm.get(key)
                 if machines and probs is not None:
-                    vec.append(int(self.rng.np_rng.choice(machines, p=probs)))
+                    vec.append(self._sample_by_cumulative(machines, probs))
                     continue
                 options = self.option_index.get(key, {})
                 if options:
@@ -367,7 +379,11 @@ class EDATS:
             machines = self.pmm_machines[key]
             mpos = {m: i for i, m in enumerate(machines)}
             freq = np.zeros(len(machines), dtype=float)
+            assigned_count = 0.0
             for ind in en:
+                if ind.ua.get(key[0]) != key[2]:
+                    continue
+                assigned_count += 1.0
                 sru_id = key[2]
                 seq = ind.op.get(sru_id, [])
                 ms_vec = ind.ms.get(sru_id, [])
@@ -376,13 +392,12 @@ class EDATS:
                         m = ms_vec[i]
                         if m in mpos:
                             freq[mpos[m]] += 1.0
-            if freq.sum() > 0:
-                freq /= freq.sum()
+            if assigned_count <= 0.0:
+                self.pmm[key] = base.copy()
+                continue
+            freq /= assigned_count
             self.pmm[key] = (1.0 - self.cfg.gamma) * base + self.cfg.gamma * freq
-            if self.pmm[key].sum() <= 0:
-                self.pmm[key] = np.ones(len(base)) / len(base)
-            else:
-                self.pmm[key] /= self.pmm[key].sum()
+            self.pmm[key] /= self.pmm[key].sum()
 
     def _neighbor_structure_i(self, ind: EncodedIndividual) -> List[EncodedIndividual]:
         """Job re-assignment among same-type SRUs."""
@@ -480,10 +495,8 @@ class EDATS:
         return (obj[0] + self.cfg.epsilon * obj[0] * freq, obj[1] + self.cfg.epsilon * obj[1] * freq)
 
     @staticmethod
-    def _build_tabu_key(ind: EncodedIndividual) -> Tuple:
+    def _build_tabu_key(ind: EncodedIndividual) -> Optional[Tuple]:
         mk = str(ind.aux.get("move_kind", ""))
-        if mk == "N1":
-            return ("N1", int(ind.aux["job_id"]), int(ind.aux["to_sru"]))
         if mk == "N2":
             return (
                 "N2",
@@ -492,16 +505,7 @@ class EDATS:
                 int(ind.aux["from_pos"]),
                 int(ind.aux["to_pos"]),
             )
-        if mk == "N3":
-            return (
-                "N3",
-                int(ind.aux["sru_id"]),
-                int(ind.aux["job_id"]),
-                int(ind.aux["op_id"]),
-                int(ind.aux["to_machine"]),
-            )
-        # Fallback key for safety.
-        return tuple(ind.os[t][0] if ind.os[t] else -1 for t in sorted(ind.os))
+        return None
 
     def _tabu_search(self, initial: EncodedIndividual) -> EncodedIndividual:
         current = initial
@@ -513,7 +517,7 @@ class EDATS:
         t_list: List[Tuple] = []
         lmls: Dict[Tuple[int, int], int] = {}
         lmlm: Dict[Tuple[int, int, int, int], int] = {}
-        t_max_len = max(5, sum(min(5, self.kx[t]) for t in self.kx))
+        t_max_len = max(1, sum(min(5, self.kx[t]) for t in self.kx))
 
         for _ in range(max(1, self.cfg.tmax)):
             n1 = self._neighbor_structure_i(current)
@@ -529,9 +533,10 @@ class EDATS:
                 obj = nb.objectives  # type: ignore[assignment]
                 pen = 0
                 mk = str(nb.aux.get("move_kind", ""))
-                if mk == "N1":
+                is_worse = bool(current.objectives is not None and dominates(current.objectives, obj))
+                if is_worse and mk == "N1":
                     pen += lmls.get((int(nb.aux["to_sru"]), int(nb.aux["job_id"])), 0)
-                elif mk == "N3":
+                elif is_worse and mk == "N3":
                     pen += lmlm.get(
                         (
                             int(nb.aux["sru_id"]),
@@ -548,11 +553,15 @@ class EDATS:
                 tabu_key = self._build_tabu_key(cand)
                 # Aspiration criterion: allow tabu move if it improves current best.
                 improves_best = dominates(cand.objectives, best_obj)  # type: ignore[arg-type]
-                if tabu_key not in t_list or improves_best:
+                is_tabu = tabu_key is not None and tabu_key in t_list
+                if not is_tabu or improves_best:
                     chosen = cand
-                    t_list.append(tabu_key)
-                    if len(t_list) > t_max_len:
-                        t_list.pop(0)
+                    if tabu_key is not None:
+                        if tabu_key in t_list:
+                            t_list.remove(tabu_key)
+                        t_list.append(tabu_key)
+                        if len(t_list) > t_max_len:
+                            t_list.pop(0)
                     break
             if chosen is None:
                 chosen = scored[0][1]
@@ -601,18 +610,39 @@ class EDATS:
             new_pop = [self._build_individual() for _ in range(self.cfg.popsize)]
             self._evaluate_population(self.instance, new_pop)
 
+            if self.cfg.use_nd_memory:
+                nd_pool = merge_non_dominated(
+                    nd_pool,
+                    [(ind.objectives, ind) for ind in new_pop if ind.objectives is not None],
+                    max_size=self.cfg.nd_pool_max,
+                )
+                ts_seed_pool = nd_pool
+            else:
+                ts_seed_pool = merge_non_dominated(
+                    [],
+                    [(ind.objectives, ind) for ind in new_pop if ind.objectives is not None],
+                    max_size=self.cfg.nd_pool_max,
+                )
+
             # TS component starts Tmax times.
-            if self.cfg.use_ts and nd_pool:
+            ts_pop: List[EncodedIndividual] = []
+            if self.cfg.use_ts and ts_seed_pool:
                 for _ in range(self.cfg.tmax):
-                    seed_ind = self.rng.py_rng.choice(nd_pool)[1]
+                    seed_ind = self.rng.py_rng.choice(ts_seed_pool)[1]
                     improved = self._tabu_search(seed_ind)
                     ev = evaluate_individual(self.instance, improved)
                     improved.objectives = ev.objectives
                     improved.feasible = ev.feasible
-                    new_pop.append(improved)
+                    ts_pop.append(improved)
+                if self.cfg.use_nd_memory:
+                    nd_pool = merge_non_dominated(
+                        nd_pool,
+                        [(ind.objectives, ind) for ind in ts_pop if ind.objectives is not None],
+                        max_size=self.cfg.nd_pool_max,
+                    )
 
             # Environmental selection back to popsize.
-            all_pop = new_pop
+            all_pop = new_pop + ts_pop
             objs = [ind.objectives for ind in all_pop]  # type: ignore[list-item]
             fronts = fast_non_dominated_sort(objs)  # type: ignore[arg-type]
             next_pop: List[EncodedIndividual] = []
@@ -626,13 +656,7 @@ class EDATS:
                     break
             pop = next_pop
 
-            if self.cfg.use_nd_memory:
-                nd_pool = merge_non_dominated(
-                    nd_pool,
-                    [(ind.objectives, ind) for ind in pop if ind.objectives is not None],
-                    max_size=self.cfg.nd_pool_max,
-                )
-            else:
+            if not self.cfg.use_nd_memory:
                 nd_pool = merge_non_dominated(
                     [],
                     [(ind.objectives, ind) for ind in pop if ind.objectives is not None],

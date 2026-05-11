@@ -69,7 +69,7 @@ def validate_instance(path: Path, seed: int) -> Dict[str, object]:
 
 def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--data-dir", default="data/sdmk01-15")
+    parser.add_argument("--data-dir", default="data/sdmk01-15_x2_r3r4")
     parser.add_argument("--out-dir", default="reports/repro/validation")
     parser.add_argument("--seed", type=int, default=20260408)
     args = parser.parse_args()

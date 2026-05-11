@@ -1,7 +1,0 @@
-instance,run,pair,c_ab,c_ba
-sdmk05,1,EDA-TS_vs_no_m,1.0,0.0
-sdmk05,1,EDA-TS_vs_no_n,0.0,0.6
-sdmk05,1,EDA-TS_vs_no_mn,1.0,0.0
-sdmk05,2,EDA-TS_vs_no_m,1.0,0.0
-sdmk05,2,EDA-TS_vs_no_n,0.3333333333333333,0.1111111111111111
-sdmk05,2,EDA-TS_vs_no_mn,1.0,0.0

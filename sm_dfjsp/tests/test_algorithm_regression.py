@@ -3,9 +3,11 @@ from __future__ import annotations
 import json
 import math
 from pathlib import Path
+import shutil
 import unittest
 
 from smdfjsp.baselines import HGATSConfig, NSGAIIConfig, run_eda, run_eda_vns, run_h_gats, run_nsgaii
+from smdfjsp.core.encoding import op_from_ua_os
 from smdfjsp.core.types import EncodedIndividual, Job, Operation, ProcessOption, SMDFJSPInstance, SRU
 from smdfjsp.eda_ts import EDATS, EDATSConfig
 
@@ -142,39 +144,52 @@ class TestAlgorithmRegression(unittest.TestCase):
 
     def test_trace_snapshot_output(self) -> None:
         inst = _build_small_instance()
-        td = Path("reports/repro/test_trace_tmp")
+        td = Path("reports/_tmp_test_trace")
         td.mkdir(parents=True, exist_ok=True)
-        cfg = EDATSConfig(
-            popsize=10,
-            max_iter=3,
-            time_limit_s=10.0,
-            alpha=0.5,
-            beta=0.5,
-            gamma=0.5,
-            mu=0.1,
-            epsilon=0.008,
-            tmax=2,
-            seed=20260430,
-            trace_enabled=True,
-            trace_dir=str(td),
-            trace_every=1,
-        )
-        result = EDATS(inst, cfg).run()
-        self.assertIsNotNone(result.trace_file)
-        trace_path = Path(result.trace_file or "")
-        self.assertTrue(trace_path.exists())
-        lines = [x for x in trace_path.read_text(encoding="utf-8").splitlines() if x.strip()]
-        self.assertGreater(len(lines), 0)
-        record = json.loads(lines[0])
-        self.assertIn("pma", record)
-        self.assertIn("pms", record)
-        self.assertIn("pmm", record)
-        self.assertIn("iter", record)
+        try:
+            cfg = EDATSConfig(
+                popsize=10,
+                max_iter=3,
+                time_limit_s=10.0,
+                alpha=0.5,
+                beta=0.5,
+                gamma=0.5,
+                mu=0.1,
+                epsilon=0.008,
+                tmax=2,
+                seed=20260430,
+                trace_enabled=True,
+                trace_dir=str(td),
+                trace_every=1,
+            )
+            result = EDATS(inst, cfg).run()
+            self.assertIsNotNone(result.trace_file)
+            trace_path = Path(result.trace_file or "")
+            self.assertTrue(trace_path.exists())
+            lines = [x for x in trace_path.read_text(encoding="utf-8").splitlines() if x.strip()]
+            self.assertGreater(len(lines), 0)
+            record = json.loads(lines[0])
+            self.assertIn("pma", record)
+            self.assertIn("pms", record)
+            self.assertIn("pmm", record)
+            self.assertIn("iter", record)
+        finally:
+            shutil.rmtree(td, ignore_errors=True)
 
-    def test_move_level_tabu_key_builder(self) -> None:
+    def test_short_tabu_key_is_neighborhood_ii_only(self) -> None:
         dummy = EncodedIndividual(ua={}, os={}, op={}, ms={}, aux={"move_kind": "N1", "job_id": 7, "to_sru": 3})
         key = EDATS._build_tabu_key(dummy)
-        self.assertEqual(key, ("N1", 7, 3))
+        self.assertIsNone(key)
+
+        dummy1 = EncodedIndividual(
+            ua={},
+            os={},
+            op={},
+            ms={},
+            aux={"move_kind": "N2", "type_id": 1, "job_id": 7, "from_pos": 4, "to_pos": 2},
+        )
+        key1 = EDATS._build_tabu_key(dummy1)
+        self.assertEqual(key1, ("N2", 1, 7, 4, 2))
 
         dummy2 = EncodedIndividual(
             ua={},
@@ -184,7 +199,26 @@ class TestAlgorithmRegression(unittest.TestCase):
             aux={"move_kind": "N3", "sru_id": 2, "job_id": 5, "op_id": 1, "to_machine": 4},
         )
         key2 = EDATS._build_tabu_key(dummy2)
-        self.assertEqual(key2, ("N3", 2, 5, 1, 4))
+        self.assertIsNone(key2)
+
+    def test_pmm_update_keeps_previous_distribution_when_assignment_unobserved(self) -> None:
+        inst = _build_small_instance()
+        cfg = EDATSConfig(popsize=6, max_iter=1, time_limit_s=10.0, gamma=0.5, seed=20260430)
+        algo = EDATS(inst, cfg)
+        key = (1, 1, 2)
+        before = [0.8, 0.2]
+        algo.pmm[key] = algo.pmm[key] * 0.0
+        algo.pmm[key][0] = before[0]
+        algo.pmm[key][1] = before[1]
+
+        ua = {1: 1, 2: 1, 3: 1}
+        os_layer = {1: [1, 1, 2, 2, 3, 3]}
+        op_layer = op_from_ua_os(inst, ua, os_layer)
+        ms_layer = {1: [1 for _ in op_layer[1]], 2: []}
+        en = [EncodedIndividual(ua=dict(ua), os={1: list(os_layer[1])}, op=op_layer, ms=ms_layer)]
+
+        algo._update_probability_matrices(en)
+        self.assertEqual([round(float(x), 6) for x in algo.pmm[key]], before)
 
 
 if __name__ == "__main__":

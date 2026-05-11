@@ -92,7 +92,7 @@ def _write_taguchi_rows(path: Path, rows: list[dict]) -> None:
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--instance", default="sdmk15")
-    parser.add_argument("--data-dir", default="data/sdmk01-15")
+    parser.add_argument("--data-dir", default="data/sdmk01-15_x2_r3r4")
     parser.add_argument("--runs-per-combo", type=int, default=1)
     parser.add_argument("--time-limit", type=float, default=30.0)
     parser.add_argument("--max-iter", type=int, default=30)
