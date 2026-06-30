@@ -66,6 +66,8 @@ class MVCProbabilityModel:
         self.pua = {}
         for job_id, choices in self.candidates.items():
             # PUA 初始分布：有先验就按先验，否则所有候选 SRU 等概率。
+            # 这一步相当于把问题数据中的价值链结构注入搜索起点，
+            # 但后续 `update` 仍会用精英解频率持续修正它。
             if self.use_value_chain_prior and job_id in self.pua_prior:
                 self.pua[job_id] = self.pua_prior[job_id].copy()
             else:
@@ -136,6 +138,8 @@ class MVCProbabilityModel:
             completion_estimates: List[float] = []
             for sid in choices:
                 # 对每道工序取该 SRU 上最短加工时间/最低加工费用作为粗略估计。
+                # 估计阶段不考虑排队冲突，因为 PUA 只需要给“订单选哪个 SRU”提供先验倾向；
+                # 精确排队和机器冲突由评价器在个体生成后统一计算。
                 proc_time = 0.0
                 proc_cost = 0.0
                 for op in job.operations:
@@ -162,6 +166,10 @@ class MVCProbabilityModel:
             intra_best = min(intra_times) if intra_times else float(np.min(completion_arr))
             gains = np.array([max(0.0, intra_best - x) for x in completion_estimates], dtype=float)
             # 注意 gains 前面是负号：跨链带来的正收益会降低评分，从而提高概率。
+            # 权重含义：
+            # - 加工成本、运输成本、跨链固定成本越高，候选 SRU 越不优先。
+            # - 完成时间越长，候选 SRU 越不优先。
+            # - 相对链内最优方案的时间收益越大，候选 SRU 越优先。
             score = (
                 0.30 * self._normalized(np.array(proc_costs, dtype=float))
                 + 0.25 * self._normalized(np.array(transport_costs, dtype=float))
@@ -169,6 +177,8 @@ class MVCProbabilityModel:
                 + 0.20 * self._normalized(completion_arr)
                 - 0.20 * self._normalized(gains)
             )
+            # 将“越低越好”的 score 转换成概率。减去 min(score) 只改善数值稳定性，
+            # 不改变候选之间的相对偏好。
             raw = np.exp(-(score - float(np.min(score))) / temperature)
             if float(raw.sum()) <= 0.0:
                 priors[job.job_id] = np.ones(len(choices), dtype=float) / max(len(choices), 1)
@@ -295,6 +305,8 @@ class MVCProbabilityModel:
             freq /= freq.sum()
             if self.use_value_chain_prior and job_id in self.pua_prior:
                 # PUA 的目标分布不是纯频率，而是频率与价值链先验的加权混合。
+                # 这样可以避免早期精英样本过少时把概率模型拉向偶然选择；
+                # 同时随着精英频率稳定，`1 - prior_weight` 部分会保留搜索经验。
                 prior_weight = min(max(float(self.prior_weight), 0.0), 1.0)
                 target = (1.0 - prior_weight) * freq + prior_weight * self.pua_prior[job_id]
                 target = target / max(float(target.sum()), 1e-12)
@@ -327,6 +339,8 @@ class MVCProbabilityModel:
 
         for key, old in list(self.pmm.items()):
             # PMM 只从真正把该工件分配到该 SRU 的精英解中学习机器选择频率。
+            # 如果某个 (job, op, sru) 组合在精英中从未出现，不强行更新，
+            # 保留原有概率可以维持少量探索机会。
             machines = self.pmm_machines[key]
             pos = {machine_id: i for i, machine_id in enumerate(machines)}
             freq = np.zeros(len(machines), dtype=float)

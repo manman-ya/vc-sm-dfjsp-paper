@@ -136,6 +136,7 @@ class MVCEDATS:
         # 用于机器选择启发式和局部搜索修复。
         self.option_index = build_option_index(instance)  # type: ignore[arg-type]
         # 各邻域初始均匀分配搜索预算，后续按实际贡献自适应调整。
+        # 这里的概率只影响局部搜索阶段生成不同邻域候选的配额，不影响 EDA 采样本身。
         self.neighborhood_probabilities: Dict[str, float] = {
             kind: 1.0 / len(NEIGHBORHOOD_KINDS) for kind in NEIGHBORHOOD_KINDS
         }
@@ -230,6 +231,8 @@ class MVCEDATS:
             return build_heuristic_individual(self.instance, self.mode, self.rng, "random")
 
         if self.cfg.use_value_chain_init:
+            # 大部分 UA 来自概率模型，少量使用最小运输时间 UA。
+            # 这样既利用 EDA 学到的分布，也定期注入明确偏向短运输路径的结构化个体。
             ua = self.model.sample_ua(self.rng) if self.rng.py_rng.random() < 0.8 else self._md_ua()
         else:
             ua = self.model.sample_ua(self.rng)
@@ -238,12 +241,15 @@ class MVCEDATS:
         if self.cfg.use_value_chain_init:
             r = self.rng.py_rng.random()
             if r < 0.6:
+                # 主路径：按 PMM 概率采样机器，保留从精英中学习到的机器偏好。
                 ms_layer = self.model.sample_ms(op_layer, self.rng)
             elif r < 0.8:
                 from smdfjsp.model.mvc_repair import best_machine_ms
 
+                # 成本导向补充路径：让采样种群覆盖低加工成本机器组合。
                 ms_layer = best_machine_ms(self.instance, op_layer, "cost")
             else:
+                # 时间导向补充路径：用最早完工启发式缓解 makespan 目标。
                 ms_layer = self._mct_ms(op_layer)
         else:
             ms_layer = self.model.sample_ms(op_layer, self.rng)
@@ -267,6 +273,7 @@ class MVCEDATS:
         pop: List[EncodedIndividual] = []
         for idx in range(self.cfg.popsize):
             strategy = strategies[idx % len(strategies)]
+            # 轮转策略而非按比例随机抽样，可以保证小种群下每种初始化思想至少出现。
             pop.append(build_heuristic_individual(self.instance, self.mode, self.rng, strategy))
         self.rng.py_rng.shuffle(pop)
         return pop
@@ -302,6 +309,8 @@ class MVCEDATS:
                 + 2.0 * float(stats.archive_inserted.get(kind, 0))
                 + 0.01 * float(stats.improvement.get(kind, 0.0))
             )
+            # accepted 表示该邻域能推动当前解移动；archive_inserted 表示贡献了新的非支配解；
+            # improvement 是目标下降幅度，量纲可能较大，所以只给较小系数。
         total = sum(rewards.values())
         if total <= 0.0:
             target = {kind: 1.0 / len(NEIGHBORHOOD_KINDS) for kind in NEIGHBORHOOD_KINDS}
@@ -384,6 +393,7 @@ class MVCEDATS:
             # 学习集 = 当前种群精英 + 历史非支配档案。
             # 这样既学习近期搜索趋势，也保留历史 Pareto 前沿信息。
             learning_set = elites + (archive.solutions() if self.cfg.use_nd_memory else [])
+            # 概率模型更新后，下一批 UA/OS/MS 采样会向学习集中的结构靠拢。
             self.model.update(learning_set, alpha=self.cfg.alpha, beta=self.cfg.beta, gamma=self.cfg.gamma)
             module_runtime["probability_update"] += clock() - phase_start
 
@@ -400,6 +410,7 @@ class MVCEDATS:
                     stop_reason = "time_limit"
                     break
                 candidate = self._build_individual()
+                # 采样后立即评价，保证进入 new_pop 的个体都带有 objectives/feasible。
                 evaluate_mvc_population(self.instance, [candidate], self.mode)
                 evaluation_count += 1
                 new_pop.append(candidate)
@@ -449,6 +460,7 @@ class MVCEDATS:
                     )
                     improved.append(searched)
                     stats_items.append(stats)
+                    # 局部搜索内部已经评价若干邻域解，这里把消耗回收到全局评价预算。
                     evaluation_count += stats.evaluations
                     if self.cfg.max_evaluations is not None and evaluation_count >= self.cfg.max_evaluations:
                         break
@@ -475,6 +487,7 @@ class MVCEDATS:
                 if len(next_pop) + len(front) <= self.cfg.popsize:
                     next_pop.extend(new_pop[i] for i in front)
                 else:
+                    # 最后一层放不下时，用拥挤距离保留分布更稀疏的个体，维持 Pareto 前沿多样性。
                     dist = crowding_distance(objs, front)
                     ranked = sorted(zip(front, dist), key=lambda x: x[1], reverse=True)
                     next_pop.extend(new_pop[i] for i, _ in ranked[: self.cfg.popsize - len(next_pop)])

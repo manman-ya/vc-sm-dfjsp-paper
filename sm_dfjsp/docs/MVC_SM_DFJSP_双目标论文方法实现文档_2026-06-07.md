@@ -1,6 +1,7 @@
 # MVC-SM-DFJSP 双目标论文方法实现文档
 
 创建日期：2026-06-07  
+最近核查更新：2026-06-30  
 适用项目：`D:\code\recode\vc-sm_dfjsp\sm_dfjsp`  
 论文方向：面向多服务价值链协同的共享制造分布式柔性作业车间双目标调度  
 推荐算法名：MVC-EDA-TS  
@@ -16,6 +17,8 @@ min F2 = makespan
 ```
 
 `max_sru_load`、`sru_load_std`、`cross_chain_ratio`、`value_chain_inflow`、`value_chain_outflow`、`cross_chain_flow` 作为辅助诊断指标和管理启示指标，不作为正式优化目标。这样可以避免论文模型写三目标、实验只做双目标导致的审稿风险。
+
+截至 2026-06-30 的项目实现口径为：正式 MVC 模型固定使用 `objective_dim=2`；跨链成本只采用固定协同成本 `cross_chain_fixed_cost`；`cross_chain_cost_rate` 与 `cross_variable_cost` 仅作为历史兼容字段保留，并在正式实验与敏感性脚本中固定为 0。
 
 本文档强调一个核心判断：本论文的主要创新不应写成“在 EDA-TS 上加几个算子”，而应写成：
 
@@ -177,9 +180,9 @@ cost breakdown
 | --- | --- | --- |
 | `J` | 订单集合 | `instance.jobs` |
 | `V` | 价值链集合 | `job.value_chain_id`, `sru.value_chain_id` |
-| `T` | 服务类型集合 | `job.service_type_id`, `sru.service_type_ids` |
+| `T` | 服务类型集合 | `job.type_id`, `job.type_label`, `sru.service_type_ids` |
 | `U` | SRU 集合 | `instance.srus` |
-| `M_u` | SRU `u` 内机器集合 | `sru.machines` |
+| `M_u` | SRU `u` 内机器集合 | `sru.machine_ids` |
 | `O_j` | 订单 `j` 的工序集合 | `job.operations` |
 | `A_j` | 订单 `j` 的候选 SRU 集合 | `build_mvc_compatible_sru_map` |
 | `A_j^in` | 链内候选 SRU | `get_intra_chain_srus` |
@@ -190,7 +193,7 @@ cost breakdown
 | 参数 | 含义 | 项目对应 |
 | --- | --- | --- |
 | `vc_j` | 订单 `j` 所属价值链 | `job.value_chain_id` |
-| `type_j` | 订单 `j` 服务类型 | `job.service_type_id` |
+| `type_j` | 订单 `j` 服务类型 | `job.type_id`, `job.type_label` |
 | `vc_u` | SRU `u` 所属价值链 | `sru.value_chain_id` |
 | `types_u` | SRU `u` 可服务类型集合 | `sru.service_type_ids` |
 | `p_{j,o,u,m}` | 工序加工时间 | `option_index[(j,o,u)][m][0]` |
@@ -408,43 +411,62 @@ MVCModeConfig(cross_chain_allowed, objective_dim=2)
 
 | 参数 | 建议值 | 含义 |
 | --- | --- | --- |
-| `popsize` | 50-100 | 种群规模 |
-| `max_iter` | 100-200 | 最大迭代次数 |
-| `time_limit_s` | 600 或统一时间上限 | 单次运行时间限制 |
+| `popsize` | 50-100；当前正式主实验脚本默认 80 | 种群规模 |
+| `max_iter` | 100-200；当前正式主实验脚本默认 150 | 最大迭代次数 |
+| `time_limit_s` | 统一时间上限；当前正式主实验脚本默认 12000 秒 | 单次运行时间限制 |
 | `alpha` | 0.5 | UA 概率模型学习率 |
 | `beta` | 0.5 | OS 概率模型学习率 |
 | `gamma` | 0.5 | MS 概率模型学习率 |
 | `mu` | 0.1-0.2 | 精英比例 |
-| `prior_weight` | 0.25-0.40 | 价值链先验权重 |
+| `prior_weight` | 0.35；可在 0.25-0.40 做敏感性 | 价值链先验权重 |
 | `local_search_steps` | 8-20 | 禁忌搜索步数 |
-| `nd_pool_max` | 300-500 | 非支配档案容量 |
+| `nd_pool_max` | 300-500；代码默认 300 | 非支配档案容量 |
+| `max_evaluations` | 可选 | 按评价次数统一预算，便于不同算法公平比较 |
+| `time_measure` | `wall` 或 `cpu` | 时间预算口径；正式脚本默认 `wall` |
 
 ### 7.2 总体伪代码
 
 ```text
-Input: instance, algorithm config, cross_chain_allowed
-Output: non-dominated solution archive
+输入：MVC-SM-DFJSP 实例、MVCEDATSConfig、MVCModeConfig(cross_chain_allowed)
+输出：非支配解档案 Archive
 
-1. Build candidate SRU sets for each job.
-2. Build value-chain-aware prior probability model.
-3. Initialize population by MVC-aware sampling.
-4. Evaluate population.
-5. Initialize non-dominated archive.
+1.  根据服务类型和跨链模式，为每个订单构建合法候选 SRU 集合 A_j。
+2.  构建 MVCProbabilityModel：
+    2.1  初始化 UA/OS/MS 三类概率模型；
+    2.2  若启用价值链先验，则根据加工成本、运输成本、跨链固定成本、
+         预计完成时间和跨链时间收益构建 UA 先验概率。
+3.  构造初始种群 Pop：
+    3.1  若启用价值链初始化，则轮流使用 random、intra-chain-first、
+         cost-first、time-first 和 cross-gain-first；
+    3.2  否则使用概率模型或随机可行方式生成个体。
+4.  对 Pop 中所有个体执行可行性修复和双目标评价。
+5.  初始化非支配档案 Archive；若启用 use_nd_memory，则将 Pop 的非支配解加入 Archive。
 
-6. while stopping criterion is not met:
-7.     Select elites by Pareto rank and crowding distance.
-8.     Build learning set from elites and archive.
-9.     Update PMA/PMS/PMM.
-10.    Sample new population from probability model.
-11.    Repair and evaluate new population.
-12.    Select search seeds from archive or elites.
-13.    Apply value-chain-aware tabu search.
-14.    Update adaptive neighborhood probabilities.
-15.    Update non-dominated archive.
-16.    Select next population by Pareto rank and crowding distance.
-17.    Record iteration metrics.
+6.  for it = 1 到 max_iter:
+7.      若达到 time_limit_s 或 max_evaluations，则停止。
+8.      按 Pareto 层级和拥挤距离从 Pop 中选择精英 Elites。
+9.      构造学习集 LearningSet = Elites + Archive（当 use_nd_memory=True）。
+10.     用 LearningSet 更新 UA/OS/MS 概率模型。
+11.     重复采样新个体，直到达到 popsize 或评价预算：
+        11.1 从概率模型采样 UA 和 OS；
+        11.2 由 UA + OS 推导 OP；
+        11.3 采样或启发式生成 MS；
+        11.4 调用 repair_mvc_individual 修复非法分配、OS 和机器选择；
+        11.5 调用 evaluate_mvc_individual 计算 total_cost 和 makespan。
+12.     若局部搜索启用且仍有预算：
+        12.1 从 Archive 或 Elites 中选择局部搜索起点；
+        12.2 根据启用开关生成链内替换、跨链替换、跨链回流、
+             关键订单迁移、高成本回流、机器/OS 微调等邻域；
+        12.3 用禁忌表、Pareto 层级和拥挤距离选择局部移动；
+        12.4 记录各邻域的 generated、accepted、archive_inserted 和 improvement；
+        12.5 若启用自适应邻域，则根据贡献奖励更新下一代邻域概率。
+13.     若 use_nd_memory=True，则用新种群和局部搜索解更新 Archive，
+        并将 Archive 解并入候选池。
+14.     对候选池执行非支配排序和拥挤距离选择，得到下一代 Pop。
+15.     记录本代 best_cost、best_makespan、档案规模、评价次数、模块耗时和邻域统计。
 
-18. Return archive.
+16. 用最终 Pop 再更新一次 Archive。
+17. 返回 Archive、迭代历史、停止原因、评价次数和模块耗时。
 ```
 
 项目对应实现：
@@ -498,7 +520,7 @@ src/smdfjsp/mvc_eda_ts/initialization.py
 src/smdfjsp/mvc_eda_ts/algorithm.py
 ```
 
-如果后续补代码，建议把 5 类策略显式记录到 `ind.aux["init_strategy"]`，以便消融实验和论文统计。
+当前实现已经会把初始策略写入 `ind.aux["init_strategy"]`：启发式初始化记录 `random`、`intra-chain-first`、`cost-first`、`time-first`、`cross-gain-first` 等策略；关闭价值链初始化时记录 `model-sampling`。后续若要写初始化策略统计，可直接从个体辅助字段或运行历史扩展输出中提取。
 
 ## 9. 价值链先验概率模型
 
@@ -772,7 +794,7 @@ src/smdfjsp/mvc_eda_ts/tabu_search.py
 tabu_max_len = sum(min(5, len(OS_type)) for each service type)
 ```
 
-若候选解支配当前 best 或进入局部非支配集合，可允许破禁。
+若候选解支配当前局部 best，则触发 aspiration 允许破禁；进入局部非支配集合本身只用于更新局部档案和邻域贡献统计，不直接作为破禁条件。
 
 ### 11.4 自适应邻域选择
 
@@ -843,15 +865,35 @@ next_pop = rank_by_front_and_crowding(candidates)
 
 ### 13.1 实例
 
-建议使用 MVC-MK01 到 MVC-MK15 作为主实验实例。
+建议使用 MVC-MK01 到 MVC-MK15 作为主实验实例。当前项目的正式主数据集是 2VC/2Type/4SRU equal-processing 数据集：
 
 ```text
 data/mvc_mk01_15_2vc4sru_equalproc_vcpenalty
-data/mvc_mk01_15
-data/mvc_la
 ```
 
-如果论文篇幅允许，可以使用 LA 扩展实例作为泛化补充。
+该数据集的关键口径：
+
+```text
+价值链：VC1、VC2
+服务类型：T1、T2
+SRU：U1=VC1-T1, U2=VC1-T2, U3=VC2-T1, U4=VC2-T2
+每个订单有 1 个链内同类型 SRU 和 1 个跨链同类型 SRU
+跨链固定成本：200.0
+cross_chain_cost_rate：始终为 0.0
+正式总成本：processing_cost + transport_cost + cross_fixed_cost
+```
+
+其他数据集的建议用途：
+
+| 数据目录 | 建议用途 |
+| --- | --- |
+| `data/mvc_mk01_15_2vc4sru_equalproc_vcpenalty` | 正式主实验与算法对比。 |
+| `data/mvc_mk01_15_2vc4sru_integrated_mechanism` | 机制解释实验，强调 VC1 高负载和跨链时间优势共同作用。 |
+| `data/mvc_mk01_15_2vc4sru_integrated_mechanism_equalproc` | 机制实验的等加工时间版本，用于隔离成本/负载因素。 |
+| `data/mvc_mk01_15_2vc4sru_mechanism_vc_load` | 分离机制数据，包含 `intra_congested` 与 `cross_time_advantage` 两类场景。 |
+| `data/mvc_small_validation` | 小规模精确枚举或可行性验证。 |
+| `data/mvc_mk01_15`、`data/mvc_mk_merged_3vc6sru_*` | 历史或扩展 3VC/6SRU 实验，适合作为补充而非主线。 |
+| `data/mvc_la` | LA 扩展实例，若论文篇幅允许可作为泛化补充。 |
 
 ### 13.2 协同模式实验
 
@@ -872,26 +914,32 @@ Mode A 作为无跨链协同基准，Mode B 用于观察跨链协同是否改善
 | --- | --- |
 | NSGA-II | 经典多目标进化基线 |
 | MOEA/D | 分解式多目标基线 |
-| MVC-EDA-TS without prior | 消融价值链先验 |
-| MVC-EDA-TS without cross neighborhoods | 消融跨链邻域 |
 | MVC-EDA-TS full | 本文算法 |
+| EDATS-baseline | 去掉价值链初始化、价值链先验、跨链邻域和自适应邻域的弱化 EDA-TS 对照 |
 
-若实验资源允许，增加：
+当前正式主流程 `run_mvc_formal_pipeline.py` 默认主对比为：
 
 ```text
-H-GA-TS
-EDA-VNS
+nsgaii, moead, mvc-edats
+cross_modes = off,on
 ```
 
-项目已有相关基线模块：
+`run_mvc_experiment_1_2_formal.py` 额外提供 experiment 1-2 口径：
+
+```text
+Experiment 1: nsgaii, moead, edats-baseline, mvc-edats under cross_chain=off
+Experiment 2: mvc-edats under cross_chain=off,on
+```
+
+项目已有相关模块：
 
 ```text
 src/smdfjsp/baselines/mvc_nsgaii.py
 src/smdfjsp/baselines/mvc_moead.py
-src/smdfjsp/baselines/h_gats.py
-src/smdfjsp/baselines/eda.py
 src/smdfjsp/baselines/mvc_edats_baseline.py
 ```
+
+`src/smdfjsp/baselines/h_gats.py` 和 `src/smdfjsp/baselines/eda.py` 主要服务旧版 Plain SM-DFJSP/EDA-TS 复现，不建议作为当前 MVC 主实验的核心对比，除非另行做严格适配说明。
 
 ### 13.4 消融实验
 
@@ -906,7 +954,21 @@ src/smdfjsp/baselines/mvc_edats_baseline.py
 | A2 | w/o VC prior | `use_value_chain_prior=False` |
 | A3 | w/o cross neighborhoods | `use_cross_chain_neighbors=False` |
 | A4 | w/o adaptive neighborhood | `use_adaptive_neighborhood=False` |
-| A5 | w/o ND memory | `use_nd_memory=False` |
+| A5 | w/o ND memory/archive | `use_nd_memory=False` |
+
+代码中的官方变体位于：
+
+```text
+scripts/run_mvc_ablation.py::VARIANTS
+```
+
+扩展变体还包括：
+
+| 编号 | 算法变体 | 关闭模块 |
+| --- | --- | --- |
+| E1 | w/o probability model | `use_probability_model=False` |
+| E2 | w/o critical migration | `use_critical_migration=False` |
+| E3 | w/o cost return | `use_cost_return=False` |
 
 重点比较：
 
@@ -933,10 +995,12 @@ cross_chain_ratio
 为支撑管理启示，建议做跨链参数敏感性：
 
 ```text
-cross_fixed_cost: low / medium / high
-transport_cost: low / medium / high
-cross-chain time advantage: weak / medium / strong
+cross_fixed_cost: 0 / 10 / 20 / 40
+transport_cost scale: 0.8 / 1.0 / 1.2
+cross-chain time scale: 0.8 / 1.0 / 1.2
 ```
+
+当前脚本中，`cross_time_scale` 同时作用于跨链运输时间和跨链加工时间；数值越小，表示跨链时间优势越强。`cost-rates` 参数已废弃，跨链变动成本始终固定为 0。
 
 分析问题：
 
@@ -991,7 +1055,13 @@ total_cost
 
 ### 13.7 统计检验
 
-建议每个算法每个实例独立运行至少 10 次，最好 20 次。统计结果报告：
+建议每个算法每个实例独立运行至少 10 次，最好 20 次。当前正式脚本默认使用 20 个种子：
+
+```text
+20260428, 20260429, ..., 20260447
+```
+
+统计结果报告：
 
 ```text
 mean
@@ -1119,8 +1189,11 @@ VC2 -> VC1
 | --- | --- |
 | MVC NSGA-II | `src/smdfjsp/baselines/mvc_nsgaii.py` |
 | MVC MOEA/D | `src/smdfjsp/baselines/mvc_moead.py` |
-| H-GA-TS | `src/smdfjsp/baselines/h_gats.py` |
-| EDA / EDA-VNS | `src/smdfjsp/baselines/eda.py` |
+| MVC EDATS-baseline | `src/smdfjsp/baselines/mvc_edats_baseline.py` |
+| Plain H-GA-TS | `src/smdfjsp/baselines/h_gats.py` |
+| Plain EDA / EDA-VNS | `src/smdfjsp/baselines/eda.py` |
+
+注意：`h_gats.py`、`eda.py` 和 `src/smdfjsp/eda_ts/algorithm.py` 属于旧版 Plain SM-DFJSP/EDA-TS 复现链路，不是当前加入价值链后的 MVC-EDA-TS 主入口。当前 MVC 主算法入口始终是 `src/smdfjsp/mvc_eda_ts/algorithm.py`。
 
 ### 15.5 指标与图
 
@@ -1130,6 +1203,65 @@ VC2 -> VC1
 | 性能指标兼容模块 | `src/smdfjsp/metrics/performance.py` |
 | 统计检验 | `src/smdfjsp/metrics/stat_tests.py` |
 | 可视化 | `src/smdfjsp/visualization/mvc_plots.py` |
+
+### 15.6 MVC-EDA-TS 算法阅读路线
+
+如果只看“加入价值链后的 EDA-TS”，不要从旧版 `src/smdfjsp/eda_ts/algorithm.py` 开始。旧版 Plain EDA-TS 主要用于历史复现、基线和消融对比；价值链后的主算法入口是：
+
+```text
+src/smdfjsp/mvc_eda_ts/algorithm.py
+```
+
+建议按如下顺序阅读。这个顺序适合不熟悉 Python 的读者，因为它先看“数据是什么”，再看“规则怎么判断”，最后看“算法怎么迭代”。
+
+| 阅读顺序 | 文件 | 只需要重点看什么 |
+| --- | --- | --- |
+| 1 | `src/smdfjsp/core/mvc_types.py` | 看 `MVCJob`、`MVCSRU`、`MVCModeConfig`、`MVCSMDFJSPInstance`。这里定义订单、SRU、价值链归属和跨链模式。 |
+| 2 | `src/smdfjsp/data/mvc_io.py` | 看 `get_intra_chain_srus`、`get_cross_chain_srus`、`get_candidate_srus`。这里决定一个订单能选链内 SRU 还是跨链 SRU。 |
+| 3 | `src/smdfjsp/model/mvc_evaluator.py` | 看 `evaluate_mvc_individual`。这里把一个调度方案解码成成本、最大完工时间和跨链诊断指标。 |
+| 4 | `src/smdfjsp/model/mvc_repair.py` | 看 `repair_mvc_individual`。这里修复服务类型不匹配、跨链模式不允许、机器不可加工等非法编码。 |
+| 5 | `src/smdfjsp/mvc_eda_ts/initialization.py` | 看 `build_heuristic_individual`。这里生成价值链感知初始解，包括链内优先、成本优先、时间优先和跨链收益优先。 |
+| 6 | `src/smdfjsp/mvc_eda_ts/probability_model.py` | 看 `MVCProbabilityModel.build_value_chain_prior` 和 `update`。这里是价值链先验概率模型。 |
+| 7 | `src/smdfjsp/mvc_eda_ts/tabu_search.py` | 看 `NEIGHBORHOOD_KINDS` 和六个 `_n*` 邻域函数。这里是跨链协同禁忌搜索。 |
+| 8 | `src/smdfjsp/mvc_eda_ts/archive.py` | 看 `NonDominatedArchive.update`。这里保存 Pareto 非支配解。 |
+| 9 | `src/smdfjsp/mvc_eda_ts/algorithm.py` | 最后看 `MVCEDATS.run`。这里把初始化、评价、概率更新、采样、禁忌搜索和档案更新串成完整算法。 |
+
+对不熟悉 Python 的读者，可以只识别三个关键词：
+
+```text
+class = 一类对象或数据表，例如订单、SRU、算法配置。
+def   = 一个算法步骤，例如评价、采样、修复、局部搜索。
+return = 这个步骤最后输出什么。
+```
+
+因此阅读 `MVCEDATS.run` 时，不必先理解每一行语法，只需抓住主流程：
+
+```text
+初始化种群
+-> 评价成本和工期
+-> 选择精英
+-> 用精英和非支配档案更新概率模型
+-> 采样新方案并修复
+-> 对优质方案做跨链协同禁忌搜索
+-> 更新非支配档案
+-> 选择下一代
+-> 输出 Pareto 解集
+```
+
+加入价值链后，MVC-EDA-TS 相比 Plain EDA-TS 的核心新增点集中在三处：
+
+1. `initialization.py`：价值链感知初始化，使初始种群同时覆盖链内低成本方案和跨链低工期方案。
+2. `probability_model.py`：UA/PMA 概率不只学习精英频率，还融合加工成本、运输成本、跨链固定成本、预计完成时间和跨链时间收益。
+3. `tabu_search.py`：禁忌搜索不只做机器或工序微调，还显式包含链内替换、跨链替换、跨链回流、关键订单迁移和高成本回流。
+
+可以用一句话理解整个实现：
+
+```text
+每个订单先根据“服务类型 + 价值链归属”得到链内/跨链候选 SRU；
+算法用 UA/OS/OP/MS 四层编码表示一个调度方案；
+评价器计算 total_cost 和 makespan；
+MVC-EDA-TS 再通过价值链先验概率和跨链禁忌搜索不断生成更好的 Pareto 调度方案。
+```
 
 ## 16. 论文方法章节建议结构
 
@@ -1246,16 +1378,29 @@ VC2 -> VC1
 当前项目最适合按以下顺序推进：
 
 ```text
-Step 1: 固化双目标口径
-Step 2: 检查 total_cost = processing + transport + cross_fixed
-Step 3: 跑通 MVC-MK01 到 MVC-MK15
-Step 4: 跑 cross_chain_allowed=0/1 对比
-Step 5: 跑 NSGA-II、MOEA/D、MVC-EDA-TS full
-Step 6: 跑 A1-A5 消融
-Step 7: 汇总 HV/IGD/Spacing/ND size
-Step 8: 汇总 cross_chain_ratio、flow、load、cost breakdown
-Step 9: 做跨链成本敏感性
-Step 10: 根据结果回写论文结论和管理启示
+Step 1: 固化双目标口径：objective_dim=2
+Step 2: 检查 total_cost = processing_cost + transport_cost + cross_fixed_cost
+Step 3: 使用 data/mvc_mk01_15_2vc4sru_equalproc_vcpenalty 跑通 MVC-MK01 到 MVC-MK15
+Step 4: 主对比运行 NSGA-II、MOEA/D、MVC-EDA-TS，模式为 cross_chain_allowed=0/1
+Step 5: 若需要 Plain EDA-TS 对照，运行 experiment 1-2 管线中的 edats-baseline off 对比
+Step 6: 在 cross_chain=on 下运行官方 A0-A5 消融
+Step 7: 对 mk05、mk10、mk15 或全实例运行跨链固定成本、运输成本和跨链时间优势敏感性
+Step 8: 汇总 HV、IGD、GD、Spacing、ND size、runtime、evaluations_completed
+Step 9: 汇总 cross_chain_ratio、cross_chain_flow、value_chain_inflow/outflow、sru_load_std、cost breakdown
+Step 10: 根据 Pareto 前沿变化、跨链流动和成本拆分回写论文结论与管理启示
+```
+
+当前可直接使用的正式脚本：
+
+```text
+scripts/run_mvc_formal_pipeline.py
+  主对比：nsgaii, moead, mvc-edats；cross_modes=off,on
+  轻量消融：官方 A0-A5；默认 mk05,mk10,mk15
+  轻量敏感性：fixed_costs=0,10,20,40；transport/cross-time scales=0.8,1.0,1.2
+
+scripts/run_mvc_experiment_1_2_formal.py
+  Experiment 1：nsgaii, moead, edats-baseline, mvc-edats under off
+  Experiment 2：mvc-edats under off,on
 ```
 
 如果时间有限，最低可接受实验闭环为：
@@ -1264,9 +1409,9 @@ Step 10: 根据结果回写论文结论和管理启示
 MVC-MK01 到 MVC-MK15
 3 个算法：NSGA-II, MOEA/D, MVC-EDA-TS
 2 个模式：cross_chain_off, cross_chain_on
-3 个随机种子
-4 个指标：HV, IGD, min_cost, min_makespan
-1 个消融：关闭价值链先验、关闭跨链邻域
+至少 3 个随机种子；正式投稿建议 20 个随机种子
+4 个核心指标：HV, IGD, min_cost, min_makespan
+至少 2 个消融：关闭价值链先验、关闭跨链邻域
 ```
 
 但正式投稿建议扩大到 10 个以上随机种子，并增加统计检验。

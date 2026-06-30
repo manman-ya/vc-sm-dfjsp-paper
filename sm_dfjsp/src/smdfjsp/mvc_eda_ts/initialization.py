@@ -44,13 +44,17 @@ def _job_sru_estimates(instance: MVCSMDFJSPInstance, job_id: int, sru_id: int) -
     proc_time = 0.0
     proc_cost = 0.0
     for op in job.operations:
+        # 这里只在“指定 SRU”范围内看该工序的候选机器。初始化阶段不排真实队列，
+        # 因此用每道工序的最优单机估计来近似这个 SRU 对该订单的吸引力。
         options = [opt for opt in op.options if opt.sru_id == sru_id]
         if not options:
             continue
         proc_time += min(float(opt.process_time) for opt in options)
         proc_cost += min(float(opt.process_time) * float(opt.process_cost_per_time) for opt in options)
     key = (job_id, sru_id)
+    # completion 是“加工估计 + 运输时间”，用于 time-first / cross-gain-first。
     completion = proc_time + float(instance.transport_time.get(key, 0.0))
+    # total_cost 是“加工估计 + 运输成本 + 跨链固定成本”，用于 cost-first。
     total_cost = (
         proc_cost
         + float(instance.transport_cost.get(key, 0.0))
@@ -89,6 +93,7 @@ def build_heuristic_individual(
         candidates = get_candidate_srus(job, instance, mode)
         if strategy == "intra-chain-first":
             # 链内优先策略：只要本价值链内有可加工 SRU，就不主动跨链。
+            # 它是 MVC 场景的保守基线，帮助初始种群覆盖“低跨链成本/零跨链风险”的区域。
             intra = get_intra_chain_srus(job, instance)
             if intra:
                 candidates = intra
@@ -103,6 +108,7 @@ def build_heuristic_individual(
             )
         elif strategy == "cross-gain-first" and mode.cross_chain_allowed:
             # 跨链收益优先：只在跨链能相对链内最好方案带来时间收益时偏向跨链。
+            # 这里的收益只看时间，不直接抵扣成本；成本会作为同等收益时的次级排序条件。
             intra = get_intra_chain_srus(job, instance)
             intra_best = min((_job_sru_estimates(instance, job.job_id, s)[0] for s in intra), default=None)
             cross_candidates = [s for s in candidates if s not in set(intra)]
@@ -120,6 +126,7 @@ def build_heuristic_individual(
             # 负载优先：把工件放到当前估计负载最小的候选 SRU。
             sid = min(candidates, key=lambda s: current_load.get(s, 0.0))
         else:
+            # 兜底随机选择保留探索性，避免所有启发式都把订单压向同一小撮 SRU。
             sid = int(rng.py_rng.choice(candidates))
         ua[job.job_id] = int(sid)
         # 更新粗略负载，供后续工件分配参考。

@@ -106,6 +106,8 @@ def _new_sru_neighbor(
     )
     if extra_aux:
         moved.aux.update(extra_aux)
+    # SRU 迁移后，原 MS 中的机器可能不再属于新 SRU，因此必须 repair。
+    # repair 只修正编码可行性，不改变该邻域“迁移到 to_sru”的意图。
     return repair_mvc_individual(moved, instance, mode, rng)
 
 
@@ -133,6 +135,7 @@ def _n1_intra_sru_replace(
     neighbors: List[EncodedIndividual] = []
     for job in _sample_jobs(instance, rng):
         current = ind.ua.get(job.job_id)
+        # N1 只在同价值链内换 SRU，因此不会新增跨链固定成本。
         choices = [sid for sid in get_intra_chain_srus(job, instance) if sid != current]
         if not choices:
             continue
@@ -162,6 +165,7 @@ def _n2_cross_sru_replace(
     neighbors: List[EncodedIndividual] = []
     for job in _sample_jobs(instance, rng):
         current = ind.ua.get(job.job_id)
+        # N2 只看外链同类型 SRU，用于主动探索跨价值链协同带来的时间或负载改善。
         choices = [sid for sid in get_cross_chain_srus(job, instance) if sid != current]
         if not choices:
             continue
@@ -196,6 +200,7 @@ def _n3_cross_return(
     rng.py_rng.shuffle(cross_jobs)
     for job in cross_jobs:
         current = ind.ua.get(job.job_id)
+        # N3 的目标是“回本链”，因此候选只取链内 SRU。
         choices = [sid for sid in get_intra_chain_srus(job, instance) if sid != current]
         if not choices:
             continue
@@ -226,6 +231,7 @@ def _critical_jobs(ind: EncodedIndividual, instance: MVCSMDFJSPInstance, mode: M
         sid = ind.ua.get(job_id)
         if sid is None:
             continue
+        # 关键性按“加工完工 + 运输时间”估计，与评价器中的 makespan 定义保持一致。
         scored.append((ctime + float(instance.transport_time.get((job_id, sid), 0.0)), job_id))
     return [job_id for _, job_id in sorted(scored, reverse=True)[:3]]
 
@@ -261,6 +267,7 @@ def _n4_critical_cross_migration(
             for op in job.operations:
                 options = option_index.get((job_id, op.op_id, sid), {})
                 if options:
+                    # N4 是 makespan 导向邻域，所以这里用最短加工时间近似该 SRU 的速度。
                     total += min(float(pt) for pt, _ in options.values())
             return total
 
@@ -311,6 +318,7 @@ def _n5_high_cost_return(
         if mode.cross_chain_allowed:
             cross_choices = [sid for sid in get_cross_chain_srus(job, instance) if sid != current]
             if cross_choices:
+                # 除了回本链，N5 也允许换到成本更低的外链 SRU，避免过度保守。
                 cheapest_cross = min(
                     cross_choices,
                     key=lambda sid: float(instance.transport_cost.get((job.job_id, sid), 0.0))
@@ -348,6 +356,7 @@ def _n6_machine_or_os_local(
     neighbors: List[EncodedIndividual] = []
     for type_id, vec in ind.os.items():
         # OS 插入移动：从一个位置取出 token，再插入到另一个位置。
+        # OS 改变的是同服务类型订单的相对加工顺序，不改变任何订单的 SRU 归属。
         if len(vec) < 2 or len(neighbors) >= max_neighbors:
             continue
         from_pos = rng.py_rng.randrange(len(vec))
@@ -376,6 +385,7 @@ def _n6_machine_or_os_local(
 
     for sru_id, seq in ind.op.items():
         # 机器替换移动：在同一 SRU 的同一道工序上换一台候选机器。
+        # 它只微调 MS 层，适合在 UA/OS 已经较好时继续压缩时间或成本。
         if not seq or len(neighbors) >= max_neighbors:
             continue
         pos = rng.py_rng.randrange(len(seq))
@@ -438,6 +448,7 @@ def generate_mvc_neighbors(
     for kind, weight in zip(kinds, weights):
         # 按权重给每种邻域分配候选数量，至少生成 1 个避免被完全饿死。
         quota = max(1, int(round(max_neighbors * weight / total_weight)))
+        # 具体邻域函数内部仍可能因为没有合法候选而返回空列表。
         neighbors.extend(_NEIGHBOR_FUNCS[kind](ind, instance, mode, rng, quota))
     rng.py_rng.shuffle(neighbors)
     return neighbors[:max_neighbors]
@@ -452,6 +463,7 @@ def _tabu_key(ind: EncodedIndividual) -> Tuple[object, ...] | None:
 
     mk = str(ind.aux.get("move_kind", ""))
     if mk in {"N1_intra_sru_replace", "N2_cross_sru_replace", "N3_cross_return", "N4_critical_cross_migration", "N5_high_cost_return"}:
+        # SRU 迁移类 key 记录“哪个订单从哪到哪”，防止近期反复迁移同一个订单。
         return (
             mk,
             int(ind.aux["job_id"]),
@@ -459,6 +471,7 @@ def _tabu_key(ind: EncodedIndividual) -> Tuple[object, ...] | None:
             int(ind.aux["to_sru"]),
         )
     if mk == "N6_machine_or_os_local" and ind.aux.get("local_move") == "os_insert":
+        # OS 插入类 key 记录 token 和位置变化，防止短周期内撤销/重复同一排序移动。
         return (
             mk,
             "os_insert",
@@ -478,6 +491,7 @@ def _enabled_kinds(
     """根据消融开关决定本次局部搜索可用的邻域集合。"""
 
     kinds = ["N1_intra_sru_replace", "N6_machine_or_os_local"]
+    # N1/N6 是基础局部微调；跨链相关 N2-N5 由消融开关统一控制。
     if use_cross_chain_neighbors:
         kinds.extend(["N2_cross_sru_replace", "N3_cross_return"])
         if use_critical_migration:
@@ -579,6 +593,8 @@ def local_search(
         feasible_neighbors = [nb for nb in evaluated_neighbors if nb.feasible and nb.objectives is not None]
         if not feasible_neighbors:
             break
+        # 局部档案保存本次 TS 已见到的非支配候选；即使某个候选没有成为 current，
+        # 只要它对 Pareto 前沿有贡献，最终仍可能被返回。
         # 更新局部非支配档案，并统计哪些邻域真正贡献了新的非支配解。
         local_nd = merge_non_dominated(
             local_nd,
@@ -612,6 +628,8 @@ def local_search(
         if chosen_kind in stats.accepted:
             stats.accepted[chosen_kind] += 1
         old_obj = tuple(current.objectives or ())
+        # TS 采用“移动到排序最佳的允许候选”的策略，因此 current 可以不是历史 best。
+        # 这有助于跳出局部结构，best/local_nd 则负责保留真正优秀的解。
         current = candidate
         if candidate.objectives is not None and old_obj:
             # 改善量按所有目标的正向下降量求和，只记录越小越好的改进。
