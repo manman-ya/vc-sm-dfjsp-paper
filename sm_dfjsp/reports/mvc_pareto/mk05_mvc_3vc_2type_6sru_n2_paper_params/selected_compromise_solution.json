@@ -1,7 +1,0 @@
-{
-  "selection_rule": "global non-dominated solution with minimum normalized(cost)+normalized(makespan)",
-  "algorithm": "EDA-TS",
-  "run": 1,
-  "cost": 5090.449999999998,
-  "makespan": 94.0
-}

@@ -1,7 +1,0 @@
-instance,competitor,metric,Wm,p_value,win,n_runs
-sdmk05,EDA-TS_no_m,GD,0.0,0.3710933695226979,=,2
-sdmk05,EDA-TS_no_m,IGD,0.0,0.3710933695226979,=,2
-sdmk05,EDA-TS_no_mn,GD,0.0,0.3710933695226979,=,2
-sdmk05,EDA-TS_no_mn,IGD,0.0,0.3710933695226979,=,2
-sdmk05,EDA-TS_no_n,GD,0.0,0.3710933695226979,=,2
-sdmk05,EDA-TS_no_n,IGD,0.0,0.3710933695226979,=,2
