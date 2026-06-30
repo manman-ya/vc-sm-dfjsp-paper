@@ -8,6 +8,7 @@ import unittest
 
 from smdfjsp.baselines import HGATSConfig, NSGAIIConfig, run_eda, run_eda_vns, run_h_gats, run_nsgaii
 from smdfjsp.core.encoding import op_from_ua_os
+from smdfjsp.core.pareto import merge_non_dominated
 from smdfjsp.core.types import EncodedIndividual, Job, Operation, ProcessOption, SMDFJSPInstance, SRU
 from smdfjsp.eda_ts import EDATS, EDATSConfig
 
@@ -69,6 +70,23 @@ def _front_signature(run_result) -> list[tuple[float, float]]:
 
 
 class TestAlgorithmRegression(unittest.TestCase):
+    def test_non_dominated_merge_deduplicates_objective_pairs(self) -> None:
+        items = [
+            ((10.0, 8.0), "a"),
+            ((10.0, 8.0), "duplicate"),
+            ((11.0, 9.0), "dominated"),
+            ((9.0, 12.0), "tradeoff"),
+            ((12.0, 7.0), "tradeoff2"),
+        ]
+        merged = merge_non_dominated([], items, max_size=10)
+        objs = [x[0] for x in merged]
+        self.assertEqual(len(objs), len(set(objs)))
+        self.assertIn((10.0, 8.0), objs)
+        self.assertIn((9.0, 12.0), objs)
+        self.assertIn((12.0, 7.0), objs)
+        self.assertNotIn((11.0, 9.0), objs)
+        self.assertEqual([x[1] for x in merged if x[0] == (10.0, 8.0)], ["a"])
+
     def test_edats_seed_deterministic(self) -> None:
         inst = _build_small_instance()
         cfg = EDATSConfig(
@@ -124,6 +142,12 @@ class TestAlgorithmRegression(unittest.TestCase):
                 self.assertTrue(math.isfinite(float(s.objectives[1])))
                 finite_count += 1
             self.assertGreater(finite_count, 0)
+            objs = [
+                (round(float(s.objectives[0]), 8), round(float(s.objectives[1]), 8))
+                for s in result.nd_solutions
+                if s.objectives is not None
+            ]
+            self.assertEqual(len(objs), len(set(objs)))
 
     def test_baselines_run_and_return_front(self) -> None:
         inst = _build_small_instance()

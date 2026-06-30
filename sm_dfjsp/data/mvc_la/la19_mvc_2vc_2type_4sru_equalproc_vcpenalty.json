@@ -1,0 +1,5710 @@
+{
+  "instance_name": "la19_mvc_2vc_2type_4sru_equalproc_vcpenalty",
+  "source_instance": "la19",
+  "problem_type": "MVC-SM-DFJSP",
+  "is_dynamic": false,
+  "release_time_policy": "all_zero",
+  "seed": 20260442,
+  "n_jobs": 10,
+  "n_base_machines": 10,
+  "n_value_chains": 2,
+  "n_types": 2,
+  "n_srus": 4,
+  "value_chains": [
+    {
+      "id": "VC1",
+      "name": "Value chain 1",
+      "jobs": [
+        1,
+        3,
+        5,
+        7,
+        9
+      ]
+    },
+    {
+      "id": "VC2",
+      "name": "Value chain 2",
+      "jobs": [
+        2,
+        4,
+        6,
+        8,
+        10
+      ]
+    }
+  ],
+  "types": [
+    {
+      "id": "T1",
+      "name": "Service type 1",
+      "jobs": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "id": "T2",
+      "name": "Service type 2",
+      "jobs": [
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    }
+  ],
+  "base_machines": [
+    {
+      "local_machine_id": "M0",
+      "base_machine_id": 0,
+      "base_unit_processing_cost": 6.72
+    },
+    {
+      "local_machine_id": "M1",
+      "base_machine_id": 1,
+      "base_unit_processing_cost": 5.0
+    },
+    {
+      "local_machine_id": "M2",
+      "base_machine_id": 2,
+      "base_unit_processing_cost": 7.05
+    },
+    {
+      "local_machine_id": "M3",
+      "base_machine_id": 3,
+      "base_unit_processing_cost": 8.1
+    },
+    {
+      "local_machine_id": "M4",
+      "base_machine_id": 4,
+      "base_unit_processing_cost": 12.0
+    },
+    {
+      "local_machine_id": "M5",
+      "base_machine_id": 5,
+      "base_unit_processing_cost": 8.16
+    },
+    {
+      "local_machine_id": "M6",
+      "base_machine_id": 6,
+      "base_unit_processing_cost": 5.1
+    },
+    {
+      "local_machine_id": "M7",
+      "base_machine_id": 7,
+      "base_unit_processing_cost": 7.58
+    },
+    {
+      "local_machine_id": "M8",
+      "base_machine_id": 8,
+      "base_unit_processing_cost": 8.96
+    },
+    {
+      "local_machine_id": "M9",
+      "base_machine_id": 9,
+      "base_unit_processing_cost": 8.23
+    }
+  ],
+  "jobs": [
+    {
+      "job_id": 1,
+      "job_id_zero_based": 0,
+      "value_chain": "VC1",
+      "type": "T1",
+      "release_time": 0,
+      "n_operations": 10,
+      "candidate_srus": [
+        "U1",
+        "U3"
+      ],
+      "operations": [
+        {
+          "op_id": 1,
+          "op_id_zero_based": 0,
+          "eligible_base_machines": [
+            {
+              "base_machine_id": 2,
+              "base_processing_time": 44
+            }
+          ],
+          "processing_options_by_sru": {
+            "U1": [
+              {
+                "global_machine_id": "U1_M2",
+                "base_machine_id": 2,
+                "base_processing_time": 44,
+                "adjusted_processing_time": 44,
+                "unit_processing_cost": 7.05
+              }
+            ],
+            "U3": [
+              {
+                "global_machine_id": "U3_M2",
+                "base_machine_id": 2,
+                "base_processing_time": 44,
+                "adjusted_processing_time": 44,
+                "unit_processing_cost": 7.05
+              }
+            ]
+          }
+        },
+        {
+          "op_id": 2,
+          "op_id_zero_based": 1,
+          "eligible_base_machines": [
+            {
+              "base_machine_id": 3,
+              "base_processing_time": 5
+            }
+          ],
+          "processing_options_by_sru": {
+            "U1": [
+              {
+                "global_machine_id": "U1_M3",
+                "base_machine_id": 3,
+                "base_processing_time": 5,
+                "adjusted_processing_time": 5,
+                "unit_processing_cost": 8.1
+              }
+            ],
+            "U3": [
+              {
+                "global_machine_id": "U3_M3",
+                "base_machine_id": 3,
+                "base_processing_time": 5,
+                "adjusted_processing_time": 5,
+                "unit_processing_cost": 8.1
+              }
+            ]
+          }
+        },
+        {
+          "op_id": 3,
+          "op_id_zero_based": 2,
+          "eligible_base_machines": [
+            {
+              "base_machine_id": 5,
+              "base_processing_time": 58
+            },
+            {
+              "base_machine_id": 2,
+              "base_processing_time": 58
+            }
+          ],
+          "processing_options_by_sru": {
+            "U1": [
+              {
+                "global_machine_id": "U1_M5",
+                "base_machine_id": 5,
+                "base_processing_time": 58,
+                "adjusted_processing_time": 58,
+                "unit_processing_cost": 8.16
+              },
+              {
+                "global_machine_id": "U1_M2",
+                "base_machine_id": 2,
+                "base_processing_time": 58,
+                "adjusted_processing_time": 58,
+                "unit_processing_cost": 7.05
+              }
+            ],
+            "U3": [
+              {
+                "global_machine_id": "U3_M5",
+                "base_machine_id": 5,
+                "base_processing_time": 58,
+                "adjusted_processing_time": 58,
+                "unit_processing_cost": 8.16
+              },
+              {
+                "global_machine_id": "U3_M2",
+                "base_machine_id": 2,
+                "base_processing_time": 58,
+                "adjusted_processing_time": 58,
+                "unit_processing_cost": 7.05
+              }
+            ]
+          }
+        },
+        {
+          "op_id": 4,
+          "op_id_zero_based": 3,
+          "eligible_base_machines": [
+            {
+              "base_machine_id": 4,
+              "base_processing_time": 97
+            },
+            {
+              "base_machine_id": 5,
+              "base_processing_time": 97
+            }
+          ],
+          "processing_options_by_sru": {
+            "U1": [
+              {
+                "global_machine_id": "U1_M4",
+                "base_machine_id": 4,
+                "base_processing_time": 97,
+                "adjusted_processing_time": 97,
+                "unit_processing_cost": 12.0
+              },
+              {
+                "global_machine_id": "U1_M5",
+                "base_machine_id": 5,
+                "base_processing_time": 97,
+                "adjusted_processing_time": 97,
+                "unit_processing_cost": 8.16
+              }
+            ],
+            "U3": [
+              {
+                "global_machine_id": "U3_M4",
+                "base_machine_id": 4,
+                "base_processing_time": 97,
+                "adjusted_processing_time": 97,
+                "unit_processing_cost": 12.0
+              },
+              {
+                "global_machine_id": "U3_M5",
+                "base_machine_id": 5,
+                "base_processing_time": 97,
+                "adjusted_processing_time": 97,
+                "unit_processing_cost": 8.16
+              }
+            ]
+          }
+        },
+        {
+          "op_id": 5,
+          "op_id_zero_based": 4,
+          "eligible_base_machines": [
+            {
+              "base_machine_id": 0,
+              "base_processing_time": 9
+            }
+          ],
+          "processing_options_by_sru": {
+            "U1": [
+              {
+                "global_machine_id": "U1_M0",
+                "base_machine_id": 0,
+                "base_processing_time": 9,
+                "adjusted_processing_time": 9,
+                "unit_processing_cost": 6.72
+              }
+            ],
+            "U3": [
+              {
+                "global_machine_id": "U3_M0",
+                "base_machine_id": 0,
+                "base_processing_time": 9,
+                "adjusted_processing_time": 9,
+                "unit_processing_cost": 6.72
+              }
+            ]
+          }
+        },
+        {
+          "op_id": 6,
+          "op_id_zero_based": 5,
+          "eligible_base_machines": [
+            {
+              "base_machine_id": 7,
+              "base_processing_time": 84
+            },
+            {
+              "base_machine_id": 0,
+              "base_processing_time": 84
+            }
+          ],
+          "processing_options_by_sru": {
+            "U1": [
+              {
+                "global_machine_id": "U1_M7",
+                "base_machine_id": 7,
+                "base_processing_time": 84,
+                "adjusted_processing_time": 84,
+                "unit_processing_cost": 7.58
+              },
+              {
+                "global_machine_id": "U1_M0",
+                "base_machine_id": 0,
+                "base_processing_time": 84,
+                "adjusted_processing_time": 84,
+                "unit_processing_cost": 6.72
+              }
+            ],
+            "U3": [
+              {
+                "global_machine_id": "U3_M7",
+                "base_machine_id": 7,
+                "base_processing_time": 84,
+                "adjusted_processing_time": 84,
+                "unit_processing_cost": 7.58
+              },
+              {
+                "global_machine_id": "U3_M0",
+                "base_machine_id": 0,
+                "base_processing_time": 84,
+                "adjusted_processing_time": 84,
+                "unit_processing_cost": 6.72
+              }
+            ]
+          }
+        },
+        {
+          "op_id": 7,
+          "op_id_zero_based": 6,
+          "eligible_base_machines": [
+            {
+              "base_machine_id": 8,
+              "base_processing_time": 77
+            }
+          ],
+          "processing_options_by_sru": {
+            "U1": [
+              {
+                "global_machine_id": "U1_M8",
+                "base_machine_id": 8,
+                "base_processing_time": 77,
+                "adjusted_processing_time": 77,
+                "unit_processing_cost": 8.96
+              }
+            ],
+            "U3": [
+              {
+                "global_machine_id": "U3_M8",
+                "base_machine_id": 8,
+                "base_processing_time": 77,
+                "adjusted_processing_time": 77,
+                "unit_processing_cost": 8.96
+              }
+            ]
+          }
+        },
+        {
+          "op_id": 8,
+          "op_id_zero_based": 7,
+          "eligible_base_machines": [
+            {
+              "base_machine_id": 9,
+              "base_processing_time": 96
+            },
+            {
+              "base_machine_id": 6,
+              "base_processing_time": 96
+            },
+            {
+              "base_machine_id": 3,
+              "base_processing_time": 96
+            }
+          ],
+          "processing_options_by_sru": {
+            "U1": [
+              {
+                "global_machine_id": "U1_M9",
+                "base_machine_id": 9,
+                "base_processing_time": 96,
+                "adjusted_processing_time": 96,
+                "unit_processing_cost": 8.23
+              },
+              {
+                "global_machine_id": "U1_M6",
+                "base_machine_id": 6,
+                "base_processing_time": 96,
+                "adjusted_processing_time": 96,
+                "unit_processing_cost": 5.1
+              },
+              {
+                "global_machine_id": "U1_M3",
+                "base_machine_id": 3,
+                "base_processing_time": 96,
+                "adjusted_processing_time": 96,
+                "unit_processing_cost": 8.1
+              }
+            ],
+            "U3": [
+              {
+                "global_machine_id": "U3_M9",
+                "base_machine_id": 9,
+                "base_processing_time": 96,
+                "adjusted_processing_time": 96,
+                "unit_processing_cost": 8.23
+              },
+              {
+                "global_machine_id": "U3_M6",
+                "base_machine_id": 6,
+                "base_processing_time": 96,
+                "adjusted_processing_time": 96,
+                "unit_processing_cost": 5.1
+              },
+              {
+                "global_machine_id": "U3_M3",
+                "base_machine_id": 3,
+                "base_processing_time": 96,
+                "adjusted_processing_time": 96,
+                "unit_processing_cost": 8.1
+              }
+            ]
+          }
+        },
+        {
+          "op_id": 9,
+          "op_id_zero_based": 8,
+          "eligible_base_machines": [
+            {
+              "base_machine_id": 1,
+              "base_processing_time": 58
+            },
+            {
+              "base_machine_id": 0,
+              "base_processing_time": 58
+            }
+          ],
+          "processing_options_by_sru": {
+            "U1": [
+              {
+                "global_machine_id": "U1_M1",
+                "base_machine_id": 1,
+                "base_processing_time": 58,
+                "adjusted_processing_time": 58,
+                "unit_processing_cost": 5.0
+              },
+              {
+                "global_machine_id": "U1_M0",
+                "base_machine_id": 0,
+                "base_processing_time": 58,
+                "adjusted_processing_time": 58,
+                "unit_processing_cost": 6.72
+              }
+            ],
+            "U3": [
+              {
+                "global_machine_id": "U3_M1",
+                "base_machine_id": 1,
+                "base_processing_time": 58,
+                "adjusted_processing_time": 58,
+                "unit_processing_cost": 5.0
+              },
+              {
+                "global_machine_id": "U3_M0",
+                "base_machine_id": 0,
+                "base_processing_time": 58,
+                "adjusted_processing_time": 58,
+                "unit_processing_cost": 6.72
+              }
+            ]
+          }
+        },
+        {
+          "op_id": 10,
+          "op_id_zero_based": 9,
+          "eligible_base_machines": [
+            {
+              "base_machine_id": 6,
+              "base_processing_time": 89
+            },
+            {
+              "base_machine_id": 2,
+              "base_processing_time": 89
+            },
+            {
+              "base_machine_id": 9,
+              "base_processing_time": 89
+            }
+          ],
+          "processing_options_by_sru": {
+            "U1": [
+              {
+                "global_machine_id": "U1_M6",
+                "base_machine_id": 6,
+                "base_processing_time": 89,
+                "adjusted_processing_time": 89,
+                "unit_processing_cost": 5.1
+              },
+              {
+                "global_machine_id": "U1_M2",
+                "base_machine_id": 2,
+                "base_processing_time": 89,
+                "adjusted_processing_time": 89,
+                "unit_processing_cost": 7.05
+              },
+              {
+                "global_machine_id": "U1_M9",
+                "base_machine_id": 9,
+                "base_processing_time": 89,
+                "adjusted_processing_time": 89,
+                "unit_processing_cost": 8.23
+              }
+            ],
+            "U3": [
+              {
+                "global_machine_id": "U3_M6",
+                "base_machine_id": 6,
+                "base_processing_time": 89,
+                "adjusted_processing_time": 89,
+                "unit_processing_cost": 5.1
+              },
+              {
+                "global_machine_id": "U3_M2",
+                "base_machine_id": 2,
+                "base_processing_time": 89,
+                "adjusted_processing_time": 89,
+                "unit_processing_cost": 7.05
+              },
+              {
+                "global_machine_id": "U3_M9",
+                "base_machine_id": 9,
+                "base_processing_time": 89,
+                "adjusted_processing_time": 89,
+                "unit_processing_cost": 8.23
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "job_id": 2,
+      "job_id_zero_based": 1,
+      "value_chain": "VC2",
+      "type": "T1",
+      "release_time": 0,
+      "n_operations": 10,
+      "candidate_srus": [
+        "U3",
+        "U1"
+      ],
+      "operations": [
+        {
+          "op_id": 1,
+          "op_id_zero_based": 0,
+          "eligible_base_machines": [
+            {
+              "base_machine_id": 4,
+              "base_processing_time": 15
+            },
+            {
+              "base_machine_id": 5,
+              "base_processing_time": 15
+            }
+          ],
+          "processing_options_by_sru": {
+            "U3": [
+              {
+                "global_machine_id": "U3_M4",
+                "base_machine_id": 4,
+                "base_processing_time": 15,
+                "adjusted_processing_time": 15,
+                "unit_processing_cost": 12.0
+              },
+              {
+                "global_machine_id": "U3_M5",
+                "base_machine_id": 5,
+                "base_processing_time": 15,
+                "adjusted_processing_time": 15,
+                "unit_processing_cost": 8.16
+              }
+            ],
+            "U1": [
+              {
+                "global_machine_id": "U1_M4",
+                "base_machine_id": 4,
+                "base_processing_time": 15,
+                "adjusted_processing_time": 15,
+                "unit_processing_cost": 12.0
+              },
+              {
+                "global_machine_id": "U1_M5",
+                "base_machine_id": 5,
+                "base_processing_time": 15,
+                "adjusted_processing_time": 15,
+                "unit_processing_cost": 8.16
+              }
+            ]
+          }
+        },
+        {
+          "op_id": 2,
+          "op_id_zero_based": 1,
+          "eligible_base_machines": [
+            {
+              "base_machine_id": 7,
+              "base_processing_time": 31
+            },
+            {
+              "base_machine_id": 3,
+              "base_processing_time": 31
+            }
+          ],
+          "processing_options_by_sru": {
+            "U3": [
+              {
+                "global_machine_id": "U3_M7",
+                "base_machine_id": 7,
+                "base_processing_time": 31,
+                "adjusted_processing_time": 31,
+                "unit_processing_cost": 7.58
+              },
+              {
+                "global_machine_id": "U3_M3",
+                "base_machine_id": 3,
+                "base_processing_time": 31,
+                "adjusted_processing_time": 31,
+                "unit_processing_cost": 8.1
+              }
+            ],
+            "U1": [
+              {
+                "global_machine_id": "U1_M7",
+                "base_machine_id": 7,
+                "base_processing_time": 31,
+                "adjusted_processing_time": 31,
+                "unit_processing_cost": 7.58
+              },
+              {
+                "global_machine_id": "U1_M3",
+                "base_machine_id": 3,
+                "base_processing_time": 31,
+                "adjusted_processing_time": 31,
+                "unit_processing_cost": 8.1
+              }
+            ]
+          }
+        },
+        {
+          "op_id": 3,
+          "op_id_zero_based": 2,
+          "eligible_base_machines": [
+            {
+              "base_machine_id": 1,
+              "base_processing_time": 87
+            },
+            {
+              "base_machine_id": 8,
+              "base_processing_time": 87
+            },
+            {
+              "base_machine_id": 3,
+              "base_processing_time": 87
+            }
+          ],
+          "processing_options_by_sru": {
+            "U3": [
+              {
+                "global_machine_id": "U3_M1",
+                "base_machine_id": 1,
+                "base_processing_time": 87,
+                "adjusted_processing_time": 87,
+                "unit_processing_cost": 5.0
+              },
+              {
+                "global_machine_id": "U3_M8",
+                "base_machine_id": 8,
+                "base_processing_time": 87,
+                "adjusted_processing_time": 87,
+                "unit_processing_cost": 8.96
+              },
+              {
+                "global_machine_id": "U3_M3",
+                "base_machine_id": 3,
+                "base_processing_time": 87,
+                "adjusted_processing_time": 87,
+                "unit_processing_cost": 8.1
+              }
+            ],
+            "U1": [
+              {
+                "global_machine_id": "U1_M1",
+                "base_machine_id": 1,
+                "base_processing_time": 87,
+                "adjusted_processing_time": 87,
+                "unit_processing_cost": 5.0
+              },
+              {
+                "global_machine_id": "U1_M8",
+                "base_machine_id": 8,
+                "base_processing_time": 87,
+                "adjusted_processing_time": 87,
+                "unit_processing_cost": 8.96
+              },
+              {
+                "global_machine_id": "U1_M3",
+                "base_machine_id": 3,
+                "base_processing_time": 87,
+                "adjusted_processing_time": 87,
+                "unit_processing_cost": 8.1
+              }
+            ]
+          }
+        },
+        {
+          "op_id": 4,
+          "op_id_zero_based": 3,
+          "eligible_base_machines": [
+            {
+              "base_machine_id": 8,
+              "base_processing_time": 57
+            },
+            {
+              "base_machine_id": 3,
+              "base_processing_time": 57
+            },
+            {
+              "base_machine_id": 7,
+              "base_processing_time": 57
+            }
+          ],
+          "processing_options_by_sru": {
+            "U3": [
+              {
+                "global_machine_id": "U3_M8",
+                "base_machine_id": 8,
+                "base_processing_time": 57,
+                "adjusted_processing_time": 57,
+                "unit_processing_cost": 8.96
+              },
+              {
+                "global_machine_id": "U3_M3",
+                "base_machine_id": 3,
+                "base_processing_time": 57,
+                "adjusted_processing_time": 57,
+                "unit_processing_cost": 8.1
+              },
+              {
+                "global_machine_id": "U3_M7",
+                "base_machine_id": 7,
+                "base_processing_time": 57,
+                "adjusted_processing_time": 57,
+                "unit_processing_cost": 7.58
+              }
+            ],
+            "U1": [
+              {
+                "global_machine_id": "U1_M8",
+                "base_machine_id": 8,
+                "base_processing_time": 57,
+                "adjusted_processing_time": 57,
+                "unit_processing_cost": 8.96
+              },
+              {
+                "global_machine_id": "U1_M3",
+                "base_machine_id": 3,
+                "base_processing_time": 57,
+                "adjusted_processing_time": 57,
+                "unit_processing_cost": 8.1
+              },
+              {
+                "global_machine_id": "U1_M7",
+                "base_machine_id": 7,
+                "base_processing_time": 57,
+                "adjusted_processing_time": 57,
+                "unit_processing_cost": 7.58
+              }
+            ]
+          }
+        },
+        {
+          "op_id": 5,
+          "op_id_zero_based": 4,
+          "eligible_base_machines": [
+            {
+              "base_machine_id": 0,
+              "base_processing_time": 77
+            },
+            {
+              "base_machine_id": 6,
+              "base_processing_time": 77
+            }
+          ],
+          "processing_options_by_sru": {
+            "U3": [
+              {
+                "global_machine_id": "U3_M0",
+                "base_machine_id": 0,
+                "base_processing_time": 77,
+                "adjusted_processing_time": 77,
+                "unit_processing_cost": 6.72
+              },
+              {
+                "global_machine_id": "U3_M6",
+                "base_machine_id": 6,
+                "base_processing_time": 77,
+                "adjusted_processing_time": 77,
+                "unit_processing_cost": 5.1
+              }
+            ],
+            "U1": [
+              {
+                "global_machine_id": "U1_M0",
+                "base_machine_id": 0,
+                "base_processing_time": 77,
+                "adjusted_processing_time": 77,
+                "unit_processing_cost": 6.72
+              },
+              {
+                "global_machine_id": "U1_M6",
+                "base_machine_id": 6,
+                "base_processing_time": 77,
+                "adjusted_processing_time": 77,
+                "unit_processing_cost": 5.1
+              }
+            ]
+          }
+        },
+        {
+          "op_id": 6,
+          "op_id_zero_based": 5,
+          "eligible_base_machines": [
+            {
+              "base_machine_id": 3,
+              "base_processing_time": 85
+            }
+          ],
+          "processing_options_by_sru": {
+            "U3": [
+              {
+                "global_machine_id": "U3_M3",
+                "base_machine_id": 3,
+                "base_processing_time": 85,
+                "adjusted_processing_time": 85,
+                "unit_processing_cost": 8.1
+              }
+            ],
+            "U1": [
+              {
+                "global_machine_id": "U1_M3",
+                "base_machine_id": 3,
+                "base_processing_time": 85,
+                "adjusted_processing_time": 85,
+                "unit_processing_cost": 8.1
+              }
+            ]
+          }
+        },
+        {
+          "op_id": 7,
+          "op_id_zero_based": 6,
+          "eligible_base_machines": [
+            {
+              "base_machine_id": 2,
+              "base_processing_time": 81
+            },
+            {
+              "base_machine_id": 8,
+              "base_processing_time": 81
+            },
+            {
+              "base_machine_id": 0,
+              "base_processing_time": 81
+            }
+          ],
+          "processing_options_by_sru": {
+            "U3": [
+              {
+                "global_machine_id": "U3_M2",
+                "base_machine_id": 2,
+                "base_processing_time": 81,
+                "adjusted_processing_time": 81,
+                "unit_processing_cost": 7.05
+              },
+              {
+                "global_machine_id": "U3_M8",
+                "base_machine_id": 8,
+                "base_processing_time": 81,
+                "adjusted_processing_time": 81,
+                "unit_processing_cost": 8.96
+              },
+              {
+                "global_machine_id": "U3_M0",
+                "base_machine_id": 0,
+                "base_processing_time": 81,
+                "adjusted_processing_time": 81,
+                "unit_processing_cost": 6.72
+              }
+            ],
+            "U1": [
+              {
+                "global_machine_id": "U1_M2",
+                "base_machine_id": 2,
+                "base_processing_time": 81,
+                "adjusted_processing_time": 81,
+                "unit_processing_cost": 7.05
+              },
+              {
+                "global_machine_id": "U1_M8",
+                "base_machine_id": 8,
+                "base_processing_time": 81,
+                "adjusted_processing_time": 81,
+                "unit_processing_cost": 8.96
+              },
+              {
+                "global_machine_id": "U1_M0",
+                "base_machine_id": 0,
+                "base_processing_time": 81,
+                "adjusted_processing_time": 81,
+                "unit_processing_cost": 6.72
+              }
+            ]
+          }
+        },
+        {
+          "op_id": 8,
+          "op_id_zero_based": 7,
+          "eligible_base_machines": [
+            {
+              "base_machine_id": 5,
+              "base_processing_time": 39
+            },
+            {
+              "base_machine_id": 8,
+              "base_processing_time": 39
+            }
+          ],
+          "processing_options_by_sru": {
+            "U3": [
+              {
+                "global_machine_id": "U3_M5",
+                "base_machine_id": 5,
+                "base_processing_time": 39,
+                "adjusted_processing_time": 39,
+                "unit_processing_cost": 8.16
+              },
+              {
+                "global_machine_id": "U3_M8",
+                "base_machine_id": 8,
+                "base_processing_time": 39,
+                "adjusted_processing_time": 39,
+                "unit_processing_cost": 8.96
+              }
+            ],
+            "U1": [
+              {
+                "global_machine_id": "U1_M5",
+                "base_machine_id": 5,
+                "base_processing_time": 39,
+                "adjusted_processing_time": 39,
+                "unit_processing_cost": 8.16
+              },
+              {
+                "global_machine_id": "U1_M8",
+                "base_machine_id": 8,
+                "base_processing_time": 39,
+                "adjusted_processing_time": 39,
+                "unit_processing_cost": 8.96
+              }
+            ]
+          }
+        },
+        {
+          "op_id": 9,
+          "op_id_zero_based": 8,
+          "eligible_base_machines": [
+            {
+              "base_machine_id": 9,
+              "base_processing_time": 73
+            },
+            {
+              "base_machine_id": 3,
+              "base_processing_time": 73
+            },
+            {
+              "base_machine_id": 7,
+              "base_processing_time": 73
+            }
+          ],
+          "processing_options_by_sru": {
+            "U3": [
+              {
+                "global_machine_id": "U3_M9",
+                "base_machine_id": 9,
+                "base_processing_time": 73,
+                "adjusted_processing_time": 73,
+                "unit_processing_cost": 8.23
+              },
+              {
+                "global_machine_id": "U3_M3",
+                "base_machine_id": 3,
+                "base_processing_time": 73,
+                "adjusted_processing_time": 73,
+                "unit_processing_cost": 8.1
+              },
+              {
+                "global_machine_id": "U3_M7",
+                "base_machine_id": 7,
+                "base_processing_time": 73,
+                "adjusted_processing_time": 73,
+                "unit_processing_cost": 7.58
+              }
+            ],
+            "U1": [
+              {
+                "global_machine_id": "U1_M9",
+                "base_machine_id": 9,
+                "base_processing_time": 73,
+                "adjusted_processing_time": 73,
+                "unit_processing_cost": 8.23
+              },
+              {
+                "global_machine_id": "U1_M3",
+                "base_machine_id": 3,
+                "base_processing_time": 73,
+                "adjusted_processing_time": 73,
+                "unit_processing_cost": 8.1
+              },
+              {
+                "global_machine_id": "U1_M7",
+                "base_machine_id": 7,
+                "base_processing_time": 73,
+                "adjusted_processing_time": 73,
+                "unit_processing_cost": 7.58
+              }
+            ]
+          }
+        },
+        {
+          "op_id": 10,
+          "op_id_zero_based": 9,
+          "eligible_base_machines": [
+            {
+              "base_machine_id": 6,
+              "base_processing_time": 21
+            },
+            {
+              "base_machine_id": 3,
+              "base_processing_time": 21
+            },
+            {
+              "base_machine_id": 9,
+              "base_processing_time": 21
+            }
+          ],
+          "processing_options_by_sru": {
+            "U3": [
+              {
+                "global_machine_id": "U3_M6",
+                "base_machine_id": 6,
+                "base_processing_time": 21,
+                "adjusted_processing_time": 21,
+                "unit_processing_cost": 5.1
+              },
+              {
+                "global_machine_id": "U3_M3",
+                "base_machine_id": 3,
+                "base_processing_time": 21,
+                "adjusted_processing_time": 21,
+                "unit_processing_cost": 8.1
+              },
+              {
+                "global_machine_id": "U3_M9",
+                "base_machine_id": 9,
+                "base_processing_time": 21,
+                "adjusted_processing_time": 21,
+                "unit_processing_cost": 8.23
+              }
+            ],
+            "U1": [
+              {
+                "global_machine_id": "U1_M6",
+                "base_machine_id": 6,
+                "base_processing_time": 21,
+                "adjusted_processing_time": 21,
+                "unit_processing_cost": 5.1
+              },
+              {
+                "global_machine_id": "U1_M3",
+                "base_machine_id": 3,
+                "base_processing_time": 21,
+                "adjusted_processing_time": 21,
+                "unit_processing_cost": 8.1
+              },
+              {
+                "global_machine_id": "U1_M9",
+                "base_machine_id": 9,
+                "base_processing_time": 21,
+                "adjusted_processing_time": 21,
+                "unit_processing_cost": 8.23
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "job_id": 3,
+      "job_id_zero_based": 2,
+      "value_chain": "VC1",
+      "type": "T1",
+      "release_time": 0,
+      "n_operations": 10,
+      "candidate_srus": [
+        "U1",
+        "U3"
+      ],
+      "operations": [
+        {
+          "op_id": 1,
+          "op_id_zero_based": 0,
+          "eligible_base_machines": [
+            {
+              "base_machine_id": 9,
+              "base_processing_time": 82
+            }
+          ],
+          "processing_options_by_sru": {
+            "U1": [
+              {
+                "global_machine_id": "U1_M9",
+                "base_machine_id": 9,
+                "base_processing_time": 82,
+                "adjusted_processing_time": 82,
+                "unit_processing_cost": 8.23
+              }
+            ],
+            "U3": [
+              {
+                "global_machine_id": "U3_M9",
+                "base_machine_id": 9,
+                "base_processing_time": 82,
+                "adjusted_processing_time": 82,
+                "unit_processing_cost": 8.23
+              }
+            ]
+          }
+        },
+        {
+          "op_id": 2,
+          "op_id_zero_based": 1,
+          "eligible_base_machines": [
+            {
+              "base_machine_id": 6,
+              "base_processing_time": 22
+            },
+            {
+              "base_machine_id": 5,
+              "base_processing_time": 22
+            }
+          ],
+          "processing_options_by_sru": {
+            "U1": [
+              {
+                "global_machine_id": "U1_M6",
+                "base_machine_id": 6,
+                "base_processing_time": 22,
+                "adjusted_processing_time": 22,
+                "unit_processing_cost": 5.1
+              },
+              {
+                "global_machine_id": "U1_M5",
+                "base_machine_id": 5,
+                "base_processing_time": 22,
+                "adjusted_processing_time": 22,
+                "unit_processing_cost": 8.16
+              }
+            ],
+            "U3": [
+              {
+                "global_machine_id": "U3_M6",
+                "base_machine_id": 6,
+                "base_processing_time": 22,
+                "adjusted_processing_time": 22,
+                "unit_processing_cost": 5.1
+              },
+              {
+                "global_machine_id": "U3_M5",
+                "base_machine_id": 5,
+                "base_processing_time": 22,
+                "adjusted_processing_time": 22,
+                "unit_processing_cost": 8.16
+              }
+            ]
+          }
+        },
+        {
+          "op_id": 3,
+          "op_id_zero_based": 2,
+          "eligible_base_machines": [
+            {
+              "base_machine_id": 4,
+              "base_processing_time": 10
+            }
+          ],
+          "processing_options_by_sru": {
+            "U1": [
+              {
+                "global_machine_id": "U1_M4",
+                "base_machine_id": 4,
+                "base_processing_time": 10,
+                "adjusted_processing_time": 10,
+                "unit_processing_cost": 12.0
+              }
+            ],
+            "U3": [
+              {
+                "global_machine_id": "U3_M4",
+                "base_machine_id": 4,
+                "base_processing_time": 10,
+                "adjusted_processing_time": 10,
+                "unit_processing_cost": 12.0
+              }
+            ]
+          }
+        },
+        {
+          "op_id": 4,
+          "op_id_zero_based": 3,
+          "eligible_base_machines": [
+            {
+              "base_machine_id": 3,
+              "base_processing_time": 70
+            }
+          ],
+          "processing_options_by_sru": {
+            "U1": [
+              {
+                "global_machine_id": "U1_M3",
+                "base_machine_id": 3,
+                "base_processing_time": 70,
+                "adjusted_processing_time": 70,
+                "unit_processing_cost": 8.1
+              }
+            ],
+            "U3": [
+              {
+                "global_machine_id": "U3_M3",
+                "base_machine_id": 3,
+                "base_processing_time": 70,
+                "adjusted_processing_time": 70,
+                "unit_processing_cost": 8.1
+              }
+            ]
+          }
+        },
+        {
+          "op_id": 5,
+          "op_id_zero_based": 4,
+          "eligible_base_machines": [
+            {
+              "base_machine_id": 1,
+              "base_processing_time": 49
+            },
+            {
+              "base_machine_id": 2,
+              "base_processing_time": 49
+            },
+            {
+              "base_machine_id": 6,
+              "base_processing_time": 49
+            }
+          ],
+          "processing_options_by_sru": {
+            "U1": [
+              {
+                "global_machine_id": "U1_M1",
+                "base_machine_id": 1,
+                "base_processing_time": 49,
+                "adjusted_processing_time": 49,
+                "unit_processing_cost": 5.0
+              },
+              {
+                "global_machine_id": "U1_M2",
+                "base_machine_id": 2,
+                "base_processing_time": 49,
+                "adjusted_processing_time": 49,
+                "unit_processing_cost": 7.05
+              },
+              {
+                "global_machine_id": "U1_M6",
+                "base_machine_id": 6,
+                "base_processing_time": 49,
+                "adjusted_processing_time": 49,
+                "unit_processing_cost": 5.1
+              }
+            ],
+            "U3": [
+              {
+                "global_machine_id": "U3_M1",
+                "base_machine_id": 1,
+                "base_processing_time": 49,
+                "adjusted_processing_time": 49,
+                "unit_processing_cost": 5.0
+              },
+              {
+                "global_machine_id": "U3_M2",
+                "base_machine_id": 2,
+                "base_processing_time": 49,
+                "adjusted_processing_time": 49,
+                "unit_processing_cost": 7.05
+              },
+              {
+                "global_machine_id": "U3_M6",
+                "base_machine_id": 6,
+                "base_processing_time": 49,
+                "adjusted_processing_time": 49,
+                "unit_processing_cost": 5.1
+              }
+            ]
+          }
+        },
+        {
+          "op_id": 6,
+          "op_id_zero_based": 5,
+          "eligible_base_machines": [
+            {
+              "base_machine_id": 0,
+              "base_processing_time": 40
+            },
+            {
+              "base_machine_id": 9,
+              "base_processing_time": 40
+            },
+            {
+              "base_machine_id": 1,
+              "base_processing_time": 40
+            }
+          ],
+          "processing_options_by_sru": {
+            "U1": [
+              {
+                "global_machine_id": "U1_M0",
+                "base_machine_id": 0,
+                "base_processing_time": 40,
+                "adjusted_processing_time": 40,
+                "unit_processing_cost": 6.72
+              },
+              {
+                "global_machine_id": "U1_M9",
+                "base_machine_id": 9,
+                "base_processing_time": 40,
+                "adjusted_processing_time": 40,
+                "unit_processing_cost": 8.23
+              },
+              {
+                "global_machine_id": "U1_M1",
+                "base_machine_id": 1,
+                "base_processing_time": 40,
+                "adjusted_processing_time": 40,
+                "unit_processing_cost": 5.0
+              }
+            ],
+            "U3": [
+              {
+                "global_machine_id": "U3_M0",
+                "base_machine_id": 0,
+                "base_processing_time": 40,
+                "adjusted_processing_time": 40,
+                "unit_processing_cost": 6.72
+              },
+              {
+                "global_machine_id": "U3_M9",
+                "base_machine_id": 9,
+                "base_processing_time": 40,
+                "adjusted_processing_time": 40,
+                "unit_processing_cost": 8.23
+              },
+              {
+                "global_machine_id": "U3_M1",
+                "base_machine_id": 1,
+                "base_processing_time": 40,
+                "adjusted_processing_time": 40,
+                "unit_processing_cost": 5.0
+              }
+            ]
+          }
+        },
+        {
+          "op_id": 7,
+          "op_id_zero_based": 6,
+          "eligible_base_machines": [
+            {
+              "base_machine_id": 8,
+              "base_processing_time": 34
+            },
+            {
+              "base_machine_id": 3,
+              "base_processing_time": 34
+            }
+          ],
+          "processing_options_by_sru": {
+            "U1": [
+              {
+                "global_machine_id": "U1_M8",
+                "base_machine_id": 8,
+                "base_processing_time": 34,
+                "adjusted_processing_time": 34,
+                "unit_processing_cost": 8.96
+              },
+              {
+                "global_machine_id": "U1_M3",
+                "base_machine_id": 3,
+                "base_processing_time": 34,
+                "adjusted_processing_time": 34,
+                "unit_processing_cost": 8.1
+              }
+            ],
+            "U3": [
+              {
+                "global_machine_id": "U3_M8",
+                "base_machine_id": 8,
+                "base_processing_time": 34,
+                "adjusted_processing_time": 34,
+                "unit_processing_cost": 8.96
+              },
+              {
+                "global_machine_id": "U3_M3",
+                "base_machine_id": 3,
+                "base_processing_time": 34,
+                "adjusted_processing_time": 34,
+                "unit_processing_cost": 8.1
+              }
+            ]
+          }
+        },
+        {
+          "op_id": 8,
+          "op_id_zero_based": 7,
+          "eligible_base_machines": [
+            {
+              "base_machine_id": 2,
+              "base_processing_time": 48
+            },
+            {
+              "base_machine_id": 9,
+              "base_processing_time": 48
+            },
+            {
+              "base_machine_id": 1,
+              "base_processing_time": 48
+            }
+          ],
+          "processing_options_by_sru": {
+            "U1": [
+              {
+                "global_machine_id": "U1_M2",
+                "base_machine_id": 2,
+                "base_processing_time": 48,
+                "adjusted_processing_time": 48,
+                "unit_processing_cost": 7.05
+              },
+              {
+                "global_machine_id": "U1_M9",
+                "base_machine_id": 9,
+                "base_processing_time": 48,
+                "adjusted_processing_time": 48,
+                "unit_processing_cost": 8.23
+              },
+              {
+                "global_machine_id": "U1_M1",
+                "base_machine_id": 1,
+                "base_processing_time": 48,
+                "adjusted_processing_time": 48,
+                "unit_processing_cost": 5.0
+              }
+            ],
+            "U3": [
+              {
+                "global_machine_id": "U3_M2",
+                "base_machine_id": 2,
+                "base_processing_time": 48,
+                "adjusted_processing_time": 48,
+                "unit_processing_cost": 7.05
+              },
+              {
+                "global_machine_id": "U3_M9",
+                "base_machine_id": 9,
+                "base_processing_time": 48,
+                "adjusted_processing_time": 48,
+                "unit_processing_cost": 8.23
+              },
+              {
+                "global_machine_id": "U3_M1",
+                "base_machine_id": 1,
+                "base_processing_time": 48,
+                "adjusted_processing_time": 48,
+                "unit_processing_cost": 5.0
+              }
+            ]
+          }
+        },
+        {
+          "op_id": 9,
+          "op_id_zero_based": 8,
+          "eligible_base_machines": [
+            {
+              "base_machine_id": 7,
+              "base_processing_time": 80
+            }
+          ],
+          "processing_options_by_sru": {
+            "U1": [
+              {
+                "global_machine_id": "U1_M7",
+                "base_machine_id": 7,
+                "base_processing_time": 80,
+                "adjusted_processing_time": 80,
+                "unit_processing_cost": 7.58
+              }
+            ],
+            "U3": [
+              {
+                "global_machine_id": "U3_M7",
+                "base_machine_id": 7,
+                "base_processing_time": 80,
+                "adjusted_processing_time": 80,
+                "unit_processing_cost": 7.58
+              }
+            ]
+          }
+        },
+        {
+          "op_id": 10,
+          "op_id_zero_based": 9,
+          "eligible_base_machines": [
+            {
+              "base_machine_id": 5,
+              "base_processing_time": 71
+            },
+            {
+              "base_machine_id": 1,
+              "base_processing_time": 71
+            },
+            {
+              "base_machine_id": 2,
+              "base_processing_time": 71
+            }
+          ],
+          "processing_options_by_sru": {
+            "U1": [
+              {
+                "global_machine_id": "U1_M5",
+                "base_machine_id": 5,
+                "base_processing_time": 71,
+                "adjusted_processing_time": 71,
+                "unit_processing_cost": 8.16
+              },
+              {
+                "global_machine_id": "U1_M1",
+                "base_machine_id": 1,
+                "base_processing_time": 71,
+                "adjusted_processing_time": 71,
+                "unit_processing_cost": 5.0
+              },
+              {
+                "global_machine_id": "U1_M2",
+                "base_machine_id": 2,
+                "base_processing_time": 71,
+                "adjusted_processing_time": 71,
+                "unit_processing_cost": 7.05
+              }
+            ],
+            "U3": [
+              {
+                "global_machine_id": "U3_M5",
+                "base_machine_id": 5,
+                "base_processing_time": 71,
+                "adjusted_processing_time": 71,
+                "unit_processing_cost": 8.16
+              },
+              {
+                "global_machine_id": "U3_M1",
+                "base_machine_id": 1,
+                "base_processing_time": 71,
+                "adjusted_processing_time": 71,
+                "unit_processing_cost": 5.0
+              },
+              {
+                "global_machine_id": "U3_M2",
+                "base_machine_id": 2,
+                "base_processing_time": 71,
+                "adjusted_processing_time": 71,
+                "unit_processing_cost": 7.05
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "job_id": 4,
+      "job_id_zero_based": 3,
+      "value_chain": "VC2",
+      "type": "T1",
+      "release_time": 0,
+      "n_operations": 10,
+      "candidate_srus": [
+        "U3",
+        "U1"
+      ],
+      "operations": [
+        {
+          "op_id": 1,
+          "op_id_zero_based": 0,
+          "eligible_base_machines": [
+            {
+              "base_machine_id": 1,
+              "base_processing_time": 91
+            },
+            {
+              "base_machine_id": 2,
+              "base_processing_time": 91
+            }
+          ],
+          "processing_options_by_sru": {
+            "U3": [
+              {
+                "global_machine_id": "U3_M1",
+                "base_machine_id": 1,
+                "base_processing_time": 91,
+                "adjusted_processing_time": 91,
+                "unit_processing_cost": 5.0
+              },
+              {
+                "global_machine_id": "U3_M2",
+                "base_machine_id": 2,
+                "base_processing_time": 91,
+                "adjusted_processing_time": 91,
+                "unit_processing_cost": 7.05
+              }
+            ],
+            "U1": [
+              {
+                "global_machine_id": "U1_M1",
+                "base_machine_id": 1,
+                "base_processing_time": 91,
+                "adjusted_processing_time": 91,
+                "unit_processing_cost": 5.0
+              },
+              {
+                "global_machine_id": "U1_M2",
+                "base_machine_id": 2,
+                "base_processing_time": 91,
+                "adjusted_processing_time": 91,
+                "unit_processing_cost": 7.05
+              }
+            ]
+          }
+        },
+        {
+          "op_id": 2,
+          "op_id_zero_based": 1,
+          "eligible_base_machines": [
+            {
+              "base_machine_id": 2,
+              "base_processing_time": 17
+            }
+          ],
+          "processing_options_by_sru": {
+            "U3": [
+              {
+                "global_machine_id": "U3_M2",
+                "base_machine_id": 2,
+                "base_processing_time": 17,
+                "adjusted_processing_time": 17,
+                "unit_processing_cost": 7.05
+              }
+            ],
+            "U1": [
+              {
+                "global_machine_id": "U1_M2",
+                "base_machine_id": 2,
+                "base_processing_time": 17,
+                "adjusted_processing_time": 17,
+                "unit_processing_cost": 7.05
+              }
+            ]
+          }
+        },
+        {
+          "op_id": 3,
+          "op_id_zero_based": 2,
+          "eligible_base_machines": [
+            {
+              "base_machine_id": 7,
+              "base_processing_time": 62
+            },
+            {
+              "base_machine_id": 1,
+              "base_processing_time": 62
+            },
+            {
+              "base_machine_id": 3,
+              "base_processing_time": 62
+            }
+          ],
+          "processing_options_by_sru": {
+            "U3": [
+              {
+                "global_machine_id": "U3_M7",
+                "base_machine_id": 7,
+                "base_processing_time": 62,
+                "adjusted_processing_time": 62,
+                "unit_processing_cost": 7.58
+              },
+              {
+                "global_machine_id": "U3_M1",
+                "base_machine_id": 1,
+                "base_processing_time": 62,
+                "adjusted_processing_time": 62,
+                "unit_processing_cost": 5.0
+              },
+              {
+                "global_machine_id": "U3_M3",
+                "base_machine_id": 3,
+                "base_processing_time": 62,
+                "adjusted_processing_time": 62,
+                "unit_processing_cost": 8.1
+              }
+            ],
+            "U1": [
+              {
+                "global_machine_id": "U1_M7",
+                "base_machine_id": 7,
+                "base_processing_time": 62,
+                "adjusted_processing_time": 62,
+                "unit_processing_cost": 7.58
+              },
+              {
+                "global_machine_id": "U1_M1",
+                "base_machine_id": 1,
+                "base_processing_time": 62,
+                "adjusted_processing_time": 62,
+                "unit_processing_cost": 5.0
+              },
+              {
+                "global_machine_id": "U1_M3",
+                "base_machine_id": 3,
+                "base_processing_time": 62,
+                "adjusted_processing_time": 62,
+                "unit_processing_cost": 8.1
+              }
+            ]
+          }
+        },
+        {
+          "op_id": 4,
+          "op_id_zero_based": 3,
+          "eligible_base_machines": [
+            {
+              "base_machine_id": 5,
+              "base_processing_time": 75
+            },
+            {
+              "base_machine_id": 4,
+              "base_processing_time": 75
+            },
+            {
+              "base_machine_id": 2,
+              "base_processing_time": 75
+            }
+          ],
+          "processing_options_by_sru": {
+            "U3": [
+              {
+                "global_machine_id": "U3_M5",
+                "base_machine_id": 5,
+                "base_processing_time": 75,
+                "adjusted_processing_time": 75,
+                "unit_processing_cost": 8.16
+              },
+              {
+                "global_machine_id": "U3_M4",
+                "base_machine_id": 4,
+                "base_processing_time": 75,
+                "adjusted_processing_time": 75,
+                "unit_processing_cost": 12.0
+              },
+              {
+                "global_machine_id": "U3_M2",
+                "base_machine_id": 2,
+                "base_processing_time": 75,
+                "adjusted_processing_time": 75,
+                "unit_processing_cost": 7.05
+              }
+            ],
+            "U1": [
+              {
+                "global_machine_id": "U1_M5",
+                "base_machine_id": 5,
+                "base_processing_time": 75,
+                "adjusted_processing_time": 75,
+                "unit_processing_cost": 8.16
+              },
+              {
+                "global_machine_id": "U1_M4",
+                "base_machine_id": 4,
+                "base_processing_time": 75,
+                "adjusted_processing_time": 75,
+                "unit_processing_cost": 12.0
+              },
+              {
+                "global_machine_id": "U1_M2",
+                "base_machine_id": 2,
+                "base_processing_time": 75,
+                "adjusted_processing_time": 75,
+                "unit_processing_cost": 7.05
+              }
+            ]
+          }
+        },
+        {
+          "op_id": 5,
+          "op_id_zero_based": 4,
+          "eligible_base_machines": [
+            {
+              "base_machine_id": 8,
+              "base_processing_time": 47
+            }
+          ],
+          "processing_options_by_sru": {
+            "U3": [
+              {
+                "global_machine_id": "U3_M8",
+                "base_machine_id": 8,
+                "base_processing_time": 47,
+                "adjusted_processing_time": 47,
+                "unit_processing_cost": 8.96
+              }
+            ],
+            "U1": [
+              {
+                "global_machine_id": "U1_M8",
+                "base_machine_id": 8,
+                "base_processing_time": 47,
+                "adjusted_processing_time": 47,
+                "unit_processing_cost": 8.96
+              }
+            ]
+          }
+        },
+        {
+          "op_id": 6,
+          "op_id_zero_based": 5,
+          "eligible_base_machines": [
+            {
+              "base_machine_id": 4,
+              "base_processing_time": 11
+            }
+          ],
+          "processing_options_by_sru": {
+            "U3": [
+              {
+                "global_machine_id": "U3_M4",
+                "base_machine_id": 4,
+                "base_processing_time": 11,
+                "adjusted_processing_time": 11,
+                "unit_processing_cost": 12.0
+              }
+            ],
+            "U1": [
+              {
+                "global_machine_id": "U1_M4",
+                "base_machine_id": 4,
+                "base_processing_time": 11,
+                "adjusted_processing_time": 11,
+                "unit_processing_cost": 12.0
+              }
+            ]
+          }
+        },
+        {
+          "op_id": 7,
+          "op_id_zero_based": 6,
+          "eligible_base_machines": [
+            {
+              "base_machine_id": 3,
+              "base_processing_time": 7
+            },
+            {
+              "base_machine_id": 0,
+              "base_processing_time": 7
+            }
+          ],
+          "processing_options_by_sru": {
+            "U3": [
+              {
+                "global_machine_id": "U3_M3",
+                "base_machine_id": 3,
+                "base_processing_time": 7,
+                "adjusted_processing_time": 7,
+                "unit_processing_cost": 8.1
+              },
+              {
+                "global_machine_id": "U3_M0",
+                "base_machine_id": 0,
+                "base_processing_time": 7,
+                "adjusted_processing_time": 7,
+                "unit_processing_cost": 6.72
+              }
+            ],
+            "U1": [
+              {
+                "global_machine_id": "U1_M3",
+                "base_machine_id": 3,
+                "base_processing_time": 7,
+                "adjusted_processing_time": 7,
+                "unit_processing_cost": 8.1
+              },
+              {
+                "global_machine_id": "U1_M0",
+                "base_machine_id": 0,
+                "base_processing_time": 7,
+                "adjusted_processing_time": 7,
+                "unit_processing_cost": 6.72
+              }
+            ]
+          }
+        },
+        {
+          "op_id": 8,
+          "op_id_zero_based": 7,
+          "eligible_base_machines": [
+            {
+              "base_machine_id": 6,
+              "base_processing_time": 72
+            },
+            {
+              "base_machine_id": 0,
+              "base_processing_time": 72
+            }
+          ],
+          "processing_options_by_sru": {
+            "U3": [
+              {
+                "global_machine_id": "U3_M6",
+                "base_machine_id": 6,
+                "base_processing_time": 72,
+                "adjusted_processing_time": 72,
+                "unit_processing_cost": 5.1
+              },
+              {
+                "global_machine_id": "U3_M0",
+                "base_machine_id": 0,
+                "base_processing_time": 72,
+                "adjusted_processing_time": 72,
+                "unit_processing_cost": 6.72
+              }
+            ],
+            "U1": [
+              {
+                "global_machine_id": "U1_M6",
+                "base_machine_id": 6,
+                "base_processing_time": 72,
+                "adjusted_processing_time": 72,
+                "unit_processing_cost": 5.1
+              },
+              {
+                "global_machine_id": "U1_M0",
+                "base_machine_id": 0,
+                "base_processing_time": 72,
+                "adjusted_processing_time": 72,
+                "unit_processing_cost": 6.72
+              }
+            ]
+          }
+        },
+        {
+          "op_id": 9,
+          "op_id_zero_based": 8,
+          "eligible_base_machines": [
+            {
+              "base_machine_id": 9,
+              "base_processing_time": 35
+            },
+            {
+              "base_machine_id": 1,
+              "base_processing_time": 35
+            }
+          ],
+          "processing_options_by_sru": {
+            "U3": [
+              {
+                "global_machine_id": "U3_M9",
+                "base_machine_id": 9,
+                "base_processing_time": 35,
+                "adjusted_processing_time": 35,
+                "unit_processing_cost": 8.23
+              },
+              {
+                "global_machine_id": "U3_M1",
+                "base_machine_id": 1,
+                "base_processing_time": 35,
+                "adjusted_processing_time": 35,
+                "unit_processing_cost": 5.0
+              }
+            ],
+            "U1": [
+              {
+                "global_machine_id": "U1_M9",
+                "base_machine_id": 9,
+                "base_processing_time": 35,
+                "adjusted_processing_time": 35,
+                "unit_processing_cost": 8.23
+              },
+              {
+                "global_machine_id": "U1_M1",
+                "base_machine_id": 1,
+                "base_processing_time": 35,
+                "adjusted_processing_time": 35,
+                "unit_processing_cost": 5.0
+              }
+            ]
+          }
+        },
+        {
+          "op_id": 10,
+          "op_id_zero_based": 9,
+          "eligible_base_machines": [
+            {
+              "base_machine_id": 0,
+              "base_processing_time": 55
+            }
+          ],
+          "processing_options_by_sru": {
+            "U3": [
+              {
+                "global_machine_id": "U3_M0",
+                "base_machine_id": 0,
+                "base_processing_time": 55,
+                "adjusted_processing_time": 55,
+                "unit_processing_cost": 6.72
+              }
+            ],
+            "U1": [
+              {
+                "global_machine_id": "U1_M0",
+                "base_machine_id": 0,
+                "base_processing_time": 55,
+                "adjusted_processing_time": 55,
+                "unit_processing_cost": 6.72
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "job_id": 5,
+      "job_id_zero_based": 4,
+      "value_chain": "VC1",
+      "type": "T1",
+      "release_time": 0,
+      "n_operations": 10,
+      "candidate_srus": [
+        "U1",
+        "U3"
+      ],
+      "operations": [
+        {
+          "op_id": 1,
+          "op_id_zero_based": 0,
+          "eligible_base_machines": [
+            {
+              "base_machine_id": 6,
+              "base_processing_time": 71
+            },
+            {
+              "base_machine_id": 3,
+              "base_processing_time": 71
+            }
+          ],
+          "processing_options_by_sru": {
+            "U1": [
+              {
+                "global_machine_id": "U1_M6",
+                "base_machine_id": 6,
+                "base_processing_time": 71,
+                "adjusted_processing_time": 71,
+                "unit_processing_cost": 5.1
+              },
+              {
+                "global_machine_id": "U1_M3",
+                "base_machine_id": 3,
+                "base_processing_time": 71,
+                "adjusted_processing_time": 71,
+                "unit_processing_cost": 8.1
+              }
+            ],
+            "U3": [
+              {
+                "global_machine_id": "U3_M6",
+                "base_machine_id": 6,
+                "base_processing_time": 71,
+                "adjusted_processing_time": 71,
+                "unit_processing_cost": 5.1
+              },
+              {
+                "global_machine_id": "U3_M3",
+                "base_machine_id": 3,
+                "base_processing_time": 71,
+                "adjusted_processing_time": 71,
+                "unit_processing_cost": 8.1
+              }
+            ]
+          }
+        },
+        {
+          "op_id": 2,
+          "op_id_zero_based": 1,
+          "eligible_base_machines": [
+            {
+              "base_machine_id": 1,
+              "base_processing_time": 90
+            },
+            {
+              "base_machine_id": 0,
+              "base_processing_time": 90
+            }
+          ],
+          "processing_options_by_sru": {
+            "U1": [
+              {
+                "global_machine_id": "U1_M1",
+                "base_machine_id": 1,
+                "base_processing_time": 90,
+                "adjusted_processing_time": 90,
+                "unit_processing_cost": 5.0
+              },
+              {
+                "global_machine_id": "U1_M0",
+                "base_machine_id": 0,
+                "base_processing_time": 90,
+                "adjusted_processing_time": 90,
+                "unit_processing_cost": 6.72
+              }
+            ],
+            "U3": [
+              {
+                "global_machine_id": "U3_M1",
+                "base_machine_id": 1,
+                "base_processing_time": 90,
+                "adjusted_processing_time": 90,
+                "unit_processing_cost": 5.0
+              },
+              {
+                "global_machine_id": "U3_M0",
+                "base_machine_id": 0,
+                "base_processing_time": 90,
+                "adjusted_processing_time": 90,
+                "unit_processing_cost": 6.72
+              }
+            ]
+          }
+        },
+        {
+          "op_id": 3,
+          "op_id_zero_based": 2,
+          "eligible_base_machines": [
+            {
+              "base_machine_id": 3,
+              "base_processing_time": 75
+            }
+          ],
+          "processing_options_by_sru": {
+            "U1": [
+              {
+                "global_machine_id": "U1_M3",
+                "base_machine_id": 3,
+                "base_processing_time": 75,
+                "adjusted_processing_time": 75,
+                "unit_processing_cost": 8.1
+              }
+            ],
+            "U3": [
+              {
+                "global_machine_id": "U3_M3",
+                "base_machine_id": 3,
+                "base_processing_time": 75,
+                "adjusted_processing_time": 75,
+                "unit_processing_cost": 8.1
+              }
+            ]
+          }
+        },
+        {
+          "op_id": 4,
+          "op_id_zero_based": 3,
+          "eligible_base_machines": [
+            {
+              "base_machine_id": 0,
+              "base_processing_time": 64
+            }
+          ],
+          "processing_options_by_sru": {
+            "U1": [
+              {
+                "global_machine_id": "U1_M0",
+                "base_machine_id": 0,
+                "base_processing_time": 64,
+                "adjusted_processing_time": 64,
+                "unit_processing_cost": 6.72
+              }
+            ],
+            "U3": [
+              {
+                "global_machine_id": "U3_M0",
+                "base_machine_id": 0,
+                "base_processing_time": 64,
+                "adjusted_processing_time": 64,
+                "unit_processing_cost": 6.72
+              }
+            ]
+          }
+        },
+        {
+          "op_id": 5,
+          "op_id_zero_based": 4,
+          "eligible_base_machines": [
+            {
+              "base_machine_id": 2,
+              "base_processing_time": 94
+            },
+            {
+              "base_machine_id": 1,
+              "base_processing_time": 94
+            }
+          ],
+          "processing_options_by_sru": {
+            "U1": [
+              {
+                "global_machine_id": "U1_M2",
+                "base_machine_id": 2,
+                "base_processing_time": 94,
+                "adjusted_processing_time": 94,
+                "unit_processing_cost": 7.05
+              },
+              {
+                "global_machine_id": "U1_M1",
+                "base_machine_id": 1,
+                "base_processing_time": 94,
+                "adjusted_processing_time": 94,
+                "unit_processing_cost": 5.0
+              }
+            ],
+            "U3": [
+              {
+                "global_machine_id": "U3_M2",
+                "base_machine_id": 2,
+                "base_processing_time": 94,
+                "adjusted_processing_time": 94,
+                "unit_processing_cost": 7.05
+              },
+              {
+                "global_machine_id": "U3_M1",
+                "base_machine_id": 1,
+                "base_processing_time": 94,
+                "adjusted_processing_time": 94,
+                "unit_processing_cost": 5.0
+              }
+            ]
+          }
+        },
+        {
+          "op_id": 6,
+          "op_id_zero_based": 5,
+          "eligible_base_machines": [
+            {
+              "base_machine_id": 8,
+              "base_processing_time": 15
+            },
+            {
+              "base_machine_id": 4,
+              "base_processing_time": 15
+            }
+          ],
+          "processing_options_by_sru": {
+            "U1": [
+              {
+                "global_machine_id": "U1_M8",
+                "base_machine_id": 8,
+                "base_processing_time": 15,
+                "adjusted_processing_time": 15,
+                "unit_processing_cost": 8.96
+              },
+              {
+                "global_machine_id": "U1_M4",
+                "base_machine_id": 4,
+                "base_processing_time": 15,
+                "adjusted_processing_time": 15,
+                "unit_processing_cost": 12.0
+              }
+            ],
+            "U3": [
+              {
+                "global_machine_id": "U3_M8",
+                "base_machine_id": 8,
+                "base_processing_time": 15,
+                "adjusted_processing_time": 15,
+                "unit_processing_cost": 8.96
+              },
+              {
+                "global_machine_id": "U3_M4",
+                "base_machine_id": 4,
+                "base_processing_time": 15,
+                "adjusted_processing_time": 15,
+                "unit_processing_cost": 12.0
+              }
+            ]
+          }
+        },
+        {
+          "op_id": 7,
+          "op_id_zero_based": 6,
+          "eligible_base_machines": [
+            {
+              "base_machine_id": 4,
+              "base_processing_time": 12
+            },
+            {
+              "base_machine_id": 7,
+              "base_processing_time": 12
+            },
+            {
+              "base_machine_id": 5,
+              "base_processing_time": 12
+            }
+          ],
+          "processing_options_by_sru": {
+            "U1": [
+              {
+                "global_machine_id": "U1_M4",
+                "base_machine_id": 4,
+                "base_processing_time": 12,
+                "adjusted_processing_time": 12,
+                "unit_processing_cost": 12.0
+              },
+              {
+                "global_machine_id": "U1_M7",
+                "base_machine_id": 7,
+                "base_processing_time": 12,
+                "adjusted_processing_time": 12,
+                "unit_processing_cost": 7.58
+              },
+              {
+                "global_machine_id": "U1_M5",
+                "base_machine_id": 5,
+                "base_processing_time": 12,
+                "adjusted_processing_time": 12,
+                "unit_processing_cost": 8.16
+              }
+            ],
+            "U3": [
+              {
+                "global_machine_id": "U3_M4",
+                "base_machine_id": 4,
+                "base_processing_time": 12,
+                "adjusted_processing_time": 12,
+                "unit_processing_cost": 12.0
+              },
+              {
+                "global_machine_id": "U3_M7",
+                "base_machine_id": 7,
+                "base_processing_time": 12,
+                "adjusted_processing_time": 12,
+                "unit_processing_cost": 7.58
+              },
+              {
+                "global_machine_id": "U3_M5",
+                "base_machine_id": 5,
+                "base_processing_time": 12,
+                "adjusted_processing_time": 12,
+                "unit_processing_cost": 8.16
+              }
+            ]
+          }
+        },
+        {
+          "op_id": 8,
+          "op_id_zero_based": 7,
+          "eligible_base_machines": [
+            {
+              "base_machine_id": 7,
+              "base_processing_time": 67
+            },
+            {
+              "base_machine_id": 1,
+              "base_processing_time": 67
+            }
+          ],
+          "processing_options_by_sru": {
+            "U1": [
+              {
+                "global_machine_id": "U1_M7",
+                "base_machine_id": 7,
+                "base_processing_time": 67,
+                "adjusted_processing_time": 67,
+                "unit_processing_cost": 7.58
+              },
+              {
+                "global_machine_id": "U1_M1",
+                "base_machine_id": 1,
+                "base_processing_time": 67,
+                "adjusted_processing_time": 67,
+                "unit_processing_cost": 5.0
+              }
+            ],
+            "U3": [
+              {
+                "global_machine_id": "U3_M7",
+                "base_machine_id": 7,
+                "base_processing_time": 67,
+                "adjusted_processing_time": 67,
+                "unit_processing_cost": 7.58
+              },
+              {
+                "global_machine_id": "U3_M1",
+                "base_machine_id": 1,
+                "base_processing_time": 67,
+                "adjusted_processing_time": 67,
+                "unit_processing_cost": 5.0
+              }
+            ]
+          }
+        },
+        {
+          "op_id": 9,
+          "op_id_zero_based": 8,
+          "eligible_base_machines": [
+            {
+              "base_machine_id": 9,
+              "base_processing_time": 20
+            },
+            {
+              "base_machine_id": 8,
+              "base_processing_time": 20
+            },
+            {
+              "base_machine_id": 5,
+              "base_processing_time": 20
+            }
+          ],
+          "processing_options_by_sru": {
+            "U1": [
+              {
+                "global_machine_id": "U1_M9",
+                "base_machine_id": 9,
+                "base_processing_time": 20,
+                "adjusted_processing_time": 20,
+                "unit_processing_cost": 8.23
+              },
+              {
+                "global_machine_id": "U1_M8",
+                "base_machine_id": 8,
+                "base_processing_time": 20,
+                "adjusted_processing_time": 20,
+                "unit_processing_cost": 8.96
+              },
+              {
+                "global_machine_id": "U1_M5",
+                "base_machine_id": 5,
+                "base_processing_time": 20,
+                "adjusted_processing_time": 20,
+                "unit_processing_cost": 8.16
+              }
+            ],
+            "U3": [
+              {
+                "global_machine_id": "U3_M9",
+                "base_machine_id": 9,
+                "base_processing_time": 20,
+                "adjusted_processing_time": 20,
+                "unit_processing_cost": 8.23
+              },
+              {
+                "global_machine_id": "U3_M8",
+                "base_machine_id": 8,
+                "base_processing_time": 20,
+                "adjusted_processing_time": 20,
+                "unit_processing_cost": 8.96
+              },
+              {
+                "global_machine_id": "U3_M5",
+                "base_machine_id": 5,
+                "base_processing_time": 20,
+                "adjusted_processing_time": 20,
+                "unit_processing_cost": 8.16
+              }
+            ]
+          }
+        },
+        {
+          "op_id": 10,
+          "op_id_zero_based": 9,
+          "eligible_base_machines": [
+            {
+              "base_machine_id": 5,
+              "base_processing_time": 50
+            },
+            {
+              "base_machine_id": 4,
+              "base_processing_time": 50
+            },
+            {
+              "base_machine_id": 7,
+              "base_processing_time": 50
+            }
+          ],
+          "processing_options_by_sru": {
+            "U1": [
+              {
+                "global_machine_id": "U1_M5",
+                "base_machine_id": 5,
+                "base_processing_time": 50,
+                "adjusted_processing_time": 50,
+                "unit_processing_cost": 8.16
+              },
+              {
+                "global_machine_id": "U1_M4",
+                "base_machine_id": 4,
+                "base_processing_time": 50,
+                "adjusted_processing_time": 50,
+                "unit_processing_cost": 12.0
+              },
+              {
+                "global_machine_id": "U1_M7",
+                "base_machine_id": 7,
+                "base_processing_time": 50,
+                "adjusted_processing_time": 50,
+                "unit_processing_cost": 7.58
+              }
+            ],
+            "U3": [
+              {
+                "global_machine_id": "U3_M5",
+                "base_machine_id": 5,
+                "base_processing_time": 50,
+                "adjusted_processing_time": 50,
+                "unit_processing_cost": 8.16
+              },
+              {
+                "global_machine_id": "U3_M4",
+                "base_machine_id": 4,
+                "base_processing_time": 50,
+                "adjusted_processing_time": 50,
+                "unit_processing_cost": 12.0
+              },
+              {
+                "global_machine_id": "U3_M7",
+                "base_machine_id": 7,
+                "base_processing_time": 50,
+                "adjusted_processing_time": 50,
+                "unit_processing_cost": 7.58
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "job_id": 6,
+      "job_id_zero_based": 5,
+      "value_chain": "VC2",
+      "type": "T2",
+      "release_time": 0,
+      "n_operations": 10,
+      "candidate_srus": [
+        "U4",
+        "U2"
+      ],
+      "operations": [
+        {
+          "op_id": 1,
+          "op_id_zero_based": 0,
+          "eligible_base_machines": [
+            {
+              "base_machine_id": 7,
+              "base_processing_time": 70
+            },
+            {
+              "base_machine_id": 6,
+              "base_processing_time": 70
+            }
+          ],
+          "processing_options_by_sru": {
+            "U4": [
+              {
+                "global_machine_id": "U4_M7",
+                "base_machine_id": 7,
+                "base_processing_time": 70,
+                "adjusted_processing_time": 70,
+                "unit_processing_cost": 7.58
+              },
+              {
+                "global_machine_id": "U4_M6",
+                "base_machine_id": 6,
+                "base_processing_time": 70,
+                "adjusted_processing_time": 70,
+                "unit_processing_cost": 5.1
+              }
+            ],
+            "U2": [
+              {
+                "global_machine_id": "U2_M7",
+                "base_machine_id": 7,
+                "base_processing_time": 70,
+                "adjusted_processing_time": 70,
+                "unit_processing_cost": 7.58
+              },
+              {
+                "global_machine_id": "U2_M6",
+                "base_machine_id": 6,
+                "base_processing_time": 70,
+                "adjusted_processing_time": 70,
+                "unit_processing_cost": 5.1
+              }
+            ]
+          }
+        },
+        {
+          "op_id": 2,
+          "op_id_zero_based": 1,
+          "eligible_base_machines": [
+            {
+              "base_machine_id": 5,
+              "base_processing_time": 93
+            }
+          ],
+          "processing_options_by_sru": {
+            "U4": [
+              {
+                "global_machine_id": "U4_M5",
+                "base_machine_id": 5,
+                "base_processing_time": 93,
+                "adjusted_processing_time": 93,
+                "unit_processing_cost": 8.16
+              }
+            ],
+            "U2": [
+              {
+                "global_machine_id": "U2_M5",
+                "base_machine_id": 5,
+                "base_processing_time": 93,
+                "adjusted_processing_time": 93,
+                "unit_processing_cost": 8.16
+              }
+            ]
+          }
+        },
+        {
+          "op_id": 3,
+          "op_id_zero_based": 2,
+          "eligible_base_machines": [
+            {
+              "base_machine_id": 8,
+              "base_processing_time": 77
+            }
+          ],
+          "processing_options_by_sru": {
+            "U4": [
+              {
+                "global_machine_id": "U4_M8",
+                "base_machine_id": 8,
+                "base_processing_time": 77,
+                "adjusted_processing_time": 77,
+                "unit_processing_cost": 8.96
+              }
+            ],
+            "U2": [
+              {
+                "global_machine_id": "U2_M8",
+                "base_machine_id": 8,
+                "base_processing_time": 77,
+                "adjusted_processing_time": 77,
+                "unit_processing_cost": 8.96
+              }
+            ]
+          }
+        },
+        {
+          "op_id": 4,
+          "op_id_zero_based": 3,
+          "eligible_base_machines": [
+            {
+              "base_machine_id": 2,
+              "base_processing_time": 29
+            }
+          ],
+          "processing_options_by_sru": {
+            "U4": [
+              {
+                "global_machine_id": "U4_M2",
+                "base_machine_id": 2,
+                "base_processing_time": 29,
+                "adjusted_processing_time": 29,
+                "unit_processing_cost": 7.05
+              }
+            ],
+            "U2": [
+              {
+                "global_machine_id": "U2_M2",
+                "base_machine_id": 2,
+                "base_processing_time": 29,
+                "adjusted_processing_time": 29,
+                "unit_processing_cost": 7.05
+              }
+            ]
+          }
+        },
+        {
+          "op_id": 5,
+          "op_id_zero_based": 4,
+          "eligible_base_machines": [
+            {
+              "base_machine_id": 4,
+              "base_processing_time": 58
+            },
+            {
+              "base_machine_id": 5,
+              "base_processing_time": 58
+            }
+          ],
+          "processing_options_by_sru": {
+            "U4": [
+              {
+                "global_machine_id": "U4_M4",
+                "base_machine_id": 4,
+                "base_processing_time": 58,
+                "adjusted_processing_time": 58,
+                "unit_processing_cost": 12.0
+              },
+              {
+                "global_machine_id": "U4_M5",
+                "base_machine_id": 5,
+                "base_processing_time": 58,
+                "adjusted_processing_time": 58,
+                "unit_processing_cost": 8.16
+              }
+            ],
+            "U2": [
+              {
+                "global_machine_id": "U2_M4",
+                "base_machine_id": 4,
+                "base_processing_time": 58,
+                "adjusted_processing_time": 58,
+                "unit_processing_cost": 12.0
+              },
+              {
+                "global_machine_id": "U2_M5",
+                "base_machine_id": 5,
+                "base_processing_time": 58,
+                "adjusted_processing_time": 58,
+                "unit_processing_cost": 8.16
+              }
+            ]
+          }
+        },
+        {
+          "op_id": 6,
+          "op_id_zero_based": 5,
+          "eligible_base_machines": [
+            {
+              "base_machine_id": 6,
+              "base_processing_time": 93
+            },
+            {
+              "base_machine_id": 5,
+              "base_processing_time": 93
+            }
+          ],
+          "processing_options_by_sru": {
+            "U4": [
+              {
+                "global_machine_id": "U4_M6",
+                "base_machine_id": 6,
+                "base_processing_time": 93,
+                "adjusted_processing_time": 93,
+                "unit_processing_cost": 5.1
+              },
+              {
+                "global_machine_id": "U4_M5",
+                "base_machine_id": 5,
+                "base_processing_time": 93,
+                "adjusted_processing_time": 93,
+                "unit_processing_cost": 8.16
+              }
+            ],
+            "U2": [
+              {
+                "global_machine_id": "U2_M6",
+                "base_machine_id": 6,
+                "base_processing_time": 93,
+                "adjusted_processing_time": 93,
+                "unit_processing_cost": 5.1
+              },
+              {
+                "global_machine_id": "U2_M5",
+                "base_machine_id": 5,
+                "base_processing_time": 93,
+                "adjusted_processing_time": 93,
+                "unit_processing_cost": 8.16
+              }
+            ]
+          }
+        },
+        {
+          "op_id": 7,
+          "op_id_zero_based": 6,
+          "eligible_base_machines": [
+            {
+              "base_machine_id": 3,
+              "base_processing_time": 68
+            },
+            {
+              "base_machine_id": 6,
+              "base_processing_time": 68
+            },
+            {
+              "base_machine_id": 9,
+              "base_processing_time": 68
+            }
+          ],
+          "processing_options_by_sru": {
+            "U4": [
+              {
+                "global_machine_id": "U4_M3",
+                "base_machine_id": 3,
+                "base_processing_time": 68,
+                "adjusted_processing_time": 68,
+                "unit_processing_cost": 8.1
+              },
+              {
+                "global_machine_id": "U4_M6",
+                "base_machine_id": 6,
+                "base_processing_time": 68,
+                "adjusted_processing_time": 68,
+                "unit_processing_cost": 5.1
+              },
+              {
+                "global_machine_id": "U4_M9",
+                "base_machine_id": 9,
+                "base_processing_time": 68,
+                "adjusted_processing_time": 68,
+                "unit_processing_cost": 8.23
+              }
+            ],
+            "U2": [
+              {
+                "global_machine_id": "U2_M3",
+                "base_machine_id": 3,
+                "base_processing_time": 68,
+                "adjusted_processing_time": 68,
+                "unit_processing_cost": 8.1
+              },
+              {
+                "global_machine_id": "U2_M6",
+                "base_machine_id": 6,
+                "base_processing_time": 68,
+                "adjusted_processing_time": 68,
+                "unit_processing_cost": 5.1
+              },
+              {
+                "global_machine_id": "U2_M9",
+                "base_machine_id": 9,
+                "base_processing_time": 68,
+                "adjusted_processing_time": 68,
+                "unit_processing_cost": 8.23
+              }
+            ]
+          }
+        },
+        {
+          "op_id": 8,
+          "op_id_zero_based": 7,
+          "eligible_base_machines": [
+            {
+              "base_machine_id": 1,
+              "base_processing_time": 57
+            }
+          ],
+          "processing_options_by_sru": {
+            "U4": [
+              {
+                "global_machine_id": "U4_M1",
+                "base_machine_id": 1,
+                "base_processing_time": 57,
+                "adjusted_processing_time": 57,
+                "unit_processing_cost": 5.0
+              }
+            ],
+            "U2": [
+              {
+                "global_machine_id": "U2_M1",
+                "base_machine_id": 1,
+                "base_processing_time": 57,
+                "adjusted_processing_time": 57,
+                "unit_processing_cost": 5.0
+              }
+            ]
+          }
+        },
+        {
+          "op_id": 9,
+          "op_id_zero_based": 8,
+          "eligible_base_machines": [
+            {
+              "base_machine_id": 9,
+              "base_processing_time": 7
+            },
+            {
+              "base_machine_id": 2,
+              "base_processing_time": 7
+            }
+          ],
+          "processing_options_by_sru": {
+            "U4": [
+              {
+                "global_machine_id": "U4_M9",
+                "base_machine_id": 9,
+                "base_processing_time": 7,
+                "adjusted_processing_time": 7,
+                "unit_processing_cost": 8.23
+              },
+              {
+                "global_machine_id": "U4_M2",
+                "base_machine_id": 2,
+                "base_processing_time": 7,
+                "adjusted_processing_time": 7,
+                "unit_processing_cost": 7.05
+              }
+            ],
+            "U2": [
+              {
+                "global_machine_id": "U2_M9",
+                "base_machine_id": 9,
+                "base_processing_time": 7,
+                "adjusted_processing_time": 7,
+                "unit_processing_cost": 8.23
+              },
+              {
+                "global_machine_id": "U2_M2",
+                "base_machine_id": 2,
+                "base_processing_time": 7,
+                "adjusted_processing_time": 7,
+                "unit_processing_cost": 7.05
+              }
+            ]
+          }
+        },
+        {
+          "op_id": 10,
+          "op_id_zero_based": 9,
+          "eligible_base_machines": [
+            {
+              "base_machine_id": 0,
+              "base_processing_time": 52
+            },
+            {
+              "base_machine_id": 7,
+              "base_processing_time": 52
+            },
+            {
+              "base_machine_id": 5,
+              "base_processing_time": 52
+            }
+          ],
+          "processing_options_by_sru": {
+            "U4": [
+              {
+                "global_machine_id": "U4_M0",
+                "base_machine_id": 0,
+                "base_processing_time": 52,
+                "adjusted_processing_time": 52,
+                "unit_processing_cost": 6.72
+              },
+              {
+                "global_machine_id": "U4_M7",
+                "base_machine_id": 7,
+                "base_processing_time": 52,
+                "adjusted_processing_time": 52,
+                "unit_processing_cost": 7.58
+              },
+              {
+                "global_machine_id": "U4_M5",
+                "base_machine_id": 5,
+                "base_processing_time": 52,
+                "adjusted_processing_time": 52,
+                "unit_processing_cost": 8.16
+              }
+            ],
+            "U2": [
+              {
+                "global_machine_id": "U2_M0",
+                "base_machine_id": 0,
+                "base_processing_time": 52,
+                "adjusted_processing_time": 52,
+                "unit_processing_cost": 6.72
+              },
+              {
+                "global_machine_id": "U2_M7",
+                "base_machine_id": 7,
+                "base_processing_time": 52,
+                "adjusted_processing_time": 52,
+                "unit_processing_cost": 7.58
+              },
+              {
+                "global_machine_id": "U2_M5",
+                "base_machine_id": 5,
+                "base_processing_time": 52,
+                "adjusted_processing_time": 52,
+                "unit_processing_cost": 8.16
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "job_id": 7,
+      "job_id_zero_based": 6,
+      "value_chain": "VC1",
+      "type": "T2",
+      "release_time": 0,
+      "n_operations": 10,
+      "candidate_srus": [
+        "U2",
+        "U4"
+      ],
+      "operations": [
+        {
+          "op_id": 1,
+          "op_id_zero_based": 0,
+          "eligible_base_machines": [
+            {
+              "base_machine_id": 6,
+              "base_processing_time": 87
+            },
+            {
+              "base_machine_id": 1,
+              "base_processing_time": 87
+            }
+          ],
+          "processing_options_by_sru": {
+            "U2": [
+              {
+                "global_machine_id": "U2_M6",
+                "base_machine_id": 6,
+                "base_processing_time": 87,
+                "adjusted_processing_time": 87,
+                "unit_processing_cost": 5.1
+              },
+              {
+                "global_machine_id": "U2_M1",
+                "base_machine_id": 1,
+                "base_processing_time": 87,
+                "adjusted_processing_time": 87,
+                "unit_processing_cost": 5.0
+              }
+            ],
+            "U4": [
+              {
+                "global_machine_id": "U4_M6",
+                "base_machine_id": 6,
+                "base_processing_time": 87,
+                "adjusted_processing_time": 87,
+                "unit_processing_cost": 5.1
+              },
+              {
+                "global_machine_id": "U4_M1",
+                "base_machine_id": 1,
+                "base_processing_time": 87,
+                "adjusted_processing_time": 87,
+                "unit_processing_cost": 5.0
+              }
+            ]
+          }
+        },
+        {
+          "op_id": 2,
+          "op_id_zero_based": 1,
+          "eligible_base_machines": [
+            {
+              "base_machine_id": 1,
+              "base_processing_time": 63
+            },
+            {
+              "base_machine_id": 6,
+              "base_processing_time": 63
+            }
+          ],
+          "processing_options_by_sru": {
+            "U2": [
+              {
+                "global_machine_id": "U2_M1",
+                "base_machine_id": 1,
+                "base_processing_time": 63,
+                "adjusted_processing_time": 63,
+                "unit_processing_cost": 5.0
+              },
+              {
+                "global_machine_id": "U2_M6",
+                "base_machine_id": 6,
+                "base_processing_time": 63,
+                "adjusted_processing_time": 63,
+                "unit_processing_cost": 5.1
+              }
+            ],
+            "U4": [
+              {
+                "global_machine_id": "U4_M1",
+                "base_machine_id": 1,
+                "base_processing_time": 63,
+                "adjusted_processing_time": 63,
+                "unit_processing_cost": 5.0
+              },
+              {
+                "global_machine_id": "U4_M6",
+                "base_machine_id": 6,
+                "base_processing_time": 63,
+                "adjusted_processing_time": 63,
+                "unit_processing_cost": 5.1
+              }
+            ]
+          }
+        },
+        {
+          "op_id": 3,
+          "op_id_zero_based": 2,
+          "eligible_base_machines": [
+            {
+              "base_machine_id": 4,
+              "base_processing_time": 26
+            }
+          ],
+          "processing_options_by_sru": {
+            "U2": [
+              {
+                "global_machine_id": "U2_M4",
+                "base_machine_id": 4,
+                "base_processing_time": 26,
+                "adjusted_processing_time": 26,
+                "unit_processing_cost": 12.0
+              }
+            ],
+            "U4": [
+              {
+                "global_machine_id": "U4_M4",
+                "base_machine_id": 4,
+                "base_processing_time": 26,
+                "adjusted_processing_time": 26,
+                "unit_processing_cost": 12.0
+              }
+            ]
+          }
+        },
+        {
+          "op_id": 4,
+          "op_id_zero_based": 3,
+          "eligible_base_machines": [
+            {
+              "base_machine_id": 5,
+              "base_processing_time": 6
+            },
+            {
+              "base_machine_id": 8,
+              "base_processing_time": 6
+            }
+          ],
+          "processing_options_by_sru": {
+            "U2": [
+              {
+                "global_machine_id": "U2_M5",
+                "base_machine_id": 5,
+                "base_processing_time": 6,
+                "adjusted_processing_time": 6,
+                "unit_processing_cost": 8.16
+              },
+              {
+                "global_machine_id": "U2_M8",
+                "base_machine_id": 8,
+                "base_processing_time": 6,
+                "adjusted_processing_time": 6,
+                "unit_processing_cost": 8.96
+              }
+            ],
+            "U4": [
+              {
+                "global_machine_id": "U4_M5",
+                "base_machine_id": 5,
+                "base_processing_time": 6,
+                "adjusted_processing_time": 6,
+                "unit_processing_cost": 8.16
+              },
+              {
+                "global_machine_id": "U4_M8",
+                "base_machine_id": 8,
+                "base_processing_time": 6,
+                "adjusted_processing_time": 6,
+                "unit_processing_cost": 8.96
+              }
+            ]
+          }
+        },
+        {
+          "op_id": 5,
+          "op_id_zero_based": 4,
+          "eligible_base_machines": [
+            {
+              "base_machine_id": 2,
+              "base_processing_time": 82
+            },
+            {
+              "base_machine_id": 1,
+              "base_processing_time": 82
+            },
+            {
+              "base_machine_id": 8,
+              "base_processing_time": 82
+            }
+          ],
+          "processing_options_by_sru": {
+            "U2": [
+              {
+                "global_machine_id": "U2_M2",
+                "base_machine_id": 2,
+                "base_processing_time": 82,
+                "adjusted_processing_time": 82,
+                "unit_processing_cost": 7.05
+              },
+              {
+                "global_machine_id": "U2_M1",
+                "base_machine_id": 1,
+                "base_processing_time": 82,
+                "adjusted_processing_time": 82,
+                "unit_processing_cost": 5.0
+              },
+              {
+                "global_machine_id": "U2_M8",
+                "base_machine_id": 8,
+                "base_processing_time": 82,
+                "adjusted_processing_time": 82,
+                "unit_processing_cost": 8.96
+              }
+            ],
+            "U4": [
+              {
+                "global_machine_id": "U4_M2",
+                "base_machine_id": 2,
+                "base_processing_time": 82,
+                "adjusted_processing_time": 82,
+                "unit_processing_cost": 7.05
+              },
+              {
+                "global_machine_id": "U4_M1",
+                "base_machine_id": 1,
+                "base_processing_time": 82,
+                "adjusted_processing_time": 82,
+                "unit_processing_cost": 5.0
+              },
+              {
+                "global_machine_id": "U4_M8",
+                "base_machine_id": 8,
+                "base_processing_time": 82,
+                "adjusted_processing_time": 82,
+                "unit_processing_cost": 8.96
+              }
+            ]
+          }
+        },
+        {
+          "op_id": 6,
+          "op_id_zero_based": 5,
+          "eligible_base_machines": [
+            {
+              "base_machine_id": 3,
+              "base_processing_time": 27
+            },
+            {
+              "base_machine_id": 0,
+              "base_processing_time": 27
+            }
+          ],
+          "processing_options_by_sru": {
+            "U2": [
+              {
+                "global_machine_id": "U2_M3",
+                "base_machine_id": 3,
+                "base_processing_time": 27,
+                "adjusted_processing_time": 27,
+                "unit_processing_cost": 8.1
+              },
+              {
+                "global_machine_id": "U2_M0",
+                "base_machine_id": 0,
+                "base_processing_time": 27,
+                "adjusted_processing_time": 27,
+                "unit_processing_cost": 6.72
+              }
+            ],
+            "U4": [
+              {
+                "global_machine_id": "U4_M3",
+                "base_machine_id": 3,
+                "base_processing_time": 27,
+                "adjusted_processing_time": 27,
+                "unit_processing_cost": 8.1
+              },
+              {
+                "global_machine_id": "U4_M0",
+                "base_machine_id": 0,
+                "base_processing_time": 27,
+                "adjusted_processing_time": 27,
+                "unit_processing_cost": 6.72
+              }
+            ]
+          }
+        },
+        {
+          "op_id": 7,
+          "op_id_zero_based": 6,
+          "eligible_base_machines": [
+            {
+              "base_machine_id": 7,
+              "base_processing_time": 56
+            }
+          ],
+          "processing_options_by_sru": {
+            "U2": [
+              {
+                "global_machine_id": "U2_M7",
+                "base_machine_id": 7,
+                "base_processing_time": 56,
+                "adjusted_processing_time": 56,
+                "unit_processing_cost": 7.58
+              }
+            ],
+            "U4": [
+              {
+                "global_machine_id": "U4_M7",
+                "base_machine_id": 7,
+                "base_processing_time": 56,
+                "adjusted_processing_time": 56,
+                "unit_processing_cost": 7.58
+              }
+            ]
+          }
+        },
+        {
+          "op_id": 8,
+          "op_id_zero_based": 7,
+          "eligible_base_machines": [
+            {
+              "base_machine_id": 8,
+              "base_processing_time": 48
+            }
+          ],
+          "processing_options_by_sru": {
+            "U2": [
+              {
+                "global_machine_id": "U2_M8",
+                "base_machine_id": 8,
+                "base_processing_time": 48,
+                "adjusted_processing_time": 48,
+                "unit_processing_cost": 8.96
+              }
+            ],
+            "U4": [
+              {
+                "global_machine_id": "U4_M8",
+                "base_machine_id": 8,
+                "base_processing_time": 48,
+                "adjusted_processing_time": 48,
+                "unit_processing_cost": 8.96
+              }
+            ]
+          }
+        },
+        {
+          "op_id": 9,
+          "op_id_zero_based": 8,
+          "eligible_base_machines": [
+            {
+              "base_machine_id": 9,
+              "base_processing_time": 36
+            },
+            {
+              "base_machine_id": 2,
+              "base_processing_time": 36
+            },
+            {
+              "base_machine_id": 7,
+              "base_processing_time": 36
+            }
+          ],
+          "processing_options_by_sru": {
+            "U2": [
+              {
+                "global_machine_id": "U2_M9",
+                "base_machine_id": 9,
+                "base_processing_time": 36,
+                "adjusted_processing_time": 36,
+                "unit_processing_cost": 8.23
+              },
+              {
+                "global_machine_id": "U2_M2",
+                "base_machine_id": 2,
+                "base_processing_time": 36,
+                "adjusted_processing_time": 36,
+                "unit_processing_cost": 7.05
+              },
+              {
+                "global_machine_id": "U2_M7",
+                "base_machine_id": 7,
+                "base_processing_time": 36,
+                "adjusted_processing_time": 36,
+                "unit_processing_cost": 7.58
+              }
+            ],
+            "U4": [
+              {
+                "global_machine_id": "U4_M9",
+                "base_machine_id": 9,
+                "base_processing_time": 36,
+                "adjusted_processing_time": 36,
+                "unit_processing_cost": 8.23
+              },
+              {
+                "global_machine_id": "U4_M2",
+                "base_machine_id": 2,
+                "base_processing_time": 36,
+                "adjusted_processing_time": 36,
+                "unit_processing_cost": 7.05
+              },
+              {
+                "global_machine_id": "U4_M7",
+                "base_machine_id": 7,
+                "base_processing_time": 36,
+                "adjusted_processing_time": 36,
+                "unit_processing_cost": 7.58
+              }
+            ]
+          }
+        },
+        {
+          "op_id": 10,
+          "op_id_zero_based": 9,
+          "eligible_base_machines": [
+            {
+              "base_machine_id": 0,
+              "base_processing_time": 95
+            }
+          ],
+          "processing_options_by_sru": {
+            "U2": [
+              {
+                "global_machine_id": "U2_M0",
+                "base_machine_id": 0,
+                "base_processing_time": 95,
+                "adjusted_processing_time": 95,
+                "unit_processing_cost": 6.72
+              }
+            ],
+            "U4": [
+              {
+                "global_machine_id": "U4_M0",
+                "base_machine_id": 0,
+                "base_processing_time": 95,
+                "adjusted_processing_time": 95,
+                "unit_processing_cost": 6.72
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "job_id": 8,
+      "job_id_zero_based": 7,
+      "value_chain": "VC2",
+      "type": "T2",
+      "release_time": 0,
+      "n_operations": 10,
+      "candidate_srus": [
+        "U4",
+        "U2"
+      ],
+      "operations": [
+        {
+          "op_id": 1,
+          "op_id_zero_based": 0,
+          "eligible_base_machines": [
+            {
+              "base_machine_id": 0,
+              "base_processing_time": 36
+            },
+            {
+              "base_machine_id": 6,
+              "base_processing_time": 36
+            }
+          ],
+          "processing_options_by_sru": {
+            "U4": [
+              {
+                "global_machine_id": "U4_M0",
+                "base_machine_id": 0,
+                "base_processing_time": 36,
+                "adjusted_processing_time": 36,
+                "unit_processing_cost": 6.72
+              },
+              {
+                "global_machine_id": "U4_M6",
+                "base_machine_id": 6,
+                "base_processing_time": 36,
+                "adjusted_processing_time": 36,
+                "unit_processing_cost": 5.1
+              }
+            ],
+            "U2": [
+              {
+                "global_machine_id": "U2_M0",
+                "base_machine_id": 0,
+                "base_processing_time": 36,
+                "adjusted_processing_time": 36,
+                "unit_processing_cost": 6.72
+              },
+              {
+                "global_machine_id": "U2_M6",
+                "base_machine_id": 6,
+                "base_processing_time": 36,
+                "adjusted_processing_time": 36,
+                "unit_processing_cost": 5.1
+              }
+            ]
+          }
+        },
+        {
+          "op_id": 2,
+          "op_id_zero_based": 1,
+          "eligible_base_machines": [
+            {
+              "base_machine_id": 5,
+              "base_processing_time": 15
+            },
+            {
+              "base_machine_id": 6,
+              "base_processing_time": 15
+            }
+          ],
+          "processing_options_by_sru": {
+            "U4": [
+              {
+                "global_machine_id": "U4_M5",
+                "base_machine_id": 5,
+                "base_processing_time": 15,
+                "adjusted_processing_time": 15,
+                "unit_processing_cost": 8.16
+              },
+              {
+                "global_machine_id": "U4_M6",
+                "base_machine_id": 6,
+                "base_processing_time": 15,
+                "adjusted_processing_time": 15,
+                "unit_processing_cost": 5.1
+              }
+            ],
+            "U2": [
+              {
+                "global_machine_id": "U2_M5",
+                "base_machine_id": 5,
+                "base_processing_time": 15,
+                "adjusted_processing_time": 15,
+                "unit_processing_cost": 8.16
+              },
+              {
+                "global_machine_id": "U2_M6",
+                "base_machine_id": 6,
+                "base_processing_time": 15,
+                "adjusted_processing_time": 15,
+                "unit_processing_cost": 5.1
+              }
+            ]
+          }
+        },
+        {
+          "op_id": 3,
+          "op_id_zero_based": 2,
+          "eligible_base_machines": [
+            {
+              "base_machine_id": 8,
+              "base_processing_time": 41
+            },
+            {
+              "base_machine_id": 0,
+              "base_processing_time": 41
+            },
+            {
+              "base_machine_id": 2,
+              "base_processing_time": 41
+            }
+          ],
+          "processing_options_by_sru": {
+            "U4": [
+              {
+                "global_machine_id": "U4_M8",
+                "base_machine_id": 8,
+                "base_processing_time": 41,
+                "adjusted_processing_time": 41,
+                "unit_processing_cost": 8.96
+              },
+              {
+                "global_machine_id": "U4_M0",
+                "base_machine_id": 0,
+                "base_processing_time": 41,
+                "adjusted_processing_time": 41,
+                "unit_processing_cost": 6.72
+              },
+              {
+                "global_machine_id": "U4_M2",
+                "base_machine_id": 2,
+                "base_processing_time": 41,
+                "adjusted_processing_time": 41,
+                "unit_processing_cost": 7.05
+              }
+            ],
+            "U2": [
+              {
+                "global_machine_id": "U2_M8",
+                "base_machine_id": 8,
+                "base_processing_time": 41,
+                "adjusted_processing_time": 41,
+                "unit_processing_cost": 8.96
+              },
+              {
+                "global_machine_id": "U2_M0",
+                "base_machine_id": 0,
+                "base_processing_time": 41,
+                "adjusted_processing_time": 41,
+                "unit_processing_cost": 6.72
+              },
+              {
+                "global_machine_id": "U2_M2",
+                "base_machine_id": 2,
+                "base_processing_time": 41,
+                "adjusted_processing_time": 41,
+                "unit_processing_cost": 7.05
+              }
+            ]
+          }
+        },
+        {
+          "op_id": 4,
+          "op_id_zero_based": 3,
+          "eligible_base_machines": [
+            {
+              "base_machine_id": 9,
+              "base_processing_time": 78
+            },
+            {
+              "base_machine_id": 5,
+              "base_processing_time": 78
+            }
+          ],
+          "processing_options_by_sru": {
+            "U4": [
+              {
+                "global_machine_id": "U4_M9",
+                "base_machine_id": 9,
+                "base_processing_time": 78,
+                "adjusted_processing_time": 78,
+                "unit_processing_cost": 8.23
+              },
+              {
+                "global_machine_id": "U4_M5",
+                "base_machine_id": 5,
+                "base_processing_time": 78,
+                "adjusted_processing_time": 78,
+                "unit_processing_cost": 8.16
+              }
+            ],
+            "U2": [
+              {
+                "global_machine_id": "U2_M9",
+                "base_machine_id": 9,
+                "base_processing_time": 78,
+                "adjusted_processing_time": 78,
+                "unit_processing_cost": 8.23
+              },
+              {
+                "global_machine_id": "U2_M5",
+                "base_machine_id": 5,
+                "base_processing_time": 78,
+                "adjusted_processing_time": 78,
+                "unit_processing_cost": 8.16
+              }
+            ]
+          }
+        },
+        {
+          "op_id": 5,
+          "op_id_zero_based": 4,
+          "eligible_base_machines": [
+            {
+              "base_machine_id": 3,
+              "base_processing_time": 76
+            },
+            {
+              "base_machine_id": 4,
+              "base_processing_time": 76
+            }
+          ],
+          "processing_options_by_sru": {
+            "U4": [
+              {
+                "global_machine_id": "U4_M3",
+                "base_machine_id": 3,
+                "base_processing_time": 76,
+                "adjusted_processing_time": 76,
+                "unit_processing_cost": 8.1
+              },
+              {
+                "global_machine_id": "U4_M4",
+                "base_machine_id": 4,
+                "base_processing_time": 76,
+                "adjusted_processing_time": 76,
+                "unit_processing_cost": 12.0
+              }
+            ],
+            "U2": [
+              {
+                "global_machine_id": "U2_M3",
+                "base_machine_id": 3,
+                "base_processing_time": 76,
+                "adjusted_processing_time": 76,
+                "unit_processing_cost": 8.1
+              },
+              {
+                "global_machine_id": "U2_M4",
+                "base_machine_id": 4,
+                "base_processing_time": 76,
+                "adjusted_processing_time": 76,
+                "unit_processing_cost": 12.0
+              }
+            ]
+          }
+        },
+        {
+          "op_id": 6,
+          "op_id_zero_based": 5,
+          "eligible_base_machines": [
+            {
+              "base_machine_id": 6,
+              "base_processing_time": 84
+            }
+          ],
+          "processing_options_by_sru": {
+            "U4": [
+              {
+                "global_machine_id": "U4_M6",
+                "base_machine_id": 6,
+                "base_processing_time": 84,
+                "adjusted_processing_time": 84,
+                "unit_processing_cost": 5.1
+              }
+            ],
+            "U2": [
+              {
+                "global_machine_id": "U2_M6",
+                "base_machine_id": 6,
+                "base_processing_time": 84,
+                "adjusted_processing_time": 84,
+                "unit_processing_cost": 5.1
+              }
+            ]
+          }
+        },
+        {
+          "op_id": 7,
+          "op_id_zero_based": 6,
+          "eligible_base_machines": [
+            {
+              "base_machine_id": 4,
+              "base_processing_time": 30
+            }
+          ],
+          "processing_options_by_sru": {
+            "U4": [
+              {
+                "global_machine_id": "U4_M4",
+                "base_machine_id": 4,
+                "base_processing_time": 30,
+                "adjusted_processing_time": 30,
+                "unit_processing_cost": 12.0
+              }
+            ],
+            "U2": [
+              {
+                "global_machine_id": "U2_M4",
+                "base_machine_id": 4,
+                "base_processing_time": 30,
+                "adjusted_processing_time": 30,
+                "unit_processing_cost": 12.0
+              }
+            ]
+          }
+        },
+        {
+          "op_id": 8,
+          "op_id_zero_based": 7,
+          "eligible_base_machines": [
+            {
+              "base_machine_id": 7,
+              "base_processing_time": 76
+            }
+          ],
+          "processing_options_by_sru": {
+            "U4": [
+              {
+                "global_machine_id": "U4_M7",
+                "base_machine_id": 7,
+                "base_processing_time": 76,
+                "adjusted_processing_time": 76,
+                "unit_processing_cost": 7.58
+              }
+            ],
+            "U2": [
+              {
+                "global_machine_id": "U2_M7",
+                "base_machine_id": 7,
+                "base_processing_time": 76,
+                "adjusted_processing_time": 76,
+                "unit_processing_cost": 7.58
+              }
+            ]
+          }
+        },
+        {
+          "op_id": 9,
+          "op_id_zero_based": 8,
+          "eligible_base_machines": [
+            {
+              "base_machine_id": 2,
+              "base_processing_time": 36
+            },
+            {
+              "base_machine_id": 1,
+              "base_processing_time": 36
+            },
+            {
+              "base_machine_id": 4,
+              "base_processing_time": 36
+            }
+          ],
+          "processing_options_by_sru": {
+            "U4": [
+              {
+                "global_machine_id": "U4_M2",
+                "base_machine_id": 2,
+                "base_processing_time": 36,
+                "adjusted_processing_time": 36,
+                "unit_processing_cost": 7.05
+              },
+              {
+                "global_machine_id": "U4_M1",
+                "base_machine_id": 1,
+                "base_processing_time": 36,
+                "adjusted_processing_time": 36,
+                "unit_processing_cost": 5.0
+              },
+              {
+                "global_machine_id": "U4_M4",
+                "base_machine_id": 4,
+                "base_processing_time": 36,
+                "adjusted_processing_time": 36,
+                "unit_processing_cost": 12.0
+              }
+            ],
+            "U2": [
+              {
+                "global_machine_id": "U2_M2",
+                "base_machine_id": 2,
+                "base_processing_time": 36,
+                "adjusted_processing_time": 36,
+                "unit_processing_cost": 7.05
+              },
+              {
+                "global_machine_id": "U2_M1",
+                "base_machine_id": 1,
+                "base_processing_time": 36,
+                "adjusted_processing_time": 36,
+                "unit_processing_cost": 5.0
+              },
+              {
+                "global_machine_id": "U2_M4",
+                "base_machine_id": 4,
+                "base_processing_time": 36,
+                "adjusted_processing_time": 36,
+                "unit_processing_cost": 12.0
+              }
+            ]
+          }
+        },
+        {
+          "op_id": 10,
+          "op_id_zero_based": 9,
+          "eligible_base_machines": [
+            {
+              "base_machine_id": 1,
+              "base_processing_time": 8
+            },
+            {
+              "base_machine_id": 9,
+              "base_processing_time": 8
+            },
+            {
+              "base_machine_id": 7,
+              "base_processing_time": 8
+            }
+          ],
+          "processing_options_by_sru": {
+            "U4": [
+              {
+                "global_machine_id": "U4_M1",
+                "base_machine_id": 1,
+                "base_processing_time": 8,
+                "adjusted_processing_time": 8,
+                "unit_processing_cost": 5.0
+              },
+              {
+                "global_machine_id": "U4_M9",
+                "base_machine_id": 9,
+                "base_processing_time": 8,
+                "adjusted_processing_time": 8,
+                "unit_processing_cost": 8.23
+              },
+              {
+                "global_machine_id": "U4_M7",
+                "base_machine_id": 7,
+                "base_processing_time": 8,
+                "adjusted_processing_time": 8,
+                "unit_processing_cost": 7.58
+              }
+            ],
+            "U2": [
+              {
+                "global_machine_id": "U2_M1",
+                "base_machine_id": 1,
+                "base_processing_time": 8,
+                "adjusted_processing_time": 8,
+                "unit_processing_cost": 5.0
+              },
+              {
+                "global_machine_id": "U2_M9",
+                "base_machine_id": 9,
+                "base_processing_time": 8,
+                "adjusted_processing_time": 8,
+                "unit_processing_cost": 8.23
+              },
+              {
+                "global_machine_id": "U2_M7",
+                "base_machine_id": 7,
+                "base_processing_time": 8,
+                "adjusted_processing_time": 8,
+                "unit_processing_cost": 7.58
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "job_id": 9,
+      "job_id_zero_based": 8,
+      "value_chain": "VC1",
+      "type": "T2",
+      "release_time": 0,
+      "n_operations": 10,
+      "candidate_srus": [
+        "U2",
+        "U4"
+      ],
+      "operations": [
+        {
+          "op_id": 1,
+          "op_id_zero_based": 0,
+          "eligible_base_machines": [
+            {
+              "base_machine_id": 5,
+              "base_processing_time": 88
+            },
+            {
+              "base_machine_id": 1,
+              "base_processing_time": 88
+            },
+            {
+              "base_machine_id": 8,
+              "base_processing_time": 88
+            }
+          ],
+          "processing_options_by_sru": {
+            "U2": [
+              {
+                "global_machine_id": "U2_M5",
+                "base_machine_id": 5,
+                "base_processing_time": 88,
+                "adjusted_processing_time": 88,
+                "unit_processing_cost": 8.16
+              },
+              {
+                "global_machine_id": "U2_M1",
+                "base_machine_id": 1,
+                "base_processing_time": 88,
+                "adjusted_processing_time": 88,
+                "unit_processing_cost": 5.0
+              },
+              {
+                "global_machine_id": "U2_M8",
+                "base_machine_id": 8,
+                "base_processing_time": 88,
+                "adjusted_processing_time": 88,
+                "unit_processing_cost": 8.96
+              }
+            ],
+            "U4": [
+              {
+                "global_machine_id": "U4_M5",
+                "base_machine_id": 5,
+                "base_processing_time": 88,
+                "adjusted_processing_time": 88,
+                "unit_processing_cost": 8.16
+              },
+              {
+                "global_machine_id": "U4_M1",
+                "base_machine_id": 1,
+                "base_processing_time": 88,
+                "adjusted_processing_time": 88,
+                "unit_processing_cost": 5.0
+              },
+              {
+                "global_machine_id": "U4_M8",
+                "base_machine_id": 8,
+                "base_processing_time": 88,
+                "adjusted_processing_time": 88,
+                "unit_processing_cost": 8.96
+              }
+            ]
+          }
+        },
+        {
+          "op_id": 2,
+          "op_id_zero_based": 1,
+          "eligible_base_machines": [
+            {
+              "base_machine_id": 2,
+              "base_processing_time": 81
+            }
+          ],
+          "processing_options_by_sru": {
+            "U2": [
+              {
+                "global_machine_id": "U2_M2",
+                "base_machine_id": 2,
+                "base_processing_time": 81,
+                "adjusted_processing_time": 81,
+                "unit_processing_cost": 7.05
+              }
+            ],
+            "U4": [
+              {
+                "global_machine_id": "U4_M2",
+                "base_machine_id": 2,
+                "base_processing_time": 81,
+                "adjusted_processing_time": 81,
+                "unit_processing_cost": 7.05
+              }
+            ]
+          }
+        },
+        {
+          "op_id": 3,
+          "op_id_zero_based": 2,
+          "eligible_base_machines": [
+            {
+              "base_machine_id": 3,
+              "base_processing_time": 13
+            },
+            {
+              "base_machine_id": 8,
+              "base_processing_time": 13
+            },
+            {
+              "base_machine_id": 9,
+              "base_processing_time": 13
+            }
+          ],
+          "processing_options_by_sru": {
+            "U2": [
+              {
+                "global_machine_id": "U2_M3",
+                "base_machine_id": 3,
+                "base_processing_time": 13,
+                "adjusted_processing_time": 13,
+                "unit_processing_cost": 8.1
+              },
+              {
+                "global_machine_id": "U2_M8",
+                "base_machine_id": 8,
+                "base_processing_time": 13,
+                "adjusted_processing_time": 13,
+                "unit_processing_cost": 8.96
+              },
+              {
+                "global_machine_id": "U2_M9",
+                "base_machine_id": 9,
+                "base_processing_time": 13,
+                "adjusted_processing_time": 13,
+                "unit_processing_cost": 8.23
+              }
+            ],
+            "U4": [
+              {
+                "global_machine_id": "U4_M3",
+                "base_machine_id": 3,
+                "base_processing_time": 13,
+                "adjusted_processing_time": 13,
+                "unit_processing_cost": 8.1
+              },
+              {
+                "global_machine_id": "U4_M8",
+                "base_machine_id": 8,
+                "base_processing_time": 13,
+                "adjusted_processing_time": 13,
+                "unit_processing_cost": 8.96
+              },
+              {
+                "global_machine_id": "U4_M9",
+                "base_machine_id": 9,
+                "base_processing_time": 13,
+                "adjusted_processing_time": 13,
+                "unit_processing_cost": 8.23
+              }
+            ]
+          }
+        },
+        {
+          "op_id": 4,
+          "op_id_zero_based": 3,
+          "eligible_base_machines": [
+            {
+              "base_machine_id": 6,
+              "base_processing_time": 82
+            }
+          ],
+          "processing_options_by_sru": {
+            "U2": [
+              {
+                "global_machine_id": "U2_M6",
+                "base_machine_id": 6,
+                "base_processing_time": 82,
+                "adjusted_processing_time": 82,
+                "unit_processing_cost": 5.1
+              }
+            ],
+            "U4": [
+              {
+                "global_machine_id": "U4_M6",
+                "base_machine_id": 6,
+                "base_processing_time": 82,
+                "adjusted_processing_time": 82,
+                "unit_processing_cost": 5.1
+              }
+            ]
+          }
+        },
+        {
+          "op_id": 5,
+          "op_id_zero_based": 4,
+          "eligible_base_machines": [
+            {
+              "base_machine_id": 4,
+              "base_processing_time": 54
+            },
+            {
+              "base_machine_id": 0,
+              "base_processing_time": 54
+            }
+          ],
+          "processing_options_by_sru": {
+            "U2": [
+              {
+                "global_machine_id": "U2_M4",
+                "base_machine_id": 4,
+                "base_processing_time": 54,
+                "adjusted_processing_time": 54,
+                "unit_processing_cost": 12.0
+              },
+              {
+                "global_machine_id": "U2_M0",
+                "base_machine_id": 0,
+                "base_processing_time": 54,
+                "adjusted_processing_time": 54,
+                "unit_processing_cost": 6.72
+              }
+            ],
+            "U4": [
+              {
+                "global_machine_id": "U4_M4",
+                "base_machine_id": 4,
+                "base_processing_time": 54,
+                "adjusted_processing_time": 54,
+                "unit_processing_cost": 12.0
+              },
+              {
+                "global_machine_id": "U4_M0",
+                "base_machine_id": 0,
+                "base_processing_time": 54,
+                "adjusted_processing_time": 54,
+                "unit_processing_cost": 6.72
+              }
+            ]
+          }
+        },
+        {
+          "op_id": 6,
+          "op_id_zero_based": 5,
+          "eligible_base_machines": [
+            {
+              "base_machine_id": 7,
+              "base_processing_time": 13
+            },
+            {
+              "base_machine_id": 0,
+              "base_processing_time": 13
+            },
+            {
+              "base_machine_id": 8,
+              "base_processing_time": 13
+            }
+          ],
+          "processing_options_by_sru": {
+            "U2": [
+              {
+                "global_machine_id": "U2_M7",
+                "base_machine_id": 7,
+                "base_processing_time": 13,
+                "adjusted_processing_time": 13,
+                "unit_processing_cost": 7.58
+              },
+              {
+                "global_machine_id": "U2_M0",
+                "base_machine_id": 0,
+                "base_processing_time": 13,
+                "adjusted_processing_time": 13,
+                "unit_processing_cost": 6.72
+              },
+              {
+                "global_machine_id": "U2_M8",
+                "base_machine_id": 8,
+                "base_processing_time": 13,
+                "adjusted_processing_time": 13,
+                "unit_processing_cost": 8.96
+              }
+            ],
+            "U4": [
+              {
+                "global_machine_id": "U4_M7",
+                "base_machine_id": 7,
+                "base_processing_time": 13,
+                "adjusted_processing_time": 13,
+                "unit_processing_cost": 7.58
+              },
+              {
+                "global_machine_id": "U4_M0",
+                "base_machine_id": 0,
+                "base_processing_time": 13,
+                "adjusted_processing_time": 13,
+                "unit_processing_cost": 6.72
+              },
+              {
+                "global_machine_id": "U4_M8",
+                "base_machine_id": 8,
+                "base_processing_time": 13,
+                "adjusted_processing_time": 13,
+                "unit_processing_cost": 8.96
+              }
+            ]
+          }
+        },
+        {
+          "op_id": 7,
+          "op_id_zero_based": 6,
+          "eligible_base_machines": [
+            {
+              "base_machine_id": 8,
+              "base_processing_time": 29
+            },
+            {
+              "base_machine_id": 5,
+              "base_processing_time": 29
+            }
+          ],
+          "processing_options_by_sru": {
+            "U2": [
+              {
+                "global_machine_id": "U2_M8",
+                "base_machine_id": 8,
+                "base_processing_time": 29,
+                "adjusted_processing_time": 29,
+                "unit_processing_cost": 8.96
+              },
+              {
+                "global_machine_id": "U2_M5",
+                "base_machine_id": 5,
+                "base_processing_time": 29,
+                "adjusted_processing_time": 29,
+                "unit_processing_cost": 8.16
+              }
+            ],
+            "U4": [
+              {
+                "global_machine_id": "U4_M8",
+                "base_machine_id": 8,
+                "base_processing_time": 29,
+                "adjusted_processing_time": 29,
+                "unit_processing_cost": 8.96
+              },
+              {
+                "global_machine_id": "U4_M5",
+                "base_machine_id": 5,
+                "base_processing_time": 29,
+                "adjusted_processing_time": 29,
+                "unit_processing_cost": 8.16
+              }
+            ]
+          }
+        },
+        {
+          "op_id": 8,
+          "op_id_zero_based": 7,
+          "eligible_base_machines": [
+            {
+              "base_machine_id": 9,
+              "base_processing_time": 40
+            },
+            {
+              "base_machine_id": 1,
+              "base_processing_time": 40
+            }
+          ],
+          "processing_options_by_sru": {
+            "U2": [
+              {
+                "global_machine_id": "U2_M9",
+                "base_machine_id": 9,
+                "base_processing_time": 40,
+                "adjusted_processing_time": 40,
+                "unit_processing_cost": 8.23
+              },
+              {
+                "global_machine_id": "U2_M1",
+                "base_machine_id": 1,
+                "base_processing_time": 40,
+                "adjusted_processing_time": 40,
+                "unit_processing_cost": 5.0
+              }
+            ],
+            "U4": [
+              {
+                "global_machine_id": "U4_M9",
+                "base_machine_id": 9,
+                "base_processing_time": 40,
+                "adjusted_processing_time": 40,
+                "unit_processing_cost": 8.23
+              },
+              {
+                "global_machine_id": "U4_M1",
+                "base_machine_id": 1,
+                "base_processing_time": 40,
+                "adjusted_processing_time": 40,
+                "unit_processing_cost": 5.0
+              }
+            ]
+          }
+        },
+        {
+          "op_id": 9,
+          "op_id_zero_based": 8,
+          "eligible_base_machines": [
+            {
+              "base_machine_id": 1,
+              "base_processing_time": 78
+            }
+          ],
+          "processing_options_by_sru": {
+            "U2": [
+              {
+                "global_machine_id": "U2_M1",
+                "base_machine_id": 1,
+                "base_processing_time": 78,
+                "adjusted_processing_time": 78,
+                "unit_processing_cost": 5.0
+              }
+            ],
+            "U4": [
+              {
+                "global_machine_id": "U4_M1",
+                "base_machine_id": 1,
+                "base_processing_time": 78,
+                "adjusted_processing_time": 78,
+                "unit_processing_cost": 5.0
+              }
+            ]
+          }
+        },
+        {
+          "op_id": 10,
+          "op_id_zero_based": 9,
+          "eligible_base_machines": [
+            {
+              "base_machine_id": 0,
+              "base_processing_time": 75
+            }
+          ],
+          "processing_options_by_sru": {
+            "U2": [
+              {
+                "global_machine_id": "U2_M0",
+                "base_machine_id": 0,
+                "base_processing_time": 75,
+                "adjusted_processing_time": 75,
+                "unit_processing_cost": 6.72
+              }
+            ],
+            "U4": [
+              {
+                "global_machine_id": "U4_M0",
+                "base_machine_id": 0,
+                "base_processing_time": 75,
+                "adjusted_processing_time": 75,
+                "unit_processing_cost": 6.72
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "job_id": 10,
+      "job_id_zero_based": 9,
+      "value_chain": "VC2",
+      "type": "T2",
+      "release_time": 0,
+      "n_operations": 10,
+      "candidate_srus": [
+        "U4",
+        "U2"
+      ],
+      "operations": [
+        {
+          "op_id": 1,
+          "op_id_zero_based": 0,
+          "eligible_base_machines": [
+            {
+              "base_machine_id": 9,
+              "base_processing_time": 88
+            },
+            {
+              "base_machine_id": 0,
+              "base_processing_time": 88
+            },
+            {
+              "base_machine_id": 7,
+              "base_processing_time": 88
+            }
+          ],
+          "processing_options_by_sru": {
+            "U4": [
+              {
+                "global_machine_id": "U4_M9",
+                "base_machine_id": 9,
+                "base_processing_time": 88,
+                "adjusted_processing_time": 88,
+                "unit_processing_cost": 8.23
+              },
+              {
+                "global_machine_id": "U4_M0",
+                "base_machine_id": 0,
+                "base_processing_time": 88,
+                "adjusted_processing_time": 88,
+                "unit_processing_cost": 6.72
+              },
+              {
+                "global_machine_id": "U4_M7",
+                "base_machine_id": 7,
+                "base_processing_time": 88,
+                "adjusted_processing_time": 88,
+                "unit_processing_cost": 7.58
+              }
+            ],
+            "U2": [
+              {
+                "global_machine_id": "U2_M9",
+                "base_machine_id": 9,
+                "base_processing_time": 88,
+                "adjusted_processing_time": 88,
+                "unit_processing_cost": 8.23
+              },
+              {
+                "global_machine_id": "U2_M0",
+                "base_machine_id": 0,
+                "base_processing_time": 88,
+                "adjusted_processing_time": 88,
+                "unit_processing_cost": 6.72
+              },
+              {
+                "global_machine_id": "U2_M7",
+                "base_machine_id": 7,
+                "base_processing_time": 88,
+                "adjusted_processing_time": 88,
+                "unit_processing_cost": 7.58
+              }
+            ]
+          }
+        },
+        {
+          "op_id": 2,
+          "op_id_zero_based": 1,
+          "eligible_base_machines": [
+            {
+              "base_machine_id": 4,
+              "base_processing_time": 54
+            },
+            {
+              "base_machine_id": 0,
+              "base_processing_time": 54
+            },
+            {
+              "base_machine_id": 5,
+              "base_processing_time": 54
+            }
+          ],
+          "processing_options_by_sru": {
+            "U4": [
+              {
+                "global_machine_id": "U4_M4",
+                "base_machine_id": 4,
+                "base_processing_time": 54,
+                "adjusted_processing_time": 54,
+                "unit_processing_cost": 12.0
+              },
+              {
+                "global_machine_id": "U4_M0",
+                "base_machine_id": 0,
+                "base_processing_time": 54,
+                "adjusted_processing_time": 54,
+                "unit_processing_cost": 6.72
+              },
+              {
+                "global_machine_id": "U4_M5",
+                "base_machine_id": 5,
+                "base_processing_time": 54,
+                "adjusted_processing_time": 54,
+                "unit_processing_cost": 8.16
+              }
+            ],
+            "U2": [
+              {
+                "global_machine_id": "U2_M4",
+                "base_machine_id": 4,
+                "base_processing_time": 54,
+                "adjusted_processing_time": 54,
+                "unit_processing_cost": 12.0
+              },
+              {
+                "global_machine_id": "U2_M0",
+                "base_machine_id": 0,
+                "base_processing_time": 54,
+                "adjusted_processing_time": 54,
+                "unit_processing_cost": 6.72
+              },
+              {
+                "global_machine_id": "U2_M5",
+                "base_machine_id": 5,
+                "base_processing_time": 54,
+                "adjusted_processing_time": 54,
+                "unit_processing_cost": 8.16
+              }
+            ]
+          }
+        },
+        {
+          "op_id": 3,
+          "op_id_zero_based": 2,
+          "eligible_base_machines": [
+            {
+              "base_machine_id": 6,
+              "base_processing_time": 64
+            },
+            {
+              "base_machine_id": 9,
+              "base_processing_time": 64
+            }
+          ],
+          "processing_options_by_sru": {
+            "U4": [
+              {
+                "global_machine_id": "U4_M6",
+                "base_machine_id": 6,
+                "base_processing_time": 64,
+                "adjusted_processing_time": 64,
+                "unit_processing_cost": 5.1
+              },
+              {
+                "global_machine_id": "U4_M9",
+                "base_machine_id": 9,
+                "base_processing_time": 64,
+                "adjusted_processing_time": 64,
+                "unit_processing_cost": 8.23
+              }
+            ],
+            "U2": [
+              {
+                "global_machine_id": "U2_M6",
+                "base_machine_id": 6,
+                "base_processing_time": 64,
+                "adjusted_processing_time": 64,
+                "unit_processing_cost": 5.1
+              },
+              {
+                "global_machine_id": "U2_M9",
+                "base_machine_id": 9,
+                "base_processing_time": 64,
+                "adjusted_processing_time": 64,
+                "unit_processing_cost": 8.23
+              }
+            ]
+          }
+        },
+        {
+          "op_id": 4,
+          "op_id_zero_based": 3,
+          "eligible_base_machines": [
+            {
+              "base_machine_id": 7,
+              "base_processing_time": 32
+            }
+          ],
+          "processing_options_by_sru": {
+            "U4": [
+              {
+                "global_machine_id": "U4_M7",
+                "base_machine_id": 7,
+                "base_processing_time": 32,
+                "adjusted_processing_time": 32,
+                "unit_processing_cost": 7.58
+              }
+            ],
+            "U2": [
+              {
+                "global_machine_id": "U2_M7",
+                "base_machine_id": 7,
+                "base_processing_time": 32,
+                "adjusted_processing_time": 32,
+                "unit_processing_cost": 7.58
+              }
+            ]
+          }
+        },
+        {
+          "op_id": 5,
+          "op_id_zero_based": 4,
+          "eligible_base_machines": [
+            {
+              "base_machine_id": 0,
+              "base_processing_time": 52
+            },
+            {
+              "base_machine_id": 3,
+              "base_processing_time": 52
+            }
+          ],
+          "processing_options_by_sru": {
+            "U4": [
+              {
+                "global_machine_id": "U4_M0",
+                "base_machine_id": 0,
+                "base_processing_time": 52,
+                "adjusted_processing_time": 52,
+                "unit_processing_cost": 6.72
+              },
+              {
+                "global_machine_id": "U4_M3",
+                "base_machine_id": 3,
+                "base_processing_time": 52,
+                "adjusted_processing_time": 52,
+                "unit_processing_cost": 8.1
+              }
+            ],
+            "U2": [
+              {
+                "global_machine_id": "U2_M0",
+                "base_machine_id": 0,
+                "base_processing_time": 52,
+                "adjusted_processing_time": 52,
+                "unit_processing_cost": 6.72
+              },
+              {
+                "global_machine_id": "U2_M3",
+                "base_machine_id": 3,
+                "base_processing_time": 52,
+                "adjusted_processing_time": 52,
+                "unit_processing_cost": 8.1
+              }
+            ]
+          }
+        },
+        {
+          "op_id": 6,
+          "op_id_zero_based": 5,
+          "eligible_base_machines": [
+            {
+              "base_machine_id": 2,
+              "base_processing_time": 6
+            },
+            {
+              "base_machine_id": 5,
+              "base_processing_time": 6
+            },
+            {
+              "base_machine_id": 4,
+              "base_processing_time": 6
+            }
+          ],
+          "processing_options_by_sru": {
+            "U4": [
+              {
+                "global_machine_id": "U4_M2",
+                "base_machine_id": 2,
+                "base_processing_time": 6,
+                "adjusted_processing_time": 6,
+                "unit_processing_cost": 7.05
+              },
+              {
+                "global_machine_id": "U4_M5",
+                "base_machine_id": 5,
+                "base_processing_time": 6,
+                "adjusted_processing_time": 6,
+                "unit_processing_cost": 8.16
+              },
+              {
+                "global_machine_id": "U4_M4",
+                "base_machine_id": 4,
+                "base_processing_time": 6,
+                "adjusted_processing_time": 6,
+                "unit_processing_cost": 12.0
+              }
+            ],
+            "U2": [
+              {
+                "global_machine_id": "U2_M2",
+                "base_machine_id": 2,
+                "base_processing_time": 6,
+                "adjusted_processing_time": 6,
+                "unit_processing_cost": 7.05
+              },
+              {
+                "global_machine_id": "U2_M5",
+                "base_machine_id": 5,
+                "base_processing_time": 6,
+                "adjusted_processing_time": 6,
+                "unit_processing_cost": 8.16
+              },
+              {
+                "global_machine_id": "U2_M4",
+                "base_machine_id": 4,
+                "base_processing_time": 6,
+                "adjusted_processing_time": 6,
+                "unit_processing_cost": 12.0
+              }
+            ]
+          }
+        },
+        {
+          "op_id": 7,
+          "op_id_zero_based": 6,
+          "eligible_base_machines": [
+            {
+              "base_machine_id": 8,
+              "base_processing_time": 54
+            }
+          ],
+          "processing_options_by_sru": {
+            "U4": [
+              {
+                "global_machine_id": "U4_M8",
+                "base_machine_id": 8,
+                "base_processing_time": 54,
+                "adjusted_processing_time": 54,
+                "unit_processing_cost": 8.96
+              }
+            ],
+            "U2": [
+              {
+                "global_machine_id": "U2_M8",
+                "base_machine_id": 8,
+                "base_processing_time": 54,
+                "adjusted_processing_time": 54,
+                "unit_processing_cost": 8.96
+              }
+            ]
+          }
+        },
+        {
+          "op_id": 8,
+          "op_id_zero_based": 7,
+          "eligible_base_machines": [
+            {
+              "base_machine_id": 5,
+              "base_processing_time": 82
+            }
+          ],
+          "processing_options_by_sru": {
+            "U4": [
+              {
+                "global_machine_id": "U4_M5",
+                "base_machine_id": 5,
+                "base_processing_time": 82,
+                "adjusted_processing_time": 82,
+                "unit_processing_cost": 8.16
+              }
+            ],
+            "U2": [
+              {
+                "global_machine_id": "U2_M5",
+                "base_machine_id": 5,
+                "base_processing_time": 82,
+                "adjusted_processing_time": 82,
+                "unit_processing_cost": 8.16
+              }
+            ]
+          }
+        },
+        {
+          "op_id": 9,
+          "op_id_zero_based": 8,
+          "eligible_base_machines": [
+            {
+              "base_machine_id": 3,
+              "base_processing_time": 6
+            },
+            {
+              "base_machine_id": 6,
+              "base_processing_time": 6
+            },
+            {
+              "base_machine_id": 4,
+              "base_processing_time": 6
+            }
+          ],
+          "processing_options_by_sru": {
+            "U4": [
+              {
+                "global_machine_id": "U4_M3",
+                "base_machine_id": 3,
+                "base_processing_time": 6,
+                "adjusted_processing_time": 6,
+                "unit_processing_cost": 8.1
+              },
+              {
+                "global_machine_id": "U4_M6",
+                "base_machine_id": 6,
+                "base_processing_time": 6,
+                "adjusted_processing_time": 6,
+                "unit_processing_cost": 5.1
+              },
+              {
+                "global_machine_id": "U4_M4",
+                "base_machine_id": 4,
+                "base_processing_time": 6,
+                "adjusted_processing_time": 6,
+                "unit_processing_cost": 12.0
+              }
+            ],
+            "U2": [
+              {
+                "global_machine_id": "U2_M3",
+                "base_machine_id": 3,
+                "base_processing_time": 6,
+                "adjusted_processing_time": 6,
+                "unit_processing_cost": 8.1
+              },
+              {
+                "global_machine_id": "U2_M6",
+                "base_machine_id": 6,
+                "base_processing_time": 6,
+                "adjusted_processing_time": 6,
+                "unit_processing_cost": 5.1
+              },
+              {
+                "global_machine_id": "U2_M4",
+                "base_machine_id": 4,
+                "base_processing_time": 6,
+                "adjusted_processing_time": 6,
+                "unit_processing_cost": 12.0
+              }
+            ]
+          }
+        },
+        {
+          "op_id": 10,
+          "op_id_zero_based": 9,
+          "eligible_base_machines": [
+            {
+              "base_machine_id": 1,
+              "base_processing_time": 26
+            }
+          ],
+          "processing_options_by_sru": {
+            "U4": [
+              {
+                "global_machine_id": "U4_M1",
+                "base_machine_id": 1,
+                "base_processing_time": 26,
+                "adjusted_processing_time": 26,
+                "unit_processing_cost": 5.0
+              }
+            ],
+            "U2": [
+              {
+                "global_machine_id": "U2_M1",
+                "base_machine_id": 1,
+                "base_processing_time": 26,
+                "adjusted_processing_time": 26,
+                "unit_processing_cost": 5.0
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "srus": [
+    {
+      "id": "U1",
+      "value_chain": "VC1",
+      "type": "T1",
+      "open_to_cross_chain": true,
+      "efficiency_factor": 1.0,
+      "cost_factor": 1.0,
+      "homogeneous_processing_time": true,
+      "homogeneous_processing_cost": true,
+      "machines": [
+        {
+          "local_machine_id": "M0",
+          "global_machine_id": "U1_M0",
+          "base_machine_id": 0,
+          "unit_processing_cost": 6.72
+        },
+        {
+          "local_machine_id": "M1",
+          "global_machine_id": "U1_M1",
+          "base_machine_id": 1,
+          "unit_processing_cost": 5.0
+        },
+        {
+          "local_machine_id": "M2",
+          "global_machine_id": "U1_M2",
+          "base_machine_id": 2,
+          "unit_processing_cost": 7.05
+        },
+        {
+          "local_machine_id": "M3",
+          "global_machine_id": "U1_M3",
+          "base_machine_id": 3,
+          "unit_processing_cost": 8.1
+        },
+        {
+          "local_machine_id": "M4",
+          "global_machine_id": "U1_M4",
+          "base_machine_id": 4,
+          "unit_processing_cost": 12.0
+        },
+        {
+          "local_machine_id": "M5",
+          "global_machine_id": "U1_M5",
+          "base_machine_id": 5,
+          "unit_processing_cost": 8.16
+        },
+        {
+          "local_machine_id": "M6",
+          "global_machine_id": "U1_M6",
+          "base_machine_id": 6,
+          "unit_processing_cost": 5.1
+        },
+        {
+          "local_machine_id": "M7",
+          "global_machine_id": "U1_M7",
+          "base_machine_id": 7,
+          "unit_processing_cost": 7.58
+        },
+        {
+          "local_machine_id": "M8",
+          "global_machine_id": "U1_M8",
+          "base_machine_id": 8,
+          "unit_processing_cost": 8.96
+        },
+        {
+          "local_machine_id": "M9",
+          "global_machine_id": "U1_M9",
+          "base_machine_id": 9,
+          "unit_processing_cost": 8.23
+        }
+      ]
+    },
+    {
+      "id": "U2",
+      "value_chain": "VC1",
+      "type": "T2",
+      "open_to_cross_chain": true,
+      "efficiency_factor": 1.0,
+      "cost_factor": 1.0,
+      "homogeneous_processing_time": true,
+      "homogeneous_processing_cost": true,
+      "machines": [
+        {
+          "local_machine_id": "M0",
+          "global_machine_id": "U2_M0",
+          "base_machine_id": 0,
+          "unit_processing_cost": 6.72
+        },
+        {
+          "local_machine_id": "M1",
+          "global_machine_id": "U2_M1",
+          "base_machine_id": 1,
+          "unit_processing_cost": 5.0
+        },
+        {
+          "local_machine_id": "M2",
+          "global_machine_id": "U2_M2",
+          "base_machine_id": 2,
+          "unit_processing_cost": 7.05
+        },
+        {
+          "local_machine_id": "M3",
+          "global_machine_id": "U2_M3",
+          "base_machine_id": 3,
+          "unit_processing_cost": 8.1
+        },
+        {
+          "local_machine_id": "M4",
+          "global_machine_id": "U2_M4",
+          "base_machine_id": 4,
+          "unit_processing_cost": 12.0
+        },
+        {
+          "local_machine_id": "M5",
+          "global_machine_id": "U2_M5",
+          "base_machine_id": 5,
+          "unit_processing_cost": 8.16
+        },
+        {
+          "local_machine_id": "M6",
+          "global_machine_id": "U2_M6",
+          "base_machine_id": 6,
+          "unit_processing_cost": 5.1
+        },
+        {
+          "local_machine_id": "M7",
+          "global_machine_id": "U2_M7",
+          "base_machine_id": 7,
+          "unit_processing_cost": 7.58
+        },
+        {
+          "local_machine_id": "M8",
+          "global_machine_id": "U2_M8",
+          "base_machine_id": 8,
+          "unit_processing_cost": 8.96
+        },
+        {
+          "local_machine_id": "M9",
+          "global_machine_id": "U2_M9",
+          "base_machine_id": 9,
+          "unit_processing_cost": 8.23
+        }
+      ]
+    },
+    {
+      "id": "U3",
+      "value_chain": "VC2",
+      "type": "T1",
+      "open_to_cross_chain": true,
+      "efficiency_factor": 1.0,
+      "cost_factor": 1.0,
+      "homogeneous_processing_time": true,
+      "homogeneous_processing_cost": true,
+      "machines": [
+        {
+          "local_machine_id": "M0",
+          "global_machine_id": "U3_M0",
+          "base_machine_id": 0,
+          "unit_processing_cost": 6.72
+        },
+        {
+          "local_machine_id": "M1",
+          "global_machine_id": "U3_M1",
+          "base_machine_id": 1,
+          "unit_processing_cost": 5.0
+        },
+        {
+          "local_machine_id": "M2",
+          "global_machine_id": "U3_M2",
+          "base_machine_id": 2,
+          "unit_processing_cost": 7.05
+        },
+        {
+          "local_machine_id": "M3",
+          "global_machine_id": "U3_M3",
+          "base_machine_id": 3,
+          "unit_processing_cost": 8.1
+        },
+        {
+          "local_machine_id": "M4",
+          "global_machine_id": "U3_M4",
+          "base_machine_id": 4,
+          "unit_processing_cost": 12.0
+        },
+        {
+          "local_machine_id": "M5",
+          "global_machine_id": "U3_M5",
+          "base_machine_id": 5,
+          "unit_processing_cost": 8.16
+        },
+        {
+          "local_machine_id": "M6",
+          "global_machine_id": "U3_M6",
+          "base_machine_id": 6,
+          "unit_processing_cost": 5.1
+        },
+        {
+          "local_machine_id": "M7",
+          "global_machine_id": "U3_M7",
+          "base_machine_id": 7,
+          "unit_processing_cost": 7.58
+        },
+        {
+          "local_machine_id": "M8",
+          "global_machine_id": "U3_M8",
+          "base_machine_id": 8,
+          "unit_processing_cost": 8.96
+        },
+        {
+          "local_machine_id": "M9",
+          "global_machine_id": "U3_M9",
+          "base_machine_id": 9,
+          "unit_processing_cost": 8.23
+        }
+      ]
+    },
+    {
+      "id": "U4",
+      "value_chain": "VC2",
+      "type": "T2",
+      "open_to_cross_chain": true,
+      "efficiency_factor": 1.0,
+      "cost_factor": 1.0,
+      "homogeneous_processing_time": true,
+      "homogeneous_processing_cost": true,
+      "machines": [
+        {
+          "local_machine_id": "M0",
+          "global_machine_id": "U4_M0",
+          "base_machine_id": 0,
+          "unit_processing_cost": 6.72
+        },
+        {
+          "local_machine_id": "M1",
+          "global_machine_id": "U4_M1",
+          "base_machine_id": 1,
+          "unit_processing_cost": 5.0
+        },
+        {
+          "local_machine_id": "M2",
+          "global_machine_id": "U4_M2",
+          "base_machine_id": 2,
+          "unit_processing_cost": 7.05
+        },
+        {
+          "local_machine_id": "M3",
+          "global_machine_id": "U4_M3",
+          "base_machine_id": 3,
+          "unit_processing_cost": 8.1
+        },
+        {
+          "local_machine_id": "M4",
+          "global_machine_id": "U4_M4",
+          "base_machine_id": 4,
+          "unit_processing_cost": 12.0
+        },
+        {
+          "local_machine_id": "M5",
+          "global_machine_id": "U4_M5",
+          "base_machine_id": 5,
+          "unit_processing_cost": 8.16
+        },
+        {
+          "local_machine_id": "M6",
+          "global_machine_id": "U4_M6",
+          "base_machine_id": 6,
+          "unit_processing_cost": 5.1
+        },
+        {
+          "local_machine_id": "M7",
+          "global_machine_id": "U4_M7",
+          "base_machine_id": 7,
+          "unit_processing_cost": 7.58
+        },
+        {
+          "local_machine_id": "M8",
+          "global_machine_id": "U4_M8",
+          "base_machine_id": 8,
+          "unit_processing_cost": 8.96
+        },
+        {
+          "local_machine_id": "M9",
+          "global_machine_id": "U4_M9",
+          "base_machine_id": 9,
+          "unit_processing_cost": 8.23
+        }
+      ]
+    }
+  ],
+  "candidate_srus_by_type": {
+    "T1": [
+      "U1",
+      "U3"
+    ],
+    "T2": [
+      "U2",
+      "U4"
+    ]
+  },
+  "job_sru_compatibility": {
+    "J1": {
+      "candidate_srus": [
+        "U1",
+        "U3"
+      ],
+      "intra_chain_srus": [
+        "U1"
+      ],
+      "cross_chain_srus": [
+        "U3"
+      ]
+    },
+    "J2": {
+      "candidate_srus": [
+        "U3",
+        "U1"
+      ],
+      "intra_chain_srus": [
+        "U3"
+      ],
+      "cross_chain_srus": [
+        "U1"
+      ]
+    },
+    "J3": {
+      "candidate_srus": [
+        "U1",
+        "U3"
+      ],
+      "intra_chain_srus": [
+        "U1"
+      ],
+      "cross_chain_srus": [
+        "U3"
+      ]
+    },
+    "J4": {
+      "candidate_srus": [
+        "U3",
+        "U1"
+      ],
+      "intra_chain_srus": [
+        "U3"
+      ],
+      "cross_chain_srus": [
+        "U1"
+      ]
+    },
+    "J5": {
+      "candidate_srus": [
+        "U1",
+        "U3"
+      ],
+      "intra_chain_srus": [
+        "U1"
+      ],
+      "cross_chain_srus": [
+        "U3"
+      ]
+    },
+    "J6": {
+      "candidate_srus": [
+        "U4",
+        "U2"
+      ],
+      "intra_chain_srus": [
+        "U4"
+      ],
+      "cross_chain_srus": [
+        "U2"
+      ]
+    },
+    "J7": {
+      "candidate_srus": [
+        "U2",
+        "U4"
+      ],
+      "intra_chain_srus": [
+        "U2"
+      ],
+      "cross_chain_srus": [
+        "U4"
+      ]
+    },
+    "J8": {
+      "candidate_srus": [
+        "U4",
+        "U2"
+      ],
+      "intra_chain_srus": [
+        "U4"
+      ],
+      "cross_chain_srus": [
+        "U2"
+      ]
+    },
+    "J9": {
+      "candidate_srus": [
+        "U2",
+        "U4"
+      ],
+      "intra_chain_srus": [
+        "U2"
+      ],
+      "cross_chain_srus": [
+        "U4"
+      ]
+    },
+    "J10": {
+      "candidate_srus": [
+        "U4",
+        "U2"
+      ],
+      "intra_chain_srus": [
+        "U4"
+      ],
+      "cross_chain_srus": [
+        "U2"
+      ]
+    }
+  },
+  "transport_time": {
+    "J1": {
+      "U1": 3,
+      "U3": 8
+    },
+    "J2": {
+      "U3": 2,
+      "U1": 9
+    },
+    "J3": {
+      "U1": 3,
+      "U3": 7
+    },
+    "J4": {
+      "U3": 2,
+      "U1": 8
+    },
+    "J5": {
+      "U1": 3,
+      "U3": 9
+    },
+    "J6": {
+      "U4": 2,
+      "U2": 7
+    },
+    "J7": {
+      "U2": 3,
+      "U4": 8
+    },
+    "J8": {
+      "U4": 2,
+      "U2": 9
+    },
+    "J9": {
+      "U2": 3,
+      "U4": 7
+    },
+    "J10": {
+      "U4": 2,
+      "U2": 8
+    }
+  },
+  "transport_cost": {
+    "J1": {
+      "U1": 5.4,
+      "U3": 38.4
+    },
+    "J2": {
+      "U3": 3.6,
+      "U1": 43.2
+    },
+    "J3": {
+      "U1": 5.4,
+      "U3": 33.6
+    },
+    "J4": {
+      "U3": 3.6,
+      "U1": 38.4
+    },
+    "J5": {
+      "U1": 5.4,
+      "U3": 43.2
+    },
+    "J6": {
+      "U4": 3.6,
+      "U2": 33.6
+    },
+    "J7": {
+      "U2": 5.4,
+      "U4": 38.4
+    },
+    "J8": {
+      "U4": 3.6,
+      "U2": 43.2
+    },
+    "J9": {
+      "U2": 5.4,
+      "U4": 33.6
+    },
+    "J10": {
+      "U4": 3.6,
+      "U2": 38.4
+    }
+  },
+  "cross_chain": {
+    "J1": {
+      "U1": {
+        "job_value_chain": "VC1",
+        "sru_value_chain": "VC1",
+        "is_cross_chain": false,
+        "cross_chain_fixed_cost": 0.0,
+        "cross_chain_cost_rate": 0.0,
+        "estimated_cross_chain_cost": 0.0
+      },
+      "U3": {
+        "job_value_chain": "VC1",
+        "sru_value_chain": "VC2",
+        "is_cross_chain": true,
+        "cross_chain_fixed_cost": 200.0,
+        "cross_chain_cost_rate": 0.0,
+        "estimated_cross_chain_cost": 200.0
+      }
+    },
+    "J2": {
+      "U3": {
+        "job_value_chain": "VC2",
+        "sru_value_chain": "VC2",
+        "is_cross_chain": false,
+        "cross_chain_fixed_cost": 0.0,
+        "cross_chain_cost_rate": 0.0,
+        "estimated_cross_chain_cost": 0.0
+      },
+      "U1": {
+        "job_value_chain": "VC2",
+        "sru_value_chain": "VC1",
+        "is_cross_chain": true,
+        "cross_chain_fixed_cost": 200.0,
+        "cross_chain_cost_rate": 0.0,
+        "estimated_cross_chain_cost": 200.0
+      }
+    },
+    "J3": {
+      "U1": {
+        "job_value_chain": "VC1",
+        "sru_value_chain": "VC1",
+        "is_cross_chain": false,
+        "cross_chain_fixed_cost": 0.0,
+        "cross_chain_cost_rate": 0.0,
+        "estimated_cross_chain_cost": 0.0
+      },
+      "U3": {
+        "job_value_chain": "VC1",
+        "sru_value_chain": "VC2",
+        "is_cross_chain": true,
+        "cross_chain_fixed_cost": 200.0,
+        "cross_chain_cost_rate": 0.0,
+        "estimated_cross_chain_cost": 200.0
+      }
+    },
+    "J4": {
+      "U3": {
+        "job_value_chain": "VC2",
+        "sru_value_chain": "VC2",
+        "is_cross_chain": false,
+        "cross_chain_fixed_cost": 0.0,
+        "cross_chain_cost_rate": 0.0,
+        "estimated_cross_chain_cost": 0.0
+      },
+      "U1": {
+        "job_value_chain": "VC2",
+        "sru_value_chain": "VC1",
+        "is_cross_chain": true,
+        "cross_chain_fixed_cost": 200.0,
+        "cross_chain_cost_rate": 0.0,
+        "estimated_cross_chain_cost": 200.0
+      }
+    },
+    "J5": {
+      "U1": {
+        "job_value_chain": "VC1",
+        "sru_value_chain": "VC1",
+        "is_cross_chain": false,
+        "cross_chain_fixed_cost": 0.0,
+        "cross_chain_cost_rate": 0.0,
+        "estimated_cross_chain_cost": 0.0
+      },
+      "U3": {
+        "job_value_chain": "VC1",
+        "sru_value_chain": "VC2",
+        "is_cross_chain": true,
+        "cross_chain_fixed_cost": 200.0,
+        "cross_chain_cost_rate": 0.0,
+        "estimated_cross_chain_cost": 200.0
+      }
+    },
+    "J6": {
+      "U4": {
+        "job_value_chain": "VC2",
+        "sru_value_chain": "VC2",
+        "is_cross_chain": false,
+        "cross_chain_fixed_cost": 0.0,
+        "cross_chain_cost_rate": 0.0,
+        "estimated_cross_chain_cost": 0.0
+      },
+      "U2": {
+        "job_value_chain": "VC2",
+        "sru_value_chain": "VC1",
+        "is_cross_chain": true,
+        "cross_chain_fixed_cost": 200.0,
+        "cross_chain_cost_rate": 0.0,
+        "estimated_cross_chain_cost": 200.0
+      }
+    },
+    "J7": {
+      "U2": {
+        "job_value_chain": "VC1",
+        "sru_value_chain": "VC1",
+        "is_cross_chain": false,
+        "cross_chain_fixed_cost": 0.0,
+        "cross_chain_cost_rate": 0.0,
+        "estimated_cross_chain_cost": 0.0
+      },
+      "U4": {
+        "job_value_chain": "VC1",
+        "sru_value_chain": "VC2",
+        "is_cross_chain": true,
+        "cross_chain_fixed_cost": 200.0,
+        "cross_chain_cost_rate": 0.0,
+        "estimated_cross_chain_cost": 200.0
+      }
+    },
+    "J8": {
+      "U4": {
+        "job_value_chain": "VC2",
+        "sru_value_chain": "VC2",
+        "is_cross_chain": false,
+        "cross_chain_fixed_cost": 0.0,
+        "cross_chain_cost_rate": 0.0,
+        "estimated_cross_chain_cost": 0.0
+      },
+      "U2": {
+        "job_value_chain": "VC2",
+        "sru_value_chain": "VC1",
+        "is_cross_chain": true,
+        "cross_chain_fixed_cost": 200.0,
+        "cross_chain_cost_rate": 0.0,
+        "estimated_cross_chain_cost": 200.0
+      }
+    },
+    "J9": {
+      "U2": {
+        "job_value_chain": "VC1",
+        "sru_value_chain": "VC1",
+        "is_cross_chain": false,
+        "cross_chain_fixed_cost": 0.0,
+        "cross_chain_cost_rate": 0.0,
+        "estimated_cross_chain_cost": 0.0
+      },
+      "U4": {
+        "job_value_chain": "VC1",
+        "sru_value_chain": "VC2",
+        "is_cross_chain": true,
+        "cross_chain_fixed_cost": 200.0,
+        "cross_chain_cost_rate": 0.0,
+        "estimated_cross_chain_cost": 200.0
+      }
+    },
+    "J10": {
+      "U4": {
+        "job_value_chain": "VC2",
+        "sru_value_chain": "VC2",
+        "is_cross_chain": false,
+        "cross_chain_fixed_cost": 0.0,
+        "cross_chain_cost_rate": 0.0,
+        "estimated_cross_chain_cost": 0.0
+      },
+      "U2": {
+        "job_value_chain": "VC2",
+        "sru_value_chain": "VC1",
+        "is_cross_chain": true,
+        "cross_chain_fixed_cost": 200.0,
+        "cross_chain_cost_rate": 0.0,
+        "estimated_cross_chain_cost": 200.0
+      }
+    }
+  },
+  "objectives": [
+    {
+      "id": "total_cost",
+      "sense": "min",
+      "definition": "PC + TC + CFC"
+    },
+    {
+      "id": "makespan",
+      "sense": "min",
+      "definition": "max(C_j + transport_time)"
+    },
+    {
+      "id": "max_sru_load",
+      "sense": "min",
+      "definition": "max(load_u)"
+    }
+  ],
+  "notes": {
+    "source_la_file": "D:/code/recode/vc-sm_dfjsp/sm_dfjsp/data/la/la19.json",
+    "static_orders_only": true,
+    "all_release_time_zero": true,
+    "job_single_sru_hard_constraint": true,
+    "operations_keep_original_order": true,
+    "all_srus_open_to_cross_chain": true,
+    "cross_chain_allowed_is_experiment_mode": true,
+    "processing_time_rule": "adjusted_processing_time equals original LA processing time for every SRU.",
+    "processing_cost_rule": "unit_processing_cost depends only on base_machine_id and is identical across all SRUs.",
+    "machine_cost_rule": "Machine cost is inverse-normalized from the source LA instance mean processing time to [5.0, 12.0], rounded to 2 decimals.",
+    "local_transport_rule": "transport_time = 2 + job_id % 2; transport_unit_cost = 1.8.",
+    "cross_chain_penalty_rule": "Cross-chain penalties are symmetric by unordered value-chain pair.",
+    "symmetric_cross_chain_penalty_by_vc_pair": {
+      "VC1-VC2": {
+        "cross_chain_fixed_cost": 200.0,
+        "cross_chain_cost_rate": 0.0,
+        "transport_time_base": 7,
+        "transport_unit_cost": 4.8
+      }
+    }
+  }
+}

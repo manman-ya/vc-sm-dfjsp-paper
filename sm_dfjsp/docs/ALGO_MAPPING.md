@@ -1,3 +1,5 @@
+> Current project rule: cross-chain penalty adds fixed cross-chain cost only; `cross_chain_cost_rate` is kept for compatibility and is always 0. Historical variable-cost notes below are superseded.
+
 # SM-DFJSP EDA-TS 算法映射文档
 
 ## 1. 范围

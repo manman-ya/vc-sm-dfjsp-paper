@@ -71,20 +71,47 @@ def get_non_dominated_indices(objs: Sequence[ObjPair]) -> List[int]:
     return fronts[0] if fronts else []
 
 
+def unique_by_objective(items: Iterable[Tuple[ObjPair, object]]) -> List[Tuple[ObjPair, object]]:
+    """Deduplicate entries by objective pair, keeping the first representative."""
+    seen = set()
+    unique: List[Tuple[ObjPair, object]] = []
+    for obj, payload in items:
+        key = (float(obj[0]), float(obj[1]))
+        if key in seen:
+            continue
+        seen.add(key)
+        unique.append(((float(obj[0]), float(obj[1])), payload))
+    return unique
+
+
+def _truncate_by_crowding(
+    items: Sequence[Tuple[ObjPair, object]],
+    max_size: int,
+) -> List[Tuple[ObjPair, object]]:
+    """Keep a spread-preserving subset by crowding distance."""
+    if len(items) <= max_size:
+        return list(items)
+    objs = [x[0] for x in items]
+    front = list(range(len(items)))
+    distances = crowding_distance(objs, front)
+    ranked = sorted(zip(range(len(items)), distances), key=lambda x: x[1], reverse=True)
+    keep = sorted(i for i, _ in ranked[:max_size])
+    return [items[i] for i in keep]
+
+
 def merge_non_dominated(
     base: Iterable[Tuple[ObjPair, object]],
     incoming: Iterable[Tuple[ObjPair, object]],
     max_size: int | None = None,
 ) -> List[Tuple[ObjPair, object]]:
     """Merge two pools and keep only non-dominated entries."""
-    merged = list(base) + list(incoming)
+    merged = unique_by_objective(list(base) + list(incoming))
     if not merged:
         return []
     objs = [item[0] for item in merged]
     nd = get_non_dominated_indices(objs)
-    result = [merged[i] for i in nd]
+    result = unique_by_objective(merged[i] for i in nd)
     if max_size is not None and len(result) > max_size:
-        # Keep smallest cost first when truncation is needed.
-        result = sorted(result, key=lambda x: (x[0][0], x[0][1]))[:max_size]
+        result = _truncate_by_crowding(result, max_size)
     return result
 

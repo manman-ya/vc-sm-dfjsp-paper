@@ -1,5 +1,21 @@
 from __future__ import annotations
 
+"""Plain EDA-TS 算法实现。
+
+这是不含 MVC 专用价值链机制的 EDA-TS 基线版本，主要用于复现和消融对比。
+算法思想：
+1. 使用三层概率矩阵生成四层编码个体。
+2. 用非支配排序选择精英，更新概率矩阵。
+3. 可选地维护历史非支配记忆池。
+4. 可选地对非支配解做禁忌搜索强化。
+
+编码含义：
+- UA: 工件到 SRU 的分配。
+- OS: 各类型工件的工序顺序 token 序列。
+- OP: 由 UA+OS 派生出来的 SRU 工序队列。
+- MS: 每个 SRU 队列中各工序的机器选择。
+"""
+
 import json
 import math
 import time
@@ -25,14 +41,21 @@ from smdfjsp.model.evaluator import evaluate_individual
 
 @dataclass
 class EDATSConfig:
+    """Plain EDA-TS 的参数配置。"""
+
     popsize: int = 50
+    # 最大迭代次数；运行还受 time_limit_s 限制。
     max_iter: int = 100
     time_limit_s: float = 100.0
+    # 三类概率矩阵的学习率。
     alpha: float = 0.5  # PMA lr
     beta: float = 0.5  # PMS lr
     gamma: float = 0.5  # PMM lr
+    # 每代用于概率更新的精英比例。
     mu: float = 0.1  # elite rate
+    # 禁忌搜索中长期记忆的惩罚系数。
     epsilon: float = 0.008  # penalty factor
+    # 每代禁忌搜索起点数/局部步数相关参数。
     tmax: int = 10  # TS starts per generation
     nd_pool_max: int = 300
     seed: int = 42
@@ -46,12 +69,16 @@ class EDATSConfig:
 
 @dataclass
 class RunResult:
+    """Plain EDA-TS 的运行结果。"""
+
     nd_solutions: List[EncodedIndividual]
     history: List[Dict[str, float]]
     trace_file: Optional[str] = None
 
 
 class EDATS:
+    """Plain EDA-TS 求解器。"""
+
     def __init__(self, instance: SMDFJSPInstance, config: EDATSConfig):
         self.instance = instance
         self.cfg = config
@@ -61,6 +88,7 @@ class EDATS:
         self.sru_map = instance.sru_map()
         self.jobs_by_type = instance.jobs_by_type()
         self.srus_by_type = instance.srus_by_type()
+        # 每个工件可分配的 SRU 集合，后续 PMA/UA 采样都基于这个集合。
         self.compatible_srus = build_compatible_sru_map(instance, self.option_index)
         self._init_probability_matrices()
         self._trace_file: Optional[Path] = None
@@ -72,6 +100,8 @@ class EDATS:
 
     @staticmethod
     def _copy_individual(ind: EncodedIndividual) -> EncodedIndividual:
+        """复制个体的四层编码和 aux 元数据，避免邻域操作污染原个体。"""
+
         return EncodedIndividual(
             ua=dict(ind.ua),
             os={k: list(v) for k, v in ind.os.items()},
@@ -82,6 +112,8 @@ class EDATS:
 
     @staticmethod
     def _entropy(values: np.ndarray) -> float:
+        """计算概率向量熵，用于 trace 中观察概率模型是否过早收敛。"""
+
         if values.size == 0:
             return 0.0
         arr = values.astype(float)
@@ -91,6 +123,8 @@ class EDATS:
         return float(-(arr * np.log(arr)).sum())
 
     def _sample_by_cumulative(self, values: Sequence[int], probs: np.ndarray, theta_max: float = 1.0) -> int:
+        """按累积分布轮盘赌采样一个离散值。"""
+
         total = float(probs.sum())
         if not values:
             raise ValueError("Cannot sample from an empty sequence")
@@ -104,6 +138,8 @@ class EDATS:
         return int(values[-1])
 
     def _trace_snapshot(self, it: int, en_size: int, nd_size: int) -> None:
+        """按配置输出概率矩阵快照，便于调试 EDA 学习过程。"""
+
         if not self.cfg.trace_enabled:
             return
         every = max(1, int(self.cfg.trace_every))
@@ -149,6 +185,13 @@ class EDATS:
                 f.write(line + "\n")
 
     def _init_probability_matrices(self) -> None:
+        """初始化 PMA/PMS/PMM 三类概率矩阵。
+
+        PMA 对应 UA 层，学习“工件分配到哪个 SRU”。
+        PMS 对应 OS 层，学习“工件 token 更倾向出现在哪些位置”。
+        PMM 对应 MS 层，学习“某工件工序在某 SRU 上选择哪台机器”。
+        """
+
         # PMA[x][job_id] -> probabilities over compatible sru ids for this job
         self.pma: Dict[int, Dict[int, np.ndarray]] = {}
         self.pma_srus: Dict[int, List[int]] = {}
@@ -186,6 +229,8 @@ class EDATS:
                     self.pmm[key] = np.ones(len(machines), dtype=float) / len(machines)
 
     def _sample_ua(self) -> Dict[int, int]:
+        """从 PMA 中采样 UA 层。"""
+
         ua: Dict[int, int] = {}
         for t, jobs in self.jobs_by_type.items():
             for j in jobs:
@@ -195,6 +240,8 @@ class EDATS:
         return ua
 
     def _md_ua(self) -> Dict[int, int]:
+        """最小运输时间启发式 UA，用于多源种群生成。"""
+
         ua: Dict[int, int] = {}
         for job in self.instance.jobs:
             candidates = self.compatible_srus.get(job.job_id, [])
@@ -205,6 +252,12 @@ class EDATS:
         return ua
 
     def _sample_os(self) -> Dict[int, List[int]]:
+        """从 PMS 中采样 OS 层。
+
+        每个工件 token 需要出现等于其工序数的次数。
+        采样过程逐步占用位置，最后补齐未填位置，保证 OS 编码合法。
+        """
+
         os_layer: Dict[int, List[int]] = {}
         for t, jobs in self.jobs_by_type.items():
             kx = self.kx[t]
@@ -245,6 +298,8 @@ class EDATS:
         return os_layer
 
     def _sample_ms(self, op_layer: Dict[int, List[Tuple[int, int]]]) -> Dict[int, List[int]]:
+        """从 PMM 中采样 MS 层。"""
+
         ms: Dict[int, List[int]] = {}
         for sru_id, seq in op_layer.items():
             vec: List[int] = []
@@ -262,7 +317,8 @@ class EDATS:
         return ms
 
     def _mc_ms(self, op_layer: Dict[int, List[Tuple[int, int]]]) -> Dict[int, List[int]]:
-        """Choose machine with minimum processing completion cost (pt * cp)."""
+        """选择加工成本最低的机器，成本近似为 processing_time * cost_rate。"""
+
         ms: Dict[int, List[int]] = {}
         for sru_id, seq in op_layer.items():
             vec: List[int] = []
@@ -274,7 +330,8 @@ class EDATS:
         return ms
 
     def _mct_ms(self, ua: Dict[int, int], op_layer: Dict[int, List[Tuple[int, int]]]) -> Dict[int, List[int]]:
-        """Greedy choose machine to minimize projected completion time."""
+        """贪心选择预计完工时间最早的机器。"""
+
         ms: Dict[int, List[int]] = {}
         machine_ready: Dict[Tuple[int, int], float] = {}
         job_ready: Dict[int, float] = {j.job_id: 0.0 for j in self.instance.jobs}
@@ -297,6 +354,14 @@ class EDATS:
         return ms
 
     def _build_individual(self) -> EncodedIndividual:
+        """构造一个新个体。
+
+        开启多源种群时：
+        - UA 80% 来自 PMA，20% 来自最小运输时间启发式。
+        - MS 60% 来自 PMM，20% 成本优先，20% 完工时间优先。
+        这种混合能在 EDA 学习之外保留启发式探索能力。
+        """
+
         if self.cfg.use_multi_population:
             # UA: Sampling 80%, MD 20%
             ua = self._sample_ua() if self.rng.py_rng.random() < 0.8 else self._md_ua()
@@ -320,12 +385,16 @@ class EDATS:
 
     @staticmethod
     def _evaluate_population(instance: SMDFJSPInstance, pop: List[EncodedIndividual]) -> None:
+        """批量评价种群，并把目标值/可行性写回个体。"""
+
         for ind in pop:
             result = evaluate_individual(instance, ind)
             ind.objectives = result.objectives
             ind.feasible = result.feasible
 
     def _select_elite(self, pop: List[EncodedIndividual], elite_size: int) -> List[EncodedIndividual]:
+        """使用非支配排序和拥挤距离选择精英学习集。"""
+
         objs = [ind.objectives for ind in pop]  # type: ignore[list-item]
         fronts = fast_non_dominated_sort(objs)  # type: ignore[arg-type]
         selected: List[EncodedIndividual] = []
@@ -340,7 +409,38 @@ class EDATS:
                 break
         return selected
 
+    @staticmethod
+    def _rank_by_front_and_crowding(objs: Sequence[ObjPair]) -> List[int]:
+        """按 Pareto 层级和拥挤距离排序候选。"""
+
+        fronts = fast_non_dominated_sort(objs)
+        ranked: List[int] = []
+        for front in fronts:
+            distances = crowding_distance(objs, front)
+            pairs = sorted(zip(front, distances), key=lambda x: x[1], reverse=True)
+            ranked.extend(i for i, _ in pairs)
+        return ranked
+
+    def _select_ts_seeds(
+        self,
+        pool: Sequence[Tuple[ObjPair, EncodedIndividual]],
+        count: int,
+    ) -> List[EncodedIndividual]:
+        """从非支配池的稀疏区域选择禁忌搜索起点。"""
+
+        if not pool or count <= 0:
+            return []
+        objs = [x[0] for x in pool]
+        ranked = self._rank_by_front_and_crowding(objs)
+        return [pool[i][1] for i in ranked[: min(count, len(ranked))]]
+
     def _update_probability_matrices(self, en: List[EncodedIndividual]) -> None:
+        """用精英集/记忆池更新 PMA/PMS/PMM。
+
+        更新采用指数平滑：新矩阵 = 旧矩阵保留项 + 精英频率学习项。
+        这样既能学习优秀解的结构，也能保留一定随机探索概率。
+        """
+
         # PMA
         for t, jobs in self.jobs_by_type.items():
             for j in jobs:
@@ -400,7 +500,8 @@ class EDATS:
             self.pmm[key] /= self.pmm[key].sum()
 
     def _neighbor_structure_i(self, ind: EncodedIndividual) -> List[EncodedIndividual]:
-        """Job re-assignment among same-type SRUs."""
+        """N1：在同类型兼容 SRU 之间重新分配工件。"""
+
         neighbors: List[EncodedIndividual] = []
         for t, jobs in self.jobs_by_type.items():
             candidates = jobs[:]
@@ -428,7 +529,8 @@ class EDATS:
         return neighbors
 
     def _neighbor_structure_ii(self, ind: EncodedIndividual) -> List[EncodedIndividual]:
-        """Insert move in OS."""
+        """N2：OS 插入移动，改变工件 token 在序列中的位置。"""
+
         neighbors: List[EncodedIndividual] = []
         for t, vec in ind.os.items():
             if len(vec) < 2:
@@ -461,7 +563,8 @@ class EDATS:
         return neighbors
 
     def _neighbor_structure_iii(self, ind: EncodedIndividual) -> List[EncodedIndividual]:
-        """Machine replacement in MS."""
+        """N3：MS 机器替换，给某道工序换另一台兼容机器。"""
+
         neighbors: List[EncodedIndividual] = []
         for sru_id, seq in ind.op.items():
             if not seq:
@@ -492,10 +595,17 @@ class EDATS:
         return neighbors
 
     def _penalized(self, obj: ObjPair, freq: int) -> ObjPair:
+        """对重复导致变差的移动施加长期记忆惩罚。"""
+
         return (obj[0] + self.cfg.epsilon * obj[0] * freq, obj[1] + self.cfg.epsilon * obj[1] * freq)
 
     @staticmethod
     def _build_tabu_key(ind: EncodedIndividual) -> Optional[Tuple]:
+        """构造禁忌表 key。
+
+        当前只对 OS 插入移动建立显式禁忌，避免相同插入移动短期反复出现。
+        """
+
         mk = str(ind.aux.get("move_kind", ""))
         if mk == "N2":
             return (
@@ -508,11 +618,21 @@ class EDATS:
         return None
 
     def _tabu_search(self, initial: EncodedIndividual) -> EncodedIndividual:
+        """从一个初始解出发执行禁忌搜索强化。
+
+        每一步生成 N1/N2/N3 三类邻居，评价后按非支配排序选择候选。
+        禁忌表用于避免短期循环，长期记忆用于惩罚反复导致变差的 SRU/机器选择。
+        搜索结束后返回局部非支配档案中排序最靠前的个体。
+        """
+
         current = initial
         current_eval = evaluate_individual(self.instance, current)
         current.objectives = current_eval.objectives
         best = current
         best_obj = current.objectives
+        local_nd: List[Tuple[ObjPair, EncodedIndividual]] = []
+        if current.objectives is not None:
+            local_nd = merge_non_dominated([], [(current.objectives, current)])
 
         t_list: List[Tuple] = []
         lmls: Dict[Tuple[int, int], int] = {}
@@ -520,6 +640,7 @@ class EDATS:
         t_max_len = max(1, sum(min(5, self.kx[t]) for t in self.kx))
 
         for _ in range(max(1, self.cfg.tmax)):
+            # 生成三类局部邻域并统一评价。
             n1 = self._neighbor_structure_i(current)
             n2 = self._neighbor_structure_ii(current)
             n3 = self._neighbor_structure_iii(current)
@@ -530,6 +651,7 @@ class EDATS:
 
             scored: List[Tuple[ObjPair, EncodedIndividual]] = []
             for nb in neighbors:
+                # 如果候选比 current 差，则根据长期记忆频率增加惩罚目标。
                 obj = nb.objectives  # type: ignore[assignment]
                 pen = 0
                 mk = str(nb.aux.get("move_kind", ""))
@@ -547,9 +669,15 @@ class EDATS:
                         0,
                     )
                 scored.append((self._penalized(obj, pen), nb))
-            scored.sort(key=lambda x: (x[0][0], x[0][1]))
+            local_nd = merge_non_dominated(
+                local_nd,
+                [(nb.objectives, nb) for nb in neighbors if nb.objectives is not None],
+                max_size=max(1, self.cfg.nd_pool_max),
+            )
+            candidate_order = self._rank_by_front_and_crowding([x[0] for x in scored])
             chosen = None
-            for _, cand in scored:
+            for cand_idx in candidate_order:
+                cand = scored[cand_idx][1]
                 tabu_key = self._build_tabu_key(cand)
                 # Aspiration criterion: allow tabu move if it improves current best.
                 improves_best = dominates(cand.objectives, best_obj)  # type: ignore[arg-type]
@@ -564,7 +692,7 @@ class EDATS:
                             t_list.pop(0)
                     break
             if chosen is None:
-                chosen = scored[0][1]
+                chosen = scored[candidate_order[0]][1]
             # Update long-memory frequencies by neighborhood move type.
             mk = str(chosen.aux.get("move_kind", ""))
             if mk == "N1":
@@ -583,9 +711,23 @@ class EDATS:
             if dominates(current.objectives, best_obj):  # type: ignore[arg-type]
                 best = current
                 best_obj = current.objectives
+        if local_nd:
+            local_objs = [x[0] for x in local_nd]
+            ranked_local = self._rank_by_front_and_crowding(local_objs)
+            return local_nd[ranked_local[0]][1]
         return best
 
     def run(self) -> RunResult:
+        """执行 Plain EDA-TS 主循环。
+
+        流程：
+        1. 初始化种群并评价。
+        2. 维护非支配记忆池。
+        3. 每代选择精英并更新概率矩阵。
+        4. 采样新种群，必要时做禁忌搜索强化。
+        5. 用非支配排序和拥挤距离做环境选择。
+        """
+
         start = time.time()
         pop = [self._build_individual() for _ in range(self.cfg.popsize)]
         self._evaluate_population(self.instance, pop)
@@ -599,10 +741,12 @@ class EDATS:
         history: List[Dict[str, float]] = []
 
         for it in range(1, self.cfg.max_iter + 1):
+            # 时间预算优先于代数预算。
             if (time.time() - start) >= self.cfg.time_limit_s:
                 break
             elite_size = max(1, int(self.cfg.mu * self.cfg.popsize))
             elites = self._select_elite(pop, elite_size)
+            # 学习集由当前精英和历史非支配记忆共同组成。
             en = elites + ([x[1] for x in nd_pool] if self.cfg.use_nd_memory else [])
             self._update_probability_matrices(en)
             self._trace_snapshot(it=it, en_size=len(en), nd_size=len(nd_pool))
@@ -624,11 +768,10 @@ class EDATS:
                     max_size=self.cfg.nd_pool_max,
                 )
 
-            # TS component starts Tmax times.
+            # TS component starts from sparse regions of the non-dominated pool.
             ts_pop: List[EncodedIndividual] = []
             if self.cfg.use_ts and ts_seed_pool:
-                for _ in range(self.cfg.tmax):
-                    seed_ind = self.rng.py_rng.choice(ts_seed_pool)[1]
+                for seed_ind in self._select_ts_seeds(ts_seed_pool, self.cfg.tmax):
                     improved = self._tabu_search(seed_ind)
                     ev = evaluate_individual(self.instance, improved)
                     improved.objectives = ev.objectives

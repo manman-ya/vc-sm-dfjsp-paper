@@ -1,3 +1,5 @@
+> Current project rule: cross-chain penalty adds fixed cross-chain cost only; `cross_chain_cost_rate` is kept for compatibility and is always 0. Historical variable-cost notes below are superseded.
+
 # EDA-TS 复现说明文档（算法对齐增强版，2026-05-11）
 
 ## 1. 结论

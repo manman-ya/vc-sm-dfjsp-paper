@@ -1,3 +1,5 @@
+> Current project rule: cross-chain penalty adds fixed cross-chain cost only; `cross_chain_cost_rate` is kept for compatibility and is always 0. Historical variable-cost notes below are superseded.
+
 # 构造FJSP实例扩展
 
 **User:** Anonymous  

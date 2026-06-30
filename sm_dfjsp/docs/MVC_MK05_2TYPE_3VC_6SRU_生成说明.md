@@ -1,3 +1,5 @@
+> Current project rule: cross-chain penalty adds fixed cross-chain cost only; `cross_chain_cost_rate` is kept for compatibility and is always 0.
+
 # MK05 MVC-SM-DFJSP 2类型实例生成说明
 
 本文档说明 `data/mvc_sm_dfjsp/mk05_mvc_3vc_6sru.json` 的生成逻辑。该文件由 `scripts/build_mk05_mvc_instance.py` 从 `data/mk05.txt` 构造得到。
@@ -48,6 +50,8 @@
 | `U5` | `VC3` | `T2` | `0.92` | `1.15` |
 | `U6` | `VC3` | `T1` | `1.10` | `0.90` |
 
+当前版本中，6 个 SRU 都显式设置为 `open_to_cross_chain = true`，即都允许被其他价值链的同类型订单跨链调用。
+
 每个 SRU 都复制基础机器 `M0..M3`，生成全局机器编号，例如 `U1_M0`、`U1_M1`。
 
 ## 候选 SRU 规则
@@ -62,7 +66,7 @@
 订单的 `candidate_srus` 为其类型对应的全部 SRU。然后再按订单所属价值链拆分：
 
 - `intra_chain_srus`：候选 SRU 中与订单同价值链的 SRU。
-- `cross_chain_srus`：候选 SRU 中与订单不同价值链的 SRU。
+- `cross_chain_srus`：候选 SRU 中与订单不同价值链且 `open_to_cross_chain=true` 的 SRU。
 
 由于每条价值链都有一个 `T1` SRU 和一个 `T2` SRU，因此所有订单都满足：
 
@@ -121,7 +125,7 @@ transport_cost = transport_time * 3.0
 
 ```text
 cross_chain_fixed_cost = 20.0
-cross_chain_cost_rate = 0.05
+cross_chain_cost_rate = 0.0
 estimated_cross_chain_cost = 20.0 + 0.05 * estimated_processing_cost
 ```
 

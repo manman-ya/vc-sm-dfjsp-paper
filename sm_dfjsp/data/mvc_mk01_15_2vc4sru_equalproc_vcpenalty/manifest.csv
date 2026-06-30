@@ -1,0 +1,16 @@
+instance,source_instance,jobs,base_machines,value_chains,types,srus,ops,seed,file
+mk01_mvc_2vc_2type_4sru_equalproc_vcpenalty,mk01,10,6,2,2,4,55,20260442,D:/code/recode/vc-sm_dfjsp/sm_dfjsp/data/mvc_mk01_15_2vc4sru_equalproc_vcpenalty/mk01_mvc_2vc_2type_4sru_equalproc_vcpenalty.json
+mk02_mvc_2vc_2type_4sru_equalproc_vcpenalty,mk02,10,6,2,2,4,58,20260442,D:/code/recode/vc-sm_dfjsp/sm_dfjsp/data/mvc_mk01_15_2vc4sru_equalproc_vcpenalty/mk02_mvc_2vc_2type_4sru_equalproc_vcpenalty.json
+mk03_mvc_2vc_2type_4sru_equalproc_vcpenalty,mk03,15,8,2,2,4,150,20260442,D:/code/recode/vc-sm_dfjsp/sm_dfjsp/data/mvc_mk01_15_2vc4sru_equalproc_vcpenalty/mk03_mvc_2vc_2type_4sru_equalproc_vcpenalty.json
+mk04_mvc_2vc_2type_4sru_equalproc_vcpenalty,mk04,15,8,2,2,4,90,20260442,D:/code/recode/vc-sm_dfjsp/sm_dfjsp/data/mvc_mk01_15_2vc4sru_equalproc_vcpenalty/mk04_mvc_2vc_2type_4sru_equalproc_vcpenalty.json
+mk05_mvc_2vc_2type_4sru_equalproc_vcpenalty,mk05,15,4,2,2,4,106,20260442,D:/code/recode/vc-sm_dfjsp/sm_dfjsp/data/mvc_mk01_15_2vc4sru_equalproc_vcpenalty/mk05_mvc_2vc_2type_4sru_equalproc_vcpenalty.json
+mk06_mvc_2vc_2type_4sru_equalproc_vcpenalty,mk06,10,10,2,2,4,150,20260442,D:/code/recode/vc-sm_dfjsp/sm_dfjsp/data/mvc_mk01_15_2vc4sru_equalproc_vcpenalty/mk06_mvc_2vc_2type_4sru_equalproc_vcpenalty.json
+mk07_mvc_2vc_2type_4sru_equalproc_vcpenalty,mk07,20,5,2,2,4,100,20260442,D:/code/recode/vc-sm_dfjsp/sm_dfjsp/data/mvc_mk01_15_2vc4sru_equalproc_vcpenalty/mk07_mvc_2vc_2type_4sru_equalproc_vcpenalty.json
+mk08_mvc_2vc_2type_4sru_equalproc_vcpenalty,mk08,20,10,2,2,4,225,20260442,D:/code/recode/vc-sm_dfjsp/sm_dfjsp/data/mvc_mk01_15_2vc4sru_equalproc_vcpenalty/mk08_mvc_2vc_2type_4sru_equalproc_vcpenalty.json
+mk09_mvc_2vc_2type_4sru_equalproc_vcpenalty,mk09,20,10,2,2,4,240,20260442,D:/code/recode/vc-sm_dfjsp/sm_dfjsp/data/mvc_mk01_15_2vc4sru_equalproc_vcpenalty/mk09_mvc_2vc_2type_4sru_equalproc_vcpenalty.json
+mk10_mvc_2vc_2type_4sru_equalproc_vcpenalty,mk10,20,15,2,2,4,240,20260442,D:/code/recode/vc-sm_dfjsp/sm_dfjsp/data/mvc_mk01_15_2vc4sru_equalproc_vcpenalty/mk10_mvc_2vc_2type_4sru_equalproc_vcpenalty.json
+mk11_mvc_2vc_2type_4sru_equalproc_vcpenalty,mk11,30,5,2,2,4,179,20260442,D:/code/recode/vc-sm_dfjsp/sm_dfjsp/data/mvc_mk01_15_2vc4sru_equalproc_vcpenalty/mk11_mvc_2vc_2type_4sru_equalproc_vcpenalty.json
+mk12_mvc_2vc_2type_4sru_equalproc_vcpenalty,mk12,30,10,2,2,4,193,20260442,D:/code/recode/vc-sm_dfjsp/sm_dfjsp/data/mvc_mk01_15_2vc4sru_equalproc_vcpenalty/mk12_mvc_2vc_2type_4sru_equalproc_vcpenalty.json
+mk13_mvc_2vc_2type_4sru_equalproc_vcpenalty,mk13,30,10,2,2,4,231,20260442,D:/code/recode/vc-sm_dfjsp/sm_dfjsp/data/mvc_mk01_15_2vc4sru_equalproc_vcpenalty/mk13_mvc_2vc_2type_4sru_equalproc_vcpenalty.json
+mk14_mvc_2vc_2type_4sru_equalproc_vcpenalty,mk14,30,15,2,2,4,277,20260442,D:/code/recode/vc-sm_dfjsp/sm_dfjsp/data/mvc_mk01_15_2vc4sru_equalproc_vcpenalty/mk14_mvc_2vc_2type_4sru_equalproc_vcpenalty.json
+mk15_mvc_2vc_2type_4sru_equalproc_vcpenalty,mk15,30,15,2,2,4,284,20260442,D:/code/recode/vc-sm_dfjsp/sm_dfjsp/data/mvc_mk01_15_2vc4sru_equalproc_vcpenalty/mk15_mvc_2vc_2type_4sru_equalproc_vcpenalty.json

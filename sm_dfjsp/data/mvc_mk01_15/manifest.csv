@@ -1,0 +1,16 @@
+instance,source_instance,jobs,base_machines,value_chains,types,srus,ops,seed,file
+mk01_mvc_3vc_2type_6sru,mk01,10,6,3,2,6,55,20260428,D:/code/recode/vc-sm_dfjsp/sm_dfjsp/data/mvc_mk01_15/mk01_mvc_3vc_2type_6sru.json
+mk02_mvc_3vc_2type_6sru,mk02,10,6,3,2,6,58,20260429,D:/code/recode/vc-sm_dfjsp/sm_dfjsp/data/mvc_mk01_15/mk02_mvc_3vc_2type_6sru.json
+mk03_mvc_3vc_2type_6sru,mk03,15,8,3,2,6,150,20260430,D:/code/recode/vc-sm_dfjsp/sm_dfjsp/data/mvc_mk01_15/mk03_mvc_3vc_2type_6sru.json
+mk04_mvc_3vc_2type_6sru,mk04,15,8,3,2,6,90,20260431,D:/code/recode/vc-sm_dfjsp/sm_dfjsp/data/mvc_mk01_15/mk04_mvc_3vc_2type_6sru.json
+mk05_mvc_3vc_2type_6sru,mk05,15,4,3,2,6,106,20260432,D:/code/recode/vc-sm_dfjsp/sm_dfjsp/data/mvc_mk01_15/mk05_mvc_3vc_2type_6sru.json
+mk06_mvc_3vc_2type_6sru,mk06,10,10,3,2,6,150,20260433,D:/code/recode/vc-sm_dfjsp/sm_dfjsp/data/mvc_mk01_15/mk06_mvc_3vc_2type_6sru.json
+mk07_mvc_3vc_2type_6sru,mk07,20,5,3,2,6,100,20260434,D:/code/recode/vc-sm_dfjsp/sm_dfjsp/data/mvc_mk01_15/mk07_mvc_3vc_2type_6sru.json
+mk08_mvc_3vc_2type_6sru,mk08,20,10,3,2,6,225,20260435,D:/code/recode/vc-sm_dfjsp/sm_dfjsp/data/mvc_mk01_15/mk08_mvc_3vc_2type_6sru.json
+mk09_mvc_3vc_2type_6sru,mk09,20,10,3,2,6,240,20260436,D:/code/recode/vc-sm_dfjsp/sm_dfjsp/data/mvc_mk01_15/mk09_mvc_3vc_2type_6sru.json
+mk10_mvc_3vc_2type_6sru,mk10,20,15,3,2,6,240,20260437,D:/code/recode/vc-sm_dfjsp/sm_dfjsp/data/mvc_mk01_15/mk10_mvc_3vc_2type_6sru.json
+mk11_mvc_3vc_2type_6sru,mk11,30,5,3,2,6,179,20260438,D:/code/recode/vc-sm_dfjsp/sm_dfjsp/data/mvc_mk01_15/mk11_mvc_3vc_2type_6sru.json
+mk12_mvc_3vc_2type_6sru,mk12,30,10,3,2,6,193,20260439,D:/code/recode/vc-sm_dfjsp/sm_dfjsp/data/mvc_mk01_15/mk12_mvc_3vc_2type_6sru.json
+mk13_mvc_3vc_2type_6sru_conflict,mk13,30,10,3,2,6,231,20260440,D:/code/recode/vc-sm_dfjsp/sm_dfjsp/data/mvc_mk01_15/mk13_mvc_3vc_2type_6sru.json
+mk14_mvc_3vc_2type_6sru,mk14,30,15,3,2,6,277,20260441,D:/code/recode/vc-sm_dfjsp/sm_dfjsp/data/mvc_mk01_15/mk14_mvc_3vc_2type_6sru.json
+mk15_mvc_3vc_2type_6sru,mk15,30,15,3,2,6,284,20260442,D:/code/recode/vc-sm_dfjsp/sm_dfjsp/data/mvc_mk01_15/mk15_mvc_3vc_2type_6sru.json
